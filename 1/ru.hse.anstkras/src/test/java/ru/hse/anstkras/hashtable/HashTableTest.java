@@ -9,6 +9,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class HashTableTest {
     private HashTable hashTable;
 
+
+    private void fill(HashTable hashTable, int n) {
+        for (int i = 0; i < n; i++) {
+            hashTable.put("key" + i, "value" + i);
+        }
+    }
+
     @BeforeEach
     void init() {
         hashTable = new HashTable();
@@ -39,25 +46,19 @@ class HashTableTest {
 
     @Test
     void contains() {
-        for (int i = 0; i < 50; i++) {
-            hashTable.put("key" + i, "value" + i);
-        }
+        fill(hashTable, 50);
         assertTrue(hashTable.contains("key21"));
     }
 
     @Test
     void get() {
-        for (int i = 0; i < 50; i++) {
-            hashTable.put("key" + i, "value" + i);
-        }
+        fill(hashTable, 50);
         assertEquals("value21", hashTable.get("key21"));
     }
 
     @Test
     void getNull() {
-        for (int i = 0; i < 50; i++) {
-            hashTable.put("key" + i, "value" + i);
-        }
+        fill(hashTable, 50);
         assertNull(hashTable.get("123"));
     }
 
@@ -70,34 +71,26 @@ class HashTableTest {
 
     @Test
     void put() {
-        for (int i = 0; i < 42; i++) {
-            hashTable.put("key" + i, "value" + i);
-        }
+        fill(hashTable, 42);
         assertEquals(42, hashTable.size());
     }
 
     @Test
     void remove() {
-        for (int i = 0; i < 50; i++) {
-            hashTable.put("key" + i, "value" + i);
-        }
+        fill(hashTable, 50);
         hashTable.remove("key21");
         assertFalse(hashTable.contains("key21"));
     }
 
     @Test
     void removeNull() {
-        for (int i = 0; i < 50; i++) {
-            hashTable.put("key" + i, "value" + i);
-        }
+        fill(hashTable, 50);
         assertNull(hashTable.remove("123"));
     }
 
     @Test
     void clear() {
-        for (int i = 0; i < 100; i++) {
-            hashTable.put(Integer.toString(i), Integer.toString(i));
-        }
+        fill(hashTable, 100);
         hashTable.clear();
         assertTrue(hashTable.empty());
     }
