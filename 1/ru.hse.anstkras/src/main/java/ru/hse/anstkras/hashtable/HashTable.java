@@ -100,6 +100,7 @@ public class HashTable {
 
     /**
      * Constructs the list of all entries in the hashtable in arbitrary order
+     *
      * @return the list of all entries in the hashtable in arbitrary order
      */
     public List entries() {
