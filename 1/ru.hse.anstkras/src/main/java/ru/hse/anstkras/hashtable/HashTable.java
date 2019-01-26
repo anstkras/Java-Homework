@@ -104,7 +104,8 @@ public class HashTable {
      * @return the list of all entries in the hashtable in arbitrary order
      */
     public List entries() {
-        List entries = new LinkedList();
+        var entries = new LinkedList();
+        System.out.println(entries.getClass());
         for (List list : lists) {
             entries.concat(list);
         }
@@ -122,7 +123,7 @@ public class HashTable {
     }
 
     protected final void rebuild() {
-        HashTable newHashTable = new HashTable(capacity * 2, loadfactor, hasher);
+        var newHashTable = new HashTable(capacity * 2, loadfactor, hasher);
         List entries = entries();
         for (Entry entry : entries) {
             newHashTable.put(entry.key, entry.value);
@@ -159,7 +160,7 @@ public class HashTable {
             if (obj == null || getClass() != obj.getClass()) {
                 return false;
             }
-            Entry otherEntry = (Entry) obj;
+            var otherEntry = (Entry) obj;
             return otherEntry.key.equals(key);
         }
 

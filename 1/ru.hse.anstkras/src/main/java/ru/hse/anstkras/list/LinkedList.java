@@ -137,7 +137,7 @@ public class LinkedList implements List {
             return;
         }
 
-        LinkedList otherList = (LinkedList) other;
+        var otherList = (LinkedList) other;
         if ((head == null && tail != null) || (head != null && tail == null)) {
             throw new IllegalStateException();
         }
