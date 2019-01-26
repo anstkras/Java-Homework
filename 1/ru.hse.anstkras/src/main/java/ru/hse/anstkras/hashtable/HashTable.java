@@ -94,6 +94,9 @@ public class HashTable {
         }
     }
 
+    /**
+     * Delete all the values in the hashtable and shrinks its capacity
+     */
     public void clear() {
         assignLists(new HashTable());
     }
