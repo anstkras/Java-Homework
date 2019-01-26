@@ -71,7 +71,7 @@ class HashTableTest {
     @Test
     void put() {
         for (int i = 0; i < 42; i++) {
-            hashTable.put("key" + Integer.toString(i), "value" + Integer.toString(i));
+            hashTable.put("key" + i, "value" + i);
         }
         assertEquals(42, hashTable.size());
     }
