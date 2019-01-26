@@ -60,8 +60,6 @@ public class HashTable {
      * If there was an old value associated with the given key,
      * than returns the old value, otherwise returns null
      *
-     * @param key
-     * @param value
      * @return the old value if exists, null otherwise
      */
     public String put(String key, String value) {
@@ -80,7 +78,6 @@ public class HashTable {
     /**
      * Removes the entry by the given key if exists, returns null otherwise.
      *
-     * @param key
      * @return the value of removed entry if exists, null otherwise
      */
     public String remove(String key) {
