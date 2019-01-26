@@ -8,7 +8,7 @@ import ru.hse.anstkras.list.List;
  */
 public class HashTable {
     protected static final double DEFAULT_LOADFACTOR = 0.75;
-    protected static final int DEFAULT_CAPACITY = 50;
+    protected static final int DEFAULT_CAPACITY = 10;
     protected final double loadfactor;
     protected final Hasher hasher;
     protected List[] lists;
@@ -95,10 +95,7 @@ public class HashTable {
     }
 
     public void clear() {
-        for (List list : lists) {
-            list.clear();
-            size = 0;
-        }
+        assignLists(new HashTable());
     }
 
     /**
@@ -129,13 +126,22 @@ public class HashTable {
         for (Entry entry : entries) {
             newHashTable.put(entry.key, entry.value);
         }
-        copy(newHashTable);
+        assignLists(newHashTable);
     }
 
-    protected final void copy(HashTable hashTable) {
+    protected final void assignLists(HashTable hashTable) {
+        deleteAll();
         lists = hashTable.lists;
         size = hashTable.size;
         capacity = hashTable.capacity;
+    }
+
+    protected final void deleteAll() {
+        for (List list : lists) {
+            list.clear();
+        }
+        lists = null;
+        size = 0;
     }
 
     public static class Entry {
