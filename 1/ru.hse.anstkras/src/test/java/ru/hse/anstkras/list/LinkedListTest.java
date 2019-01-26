@@ -1,5 +1,7 @@
 package ru.hse.anstkras.list;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.hse.anstkras.hashtable.HashTable;
 
@@ -8,23 +10,37 @@ import java.util.Iterator;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LinkedListTest {
+    private LinkedList list;
+
+    private void fill(List list, int n) {
+        for (int i = 0; i < n; i++) {
+            list.add(new HashTable.Entry("key" + i, "value" + i));
+        }
+    }
+
+    @BeforeEach
+    void init() {
+        list = new LinkedList();
+    }
+
+    @AfterEach
+    void makeNull() {
+        list = null;
+    }
 
     @Test
     void empty() {
-        LinkedList list = new LinkedList();
         assertTrue(list.empty());
     }
 
     @Test
     void notEmpty() {
-        LinkedList list = new LinkedList();
         list.add(new HashTable.Entry("key0", "value0"));
         assertFalse(list.empty());
     }
 
     @Test
     void size() {
-        LinkedList list = new LinkedList();
         list.add(new HashTable.Entry("key0", "value0"));
         list.add(new HashTable.Entry("key1", "value1"));
         assertEquals(2, list.size());
@@ -32,27 +48,20 @@ class LinkedListTest {
 
     @Test
     void find() {
-        LinkedList list = new LinkedList();
-        for (int i = 0; i < 50; i++) {
-            list.add(new HashTable.Entry("key" + i, "value" + i));
-        }
+        fill(list, 50);
         HashTable.Entry entryToFind = new HashTable.Entry("key21", null);
         assertEquals(new HashTable.Entry("key21", "value21"), list.find(entryToFind));
     }
 
     @Test
     void contains() {
-        LinkedList list = new LinkedList();
-        for (int i = 0; i < 50; i++) {
-            list.add(new HashTable.Entry("key" + i, "value" + i));
-        }
+        fill(list, 50);
         HashTable.Entry entryToFind = new HashTable.Entry("key21", null);
         assertTrue(list.contains(entryToFind));
     }
 
     @Test
     void addAndRemove() {
-        LinkedList list = new LinkedList();
         HashTable.Entry entry = new HashTable.Entry("key", "value");
         list.add(entry);
         list.remove(entry);
@@ -61,20 +70,14 @@ class LinkedListTest {
 
     @Test
     void add() {
-        LinkedList list = new LinkedList();
-        for (int i = 0; i < 42; i++) {
-            list.add(new HashTable.Entry("key" + i, "value" + i));
-        }
+        fill(list, 42);
         assertEquals(42, list.size());
     }
 
 
     @Test
     void remove() {
-        LinkedList list = new LinkedList();
-        for (int i = 0; i < 50; i++) {
-            list.add(new HashTable.Entry("key" + i, "value" + i));
-        }
+        fill(list, 50);
         HashTable.Entry entryToRemove = new HashTable.Entry("key21", null);
         list.remove(entryToRemove);
         assertFalse(list.contains(entryToRemove));
@@ -82,40 +85,28 @@ class LinkedListTest {
 
     @Test
     void removeFromEmptyList() {
-        LinkedList list = new LinkedList();
         assertNull(list.remove(new HashTable.Entry("123", "456")));
     }
 
     @Test
     void clear() {
-        LinkedList list = new LinkedList();
-        for (int i = 0; i < 100; i++) {
-            list.add(new HashTable.Entry(Integer.toString(i), Integer.toString(i)));
-        }
+        fill(list, 100);
         list.clear();
         assertTrue(list.empty());
     }
 
     @Test
     void concat() {
-        LinkedList list = new LinkedList();
-        for (int i = 0; i < 100; i++) {
-            list.add(new HashTable.Entry(Integer.toString(i), Integer.toString(i)));
-        }
+        fill(list, 100);
         LinkedList list2 = new LinkedList();
-        for (int i = 0; i < 100; i++) {
-            list2.add(new HashTable.Entry(Integer.toString(i), Integer.toString(i)));
-        }
+        fill(list2, 100);
         list.concat(list2);
         assertEquals(200, list.size());
     }
 
     @Test
     void iterator() {
-        LinkedList list = new LinkedList();
-        for (int i = 0; i < 100; i++) {
-            list.add(new HashTable.Entry(Integer.toString(i), Integer.toString(i)));
-        }
+        fill(list, 100);
         Iterator<HashTable.Entry> it = list.iterator();
         int count = 0;
         while (it.hasNext()) {
