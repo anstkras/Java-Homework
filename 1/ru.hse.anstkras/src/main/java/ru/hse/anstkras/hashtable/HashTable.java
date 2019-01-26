@@ -122,7 +122,7 @@ public class HashTable {
     }
 
     protected final void rebuild() {
-        HashTable newHashTable = new HashTable(capacity * 2);
+        HashTable newHashTable = new HashTable(capacity * 2, loadfactor, hasher);
         List entries = entries();
         for (Entry entry : entries) {
             newHashTable.put(entry.key, entry.value);
