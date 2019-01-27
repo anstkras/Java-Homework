@@ -23,7 +23,7 @@ public class Trie {
         if (element == null) {
             throw new IllegalArgumentException("Null can not be an element in the trie");
         }
-        List<TrieNode> nodes = new ArrayList<>();
+        var nodes = new ArrayList<TrieNode>();
         boolean result = false;
         TrieNode curNode = root;
         nodes.add(curNode);
@@ -34,7 +34,7 @@ public class Trie {
                 nodes.add(curNode);
             } else {
                 result = true;
-                TrieNode newNode = new TrieNode(c);
+                var newNode = new TrieNode(c);
                 curNode.next.put(c, newNode);
                 curNode = newNode;
 
