@@ -4,7 +4,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -78,16 +77,12 @@ public class TrieTest {
 
     @Test
     public void addNullElement() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            trie.add(null);
-        });
+        assertThrows(IllegalArgumentException.class, () -> trie.add(null));
     }
 
     @Test
     public void containsNullElement() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            trie.contains(null);
-        });
+        assertThrows(IllegalArgumentException.class, () -> trie.contains(null));
     }
 
     @Test
@@ -97,14 +92,20 @@ public class TrieTest {
     }
 
     @Test
-    public void remove() {
-    }
-
-    @Test
-    public void size() {
+    public void howManyStartWithNullPrefix() {
+        assertThrows(IllegalArgumentException.class, () -> trie.howManyStartWithPrefix(null));
     }
 
     @Test
     public void howManyStartWithPrefix() {
+        String[] strings = {"123", "1245", "12345", "145", "232", "3"};
+        for (String string : strings) {
+            trie.add(string);
+        }
+        assertEquals(2, trie.howManyStartWithPrefix("123"));
+        assertEquals(3, trie.howManyStartWithPrefix("12"));
+        assertEquals(0, trie.howManyStartWithPrefix("4"));
+        assertEquals(0, trie.howManyStartWithPrefix("18"));
     }
+
 }

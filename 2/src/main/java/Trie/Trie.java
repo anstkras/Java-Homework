@@ -1,9 +1,11 @@
 package Trie;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Trie {
-    private Vertex root = new Vertex();
+    private TrieNode root = new TrieNode();
     private int size;
 
     /**
@@ -21,16 +23,18 @@ public class Trie {
         if (element == null) {
             throw new IllegalArgumentException("Null can not be an element in the trie");
         }
-
+        List<TrieNode> nodes = new ArrayList<>();
         boolean result = false;
-        Vertex curNode = root;
+        TrieNode curNode = root;
+        nodes.add(curNode);
         for (int i = 0; i < element.length(); i++) {
             char c = element.charAt(i);
             if (curNode.next.containsKey(c)) {
                 curNode = curNode.next.get(c);
+                nodes.add(curNode);
             } else {
                 result = true;
-                Vertex newNode = new Vertex(c);
+                TrieNode newNode = new TrieNode(c);
                 curNode.next.put(c, newNode);
                 curNode = newNode;
 
@@ -43,6 +47,10 @@ public class Trie {
             size++;
         }
         curNode.isTerminal = true;
+
+        for (TrieNode node : nodes) {
+            node.size++;
+        }
 
         return result;
     }
@@ -60,7 +68,7 @@ public class Trie {
             throw new IllegalArgumentException("Null can not be an element in the trie");
         }
 
-        Vertex curNode = root;
+        TrieNode curNode = root;
         for (int i = 0; i < element.length(); i++) {
             char c = element.charAt(i);
             if (curNode.next.containsKey(c)) {
@@ -77,6 +85,7 @@ public class Trie {
      * the trie
      * Takes linear time of element's length
      * Throws {@code IllegalArgumentException} in case of null argument
+     *
      * @param element String to remove
      * @return {@code true} if the element was removed,
      * {@code false} if the element was not presented in
@@ -98,20 +107,37 @@ public class Trie {
         return size == 0;
     }
 
+    /**
+     * Counts the number of element in the trie that starts with the given prefix
+     */
+
     public int howManyStartWithPrefix(String prefix) {
-        return 0;
+        if (prefix == null) {
+            throw new IllegalArgumentException("Null can not be an element in the trie");
+        }
+
+        TrieNode curNode = root;
+        for (int i = 0; i < prefix.length(); i++) {
+            char c = prefix.charAt(i);
+            if (curNode.next.containsKey(c)) {
+                curNode = curNode.next.get(c);
+            } else {
+                return 0;
+            }
+        }
+        return curNode.size;
     }
 
-    private static class Vertex {
-        private HashMap<Character, Vertex> next = new HashMap<>();
+    private static class TrieNode {
+        private HashMap<Character, TrieNode> next = new HashMap<>();
         private boolean isTerminal;
         private char symbol;
         private int size = 1;
 
-        public Vertex() {
+        public TrieNode() {
         }
 
-        public Vertex(char symbol) {
+        public TrieNode(char symbol) {
             this.symbol = symbol;
         }
     }
