@@ -108,4 +108,38 @@ public class TrieTest {
         assertEquals(0, trie.howManyStartWithPrefix("18"));
     }
 
+    @Test
+    public void removeNullElement() {
+        assertThrows(IllegalArgumentException.class, () -> trie.remove(null));
+    }
+
+    @Test
+    public void addOneElementAndRemove() {
+        String s = "123";
+        trie.add(s);
+        assertTrue(trie.remove(s));
+    }
+
+    @Test
+    public void addSeveralElementsAndRemove() {
+        String[] strings = {"123", "1245", "12345", "145", "232", "3"};
+        for (String string : strings) {
+            trie.add(string);
+        }
+        
+        String[] stringsNotToRemove = {"12", "1", "14", "1456", "1455", "4"};
+        for (String string : stringsNotToRemove) {
+            assertFalse(trie.remove(string));
+        }
+
+        String[] stringsToRemove = {"123", "145", "3"};
+        for (String string : stringsToRemove) {
+            assertTrue(trie.remove(string));
+        }
+
+        String[] stringsToStay = {"12345", "1245", "232"};
+        for (String string : stringsToStay) {
+            assertTrue(trie.contains(string));
+        }
+    }
 }

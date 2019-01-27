@@ -95,6 +95,24 @@ public class Trie {
             throw new IllegalArgumentException("Null can not be an element in the trie");
         }
 
+        var nodes = new ArrayList<TrieNode>();
+        TrieNode curNode = root;
+        nodes.add(root);
+        for (int i = 0; i < element.length(); i++) {
+            char c = element.charAt(i);
+            if (curNode.next.containsKey(c)) {
+                curNode = curNode.next.get(c);
+                nodes.add(curNode);
+            } else {
+                return false;
+            }
+        }
+        if (curNode.isTerminal) {
+            for (TrieNode node : nodes) {
+                node.size--;
+            }
+            return true;
+        }
         return false;
     }
 
