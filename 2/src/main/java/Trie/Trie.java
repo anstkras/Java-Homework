@@ -34,7 +34,7 @@ public class Trie {
                 nodes.add(curNode);
             } else {
                 result = true;
-                var newNode = new TrieNode(c);
+                var newNode = new TrieNode();
                 curNode.next.put(c, newNode);
                 curNode = newNode;
 
@@ -131,14 +131,9 @@ public class Trie {
     private static class TrieNode {
         private HashMap<Character, TrieNode> next = new HashMap<>();
         private boolean isTerminal;
-        private char symbol;
         private int size = 1;
 
         public TrieNode() {
-        }
-
-        public TrieNode(char symbol) {
-            this.symbol = symbol;
         }
     }
 }
