@@ -2,7 +2,6 @@ package Trie;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Trie {
     private TrieNode root = new TrieNode();
