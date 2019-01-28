@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Trie implements Serializable {
-    private final static String NULL_ERROR = "Null can not be an element in the trie";
-    private TrieNode root = new TrieNode();
+    protected final static String NULL_ERROR = "Null can not be an element in the trie";
+    protected TrieNode root = new TrieNode();
 
     /**
      * Adds the element in the trie if the trie
@@ -192,12 +192,12 @@ public class Trie implements Serializable {
         return newNode;
     }
 
-    private static class TrieNode {
-        private final HashMap<Character, TrieNode> next = new HashMap<>();
-        private boolean isTerminal;
-        private int size;
+    protected static class TrieNode {
+        protected final HashMap<Character, TrieNode> next = new HashMap<>();
+        protected boolean isTerminal;
+        protected int size;
 
-        public TrieNode() {
+        protected TrieNode() {
         }
 
         @Override
@@ -235,7 +235,7 @@ public class Trie implements Serializable {
             return hashCode;
         }
 
-        public int countSize() {
+        protected int countSize() {
             size = 0;
             if (isTerminal) {
                 size++;
