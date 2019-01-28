@@ -194,7 +194,7 @@ public class Trie implements Serializable {
     }
 
     private static class TrieNode {
-        private HashMap<Character, TrieNode> next = new HashMap<>();
+        private final HashMap<Character, TrieNode> next = new HashMap<>();
         private boolean isTerminal;
         private int size;
 
