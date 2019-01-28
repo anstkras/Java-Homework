@@ -6,6 +6,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/** Implements a tree data structure that stores strings */
+
 public class Trie implements Serializable {
     protected final static String NULL_ERROR = "Null can not be an element in the trie";
     protected TrieNode root = new TrieNode();
