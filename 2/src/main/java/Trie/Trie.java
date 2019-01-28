@@ -1,9 +1,12 @@
 package Trie;
 
+import Serializable.Serializable;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Trie {
+public class Trie implements Serializable {
     private TrieNode root = new TrieNode();
     private int size;
 
@@ -34,6 +37,7 @@ public class Trie {
             } else {
                 result = true;
                 var newNode = new TrieNode();
+                newNode.size = 1;
                 curNode.next.put(c, newNode);
                 curNode = newNode;
 
@@ -145,12 +149,106 @@ public class Trie {
         return curNode.size;
     }
 
+    @Override
+    public void serialize(OutputStream out) throws IOException {
+        serializeNode(root, out);
+    }
+
+    @Override
+    public void deserialize(InputStream in) throws IOException {
+        root = deserializeNode(in);
+        size = root.countSize();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || obj.getClass() != getClass()) {
+            return false;
+        }
+        var otherTrie = (Trie) obj;
+        return otherTrie.size == size && root.equals(otherTrie.root);
+    }
+
+    @Override
+    public int hashCode() {
+        return root.hashCode();
+    }
+
+    protected void serializeNode(TrieNode node, OutputStream out) throws IOException {
+        var dataOutputStream = new DataOutputStream(out);
+        dataOutputStream.writeBoolean(node.isTerminal);
+        dataOutputStream.writeInt(node.next.size());
+        for (var entry : node.next.entrySet()) {
+            dataOutputStream.writeChar(entry.getKey());
+            serializeNode(entry.getValue(), out);
+        }
+    }
+
+    protected TrieNode deserializeNode(InputStream in) throws IOException {
+        var dataInputStream = new DataInputStream(in);
+        var newNode = new TrieNode();
+        newNode.isTerminal = dataInputStream.readBoolean();
+        int nextSize = dataInputStream.readInt();
+        for (int i = 0; i < nextSize; i++) {
+            char c = dataInputStream.readChar();
+            newNode.next.put(c, deserializeNode(in));
+        }
+        return newNode;
+    }
+
     private static class TrieNode {
         private HashMap<Character, TrieNode> next = new HashMap<>();
         private boolean isTerminal;
-        private int size = 1;
+        private int size;
 
         public TrieNode() {
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null || obj.getClass() != getClass()) {
+                return false;
+            }
+
+            var otherNode = (TrieNode) obj;
+            if (size != otherNode.size || isTerminal != otherNode.isTerminal) {
+                return false;
+            }
+
+            if (next.size() != otherNode.next.size()) {
+                return false;
+            }
+            for (var entry : next.entrySet()) {
+                if (!otherNode.next.containsKey(entry.getKey())) {
+                    return false;
+                }
+                if (!entry.getValue().equals(otherNode.next.get(entry.getKey()))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hashCode = 0;
+            for (var entry : next.entrySet()) {
+                hashCode += entry.getKey().hashCode();
+                hashCode += entry.getValue().hashCode();
+            }
+            return hashCode;
+        }
+
+        public int countSize() {
+            size = 0;
+            if (isTerminal) {
+                size++;
+            }
+
+            for (TrieNode curNode : next.values()) {
+                size += curNode.countSize();
+            }
+            return size;
         }
     }
 }

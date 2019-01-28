@@ -4,6 +4,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -126,7 +130,7 @@ public class TrieTest {
         for (String string : strings) {
             trie.add(string);
         }
-        
+
         String[] stringsNotToRemove = {"12", "1", "14", "1456", "1455", "4"};
         for (String string : stringsNotToRemove) {
             assertFalse(trie.remove(string));
@@ -141,5 +145,62 @@ public class TrieTest {
         for (String string : stringsToStay) {
             assertTrue(trie.contains(string));
         }
+    }
+
+    @Test
+    void serializeAndDeserialize() throws IOException {
+        String[] strings = {"123", "1245", "12345", "145", "232", "3"};
+        for (String string : strings) {
+            trie.add(string);
+        }
+        var trie2 = new Trie();
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        trie.serialize(byteArrayOutputStream);
+        var byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        trie2.deserialize(byteArrayInputStream);
+        assertEquals(trie, trie2);
+    }
+
+    @Test
+    void serializeAndDeserializeWith2BytesSymbols() throws IOException {
+        String[] strings = {"\u20AC\u040b", "\u20AC24q", "12345", "145", "232", "3\u1270"};
+        for (String string : strings) {
+            trie.add(string);
+        }
+        var trie2 = new Trie();
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        trie.serialize(byteArrayOutputStream);
+        var byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        trie2.deserialize(byteArrayInputStream);
+        assertEquals(trie, trie2);
+    }
+
+    @Test
+    void equalsAndHashCode() {
+        String[] strings = {"\u20AC\u040b", "\u20AC24q", "12345", "145", "232", "3\u1270"};
+        for (String string : strings) {
+            trie.add(string);
+        }
+        var trie2 = new Trie();
+        for (String string : strings) {
+            trie2.add(string);
+        }
+        assertEquals(trie.hashCode(), trie2.hashCode());
+        assertEquals(trie, trie2);
+    }
+
+    @Test
+    void equalsAndHashCodeForNotEqual() {
+        String[] strings = {"\u20AC\u040b", "\u20AC24q", "12345", "145", "232", "3\u1270"};
+        for (String string : strings) {
+            trie.add(string);
+        }
+        String[] strings2 = {"\u20AC\u040b", "\u20AC24q", "12345", "145", "232", "3\u1270z"};
+        var trie2 = new Trie();
+        for (String string : strings2) {
+            trie2.add(string);
+        }
+        assertNotEquals(trie.hashCode(), trie2.hashCode());
+        assertNotEquals(trie, trie2);
     }
 }
