@@ -3,9 +3,7 @@ package ru.hse.anstkras.hashtable;
 import ru.hse.anstkras.list.LinkedList;
 import ru.hse.anstkras.list.List;
 
-/**
- * Implementation of hashtable based on separate chaining technique
- */
+/** Implementation of hashtable based on separate chaining technique */
 public class HashTable {
     protected static final double DEFAULT_LOADFACTOR = 0.75;
     protected static final int DEFAULT_CAPACITY = 10;
@@ -91,9 +89,7 @@ public class HashTable {
         }
     }
 
-    /**
-     * Delete all the values in the hashtable and shrinks its capacity
-     */
+    /** Delete all the values in the hashtable and shrinks its capacity */
     public void clear() {
         assignLists(new HashTable());
     }

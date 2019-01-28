@@ -1,8 +1,6 @@
 package ru.hse.anstkras.hashtable;
 
-/**
- * Implementation of the polynomial hashing algorithm
- */
+/** Implementation of the polynomial hashing algorithm */
 public class PolynomialHasher implements Hasher {
     @Override
     public int hash(String string) {

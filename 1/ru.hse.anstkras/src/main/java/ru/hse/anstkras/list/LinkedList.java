@@ -4,9 +4,7 @@ import ru.hse.anstkras.hashtable.HashTable;
 
 import java.util.Iterator;
 
-/**
- * Doubly linked list implementation of the List interface
- */
+/** Doubly linked list implementation of the List interface */
 
 public class LinkedList implements List {
     protected ListNode head;

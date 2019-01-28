@@ -2,9 +2,7 @@ package ru.hse.anstkras.list;
 
 import ru.hse.anstkras.hashtable.HashTable;
 
-/**
- * An ordered collection of elements.
- */
+/** An ordered collection of elements. */
 
 public interface List extends Iterable<HashTable.Entry> {
     int size();
