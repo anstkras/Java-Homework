@@ -135,9 +135,6 @@ public class HashTable {
     }
 
     protected final void deleteAll() {
-        for (List list : lists) {
-            list.clear();
-        }
         lists = null;
         size = 0;
     }
