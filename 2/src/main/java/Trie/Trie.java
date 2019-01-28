@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Trie implements Serializable {
+    private final static String NULL_ERROR = "Null can not be an element in the trie";
     private TrieNode root = new TrieNode();
 
     /**
@@ -22,7 +23,7 @@ public class Trie implements Serializable {
 
     public boolean add(String element) {
         if (element == null) {
-            throw new IllegalArgumentException("Null can not be an element in the trie");
+            throw new IllegalArgumentException(NULL_ERROR);
         }
 
         var nodes = new ArrayList<TrieNode>();
@@ -64,7 +65,7 @@ public class Trie implements Serializable {
      */
     public boolean contains(String element) {
         if (element == null) {
-            throw new IllegalArgumentException("Null can not be an element in the trie");
+            throw new IllegalArgumentException(NULL_ERROR);
         }
 
         TrieNode curNode = root;
@@ -92,7 +93,7 @@ public class Trie implements Serializable {
      */
     public boolean remove(String element) {
         if (element == null) {
-            throw new IllegalArgumentException("Null can not be an element in the trie");
+            throw new IllegalArgumentException(NULL_ERROR);
         }
 
         var nodes = new ArrayList<TrieNode>();
@@ -129,7 +130,7 @@ public class Trie implements Serializable {
     /** Counts the number of element in the trie that starts with the given prefix */
     public int howManyStartWithPrefix(String prefix) {
         if (prefix == null) {
-            throw new IllegalArgumentException("Null can not be an element in the trie");
+            throw new IllegalArgumentException(NULL_ERROR);
         }
 
         TrieNode curNode = root;
