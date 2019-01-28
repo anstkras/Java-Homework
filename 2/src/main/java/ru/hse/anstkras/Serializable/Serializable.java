@@ -1,4 +1,4 @@
-package Serializable;
+package ru.hse.anstkras.Serializable;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package Trie;
+package ru.hse.anstkras.Trie;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

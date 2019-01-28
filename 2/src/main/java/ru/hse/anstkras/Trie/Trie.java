@@ -1,6 +1,6 @@
-package Trie;
+package ru.hse.anstkras.Trie;
 
-import Serializable.Serializable;
+import ru.hse.anstkras.Serializable.Serializable;
 
 import java.io.*;
 import java.util.ArrayList;
