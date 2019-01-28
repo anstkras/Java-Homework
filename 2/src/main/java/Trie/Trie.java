@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 public class Trie implements Serializable {
     private TrieNode root = new TrieNode();
-    private int size;
 
     /**
      * Adds the element in the trie if the trie
@@ -46,9 +45,7 @@ public class Trie implements Serializable {
         if (!curNode.isTerminal) {
             result = true;
         }
-        if (result) {
-            size++;
-        }
+
         curNode.isTerminal = true;
 
         for (TrieNode node : nodes) {
@@ -121,11 +118,11 @@ public class Trie implements Serializable {
     }
 
     public int size() {
-        return size;
+        return root.size;
     }
 
     public boolean empty() {
-        return size == 0;
+        return root.size == 0;
     }
 
     /**
@@ -157,7 +154,7 @@ public class Trie implements Serializable {
     @Override
     public void deserialize(InputStream in) throws IOException {
         root = deserializeNode(in);
-        size = root.countSize();
+        root.countSize();
     }
 
     @Override
@@ -166,7 +163,7 @@ public class Trie implements Serializable {
             return false;
         }
         var otherTrie = (Trie) obj;
-        return otherTrie.size == size && root.equals(otherTrie.root);
+        return root.equals(otherTrie.root);
     }
 
     @Override
