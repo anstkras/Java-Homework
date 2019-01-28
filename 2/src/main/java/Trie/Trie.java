@@ -24,17 +24,17 @@ public class Trie implements Serializable {
         if (element == null) {
             throw new IllegalArgumentException("Null can not be an element in the trie");
         }
+
         var nodes = new ArrayList<TrieNode>();
-        boolean result = false;
         TrieNode curNode = root;
         nodes.add(curNode);
+
         for (int i = 0; i < element.length(); i++) {
             char c = element.charAt(i);
             if (curNode.next.containsKey(c)) {
                 curNode = curNode.next.get(c);
                 nodes.add(curNode);
             } else {
-                result = true;
                 var newNode = new TrieNode();
                 newNode.size = 1;
                 curNode.next.put(c, newNode);
@@ -42,17 +42,16 @@ public class Trie implements Serializable {
 
             }
         }
+
         if (!curNode.isTerminal) {
-            result = true;
+            curNode.isTerminal = true;
+            for (TrieNode node : nodes) {
+                node.size++;
+            }
+            return true;
+
         }
-
-        curNode.isTerminal = true;
-
-        for (TrieNode node : nodes) {
-            node.size++;
-        }
-
-        return result;
+        return false;
     }
 
     /**
