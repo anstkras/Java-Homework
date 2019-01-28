@@ -116,18 +116,17 @@ public class Trie implements Serializable {
         return false;
     }
 
+    /** Returns the number of strings in the trie */
     public int size() {
         return root.size;
     }
 
+    /** Checks if the trie has no strings */
     public boolean empty() {
         return root.size == 0;
     }
 
-    /**
-     * Counts the number of element in the trie that starts with the given prefix
-     */
-
+    /** Counts the number of element in the trie that starts with the given prefix */
     public int howManyStartWithPrefix(String prefix) {
         if (prefix == null) {
             throw new IllegalArgumentException("Null can not be an element in the trie");
