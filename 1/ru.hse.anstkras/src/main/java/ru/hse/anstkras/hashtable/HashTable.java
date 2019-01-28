@@ -5,6 +5,7 @@ import ru.hse.anstkras.list.List;
 
 /** Implementation of hashtable based on separate chaining technique */
 public class HashTable {
+    protected static final String NULL_KEY_ERROR = "Null can not be a key in hash table";
     protected static final double DEFAULT_LOADFACTOR = 0.75;
     protected static final int DEFAULT_CAPACITY = 10;
     protected final double loadfactor;
@@ -39,12 +40,29 @@ public class HashTable {
         return size == 0;
     }
 
+    /**
+     * Checks if the given key is presented in the hash table.
+     * Throws {@code IllegalArgumentException} in case of null argument
+     */
     public boolean contains(String key) {
+        if (key == null) {
+            throw new IllegalArgumentException(NULL_KEY_ERROR);
+        }
+
         int hashKey = hashMod(key);
         return lists[hashKey].contains(new Entry(key, null));
     }
 
+    /**
+     * Looks for a value by the given key.
+     * If the key is not presented in the hash table returns null
+     * Throws {@code IllegalArgumentException} in case of null argument
+     */
     public String get(String key) {
+        if (key == null) {
+            throw new IllegalArgumentException(NULL_KEY_ERROR);
+        }
+
         int hashKey = hashMod(key);
         Entry entry = lists[hashKey].find(new Entry(key, null));
         if (entry == null) {
@@ -57,10 +75,16 @@ public class HashTable {
      * Associates the given key with the given value.
      * If there was an old value associated with the given key,
      * than returns the old value, otherwise returns null
+     * Null value is allowed
+     * Throws {@code IllegalArgumentException} in case of null key
      *
      * @return the old value if exists, null otherwise
      */
     public String put(String key, String value) {
+        if (key == null) {
+            throw new IllegalArgumentException(NULL_KEY_ERROR);
+        }
+
         int hashKey = hashMod(key);
         Entry entry = lists[hashKey].remove(new Entry(key, null));
         lists[hashKey].add(new Entry(key, value));
@@ -75,10 +99,15 @@ public class HashTable {
 
     /**
      * Removes the entry by the given key if exists, returns null otherwise.
+     * Throws {@code IllegalArgumentException} in case of null argument
      *
      * @return the value of removed entry if exists, null otherwise
      */
     public String remove(String key) {
+        if (key == null) {
+            throw new IllegalArgumentException(NULL_KEY_ERROR);
+        }
+
         int hashKey = hashMod(key);
         Entry removeEntry = lists[hashKey].remove(new Entry(key, null));
         if (removeEntry == null) {
