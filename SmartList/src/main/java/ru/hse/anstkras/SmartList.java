@@ -4,6 +4,7 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/** An implementation of list that provide efficient storage of small number of elements */
 public class SmartList<E> extends AbstractList<E> {
     private int size;
     private Object data;
@@ -37,6 +38,11 @@ public class SmartList<E> extends AbstractList<E> {
         return size;
     }
 
+    /**
+     * Set the element at given index and changing the type of inner collection if appropriate
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *         ({@code index < 0 || index >= size})
+     */
     @Override
     public E set(int index, E element) {
         if (index < 0 || index >= size) {
@@ -56,6 +62,11 @@ public class SmartList<E> extends AbstractList<E> {
         }
     }
 
+    /**
+     * Add the element at given index and changing the type of inner collection if appropriate
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *         ({@code index < 0 || index > size})
+     */
     @Override
     public void add(int index, E element) {
         if (index < 0 || index > size) {
@@ -95,6 +106,12 @@ public class SmartList<E> extends AbstractList<E> {
         }
     }
 
+    /**
+     * Removes the element at given index and changing the type of inner collection if appropriate
+     * @return an element that was at that index
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *         ({@code index < 0 || index > size})
+     */
     @Override
     public E remove(int index) {
         if (index < 0 || index > size) {
