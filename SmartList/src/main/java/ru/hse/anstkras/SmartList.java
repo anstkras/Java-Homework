@@ -83,6 +83,7 @@ public class SmartList<E> extends AbstractList<E> {
                 for (int i = 0; i < 5; i++) {
                     ((ArrayList<E>) data).add(((E[]) tmp)[i]);
                 }
+                ((ArrayList<E>) data).add(element);
             }
             else {
                 ((Object[]) data)[index] = element;
@@ -123,6 +124,7 @@ public class SmartList<E> extends AbstractList<E> {
                 array[i] = array[i + 1];
             }
             array[4] = null;
+            size--;
             return result;
         }
         if (size == 6) {
@@ -132,9 +134,11 @@ public class SmartList<E> extends AbstractList<E> {
             for (int i = 0; i < 5; i++) {
                 ((E[])data)[i] = arrayList.get(i);
             }
+            size--;
             return tmp;
         }
         if (size > 6) {
+            size--;
             return ((ArrayList<E>)data).remove(index);
         }
         return null;
