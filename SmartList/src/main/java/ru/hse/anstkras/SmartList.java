@@ -43,13 +43,13 @@ public class SmartList<E> extends AbstractList<E> {
             throw new IndexOutOfBoundsException();
         }
         if (size == 1) {
-            Object tmp = data;
+            Object result = data;
             data = element;
-            return (E) tmp;
+            return (E) result;
         } else if (size >= 2 && size <= 5) {
-            E tmp = ((E[]) data)[index];
+            E result = ((E[]) data)[index];
             ((Object[]) data)[index] = element;
-            return tmp;
+            return result;
 
         } else {
             return ((ArrayList<E>) data).set(index, element);
@@ -66,9 +66,9 @@ public class SmartList<E> extends AbstractList<E> {
             data = element;
         } else if (size == 1) {
             if (index > 0) {
-                Object tmp = data;
+                Object result = data;
                 data = new Object[5];
-                ((Object[]) data)[0] = tmp;
+                ((Object[]) data)[0] = result;
                 ((Object[]) data)[1] = element;
             } else {
                 data = element;
@@ -77,10 +77,10 @@ public class SmartList<E> extends AbstractList<E> {
             ((Object[]) data)[index] = element;
         } else if (size == 5) {
             if (index == 5) {
-                Object tmp = data;
+                Object result = data;
                 data = new ArrayList<E>();
                 for (int i = 0; i < 5; i++) {
-                    ((ArrayList<E>) data).add(((E[]) tmp)[i]);
+                    ((ArrayList<E>) data).add(((E[]) result)[i]);
                 }
                 ((ArrayList<E>) data).add(element);
             } else {
@@ -102,17 +102,17 @@ public class SmartList<E> extends AbstractList<E> {
         }
 
         if (size == 1) {
-            Object tmp = data;
+            Object result = data;
             data = null;
             size = 0;
-            return (E) tmp;
+            return (E) result;
         }
         if (size == 2) {
             int indexToStay = index == 0 ? 1 : 0;
-            E tmp = ((E[]) data)[index];
+            E result = ((E[]) data)[index];
             size--;
             data = ((E[]) data)[indexToStay];
-            return tmp;
+            return result;
         }
 
         if (size > 2 && size <= 5) {
@@ -127,20 +127,19 @@ public class SmartList<E> extends AbstractList<E> {
         }
         if (size == 6) {
             ArrayList<E> arrayList = (ArrayList<E>) data;
-            E tmp = arrayList.remove(index);
+            E result = arrayList.remove(index);
             data = new Object[5];
             for (int i = 0; i < 5; i++) {
                 ((E[]) data)[i] = arrayList.get(i);
             }
             size--;
-            return tmp;
+            return result;
         }
         if (size > 6) {
             size--;
             return ((ArrayList<E>) data).remove(index);
         }
         return null;
-
     }
 }
 
