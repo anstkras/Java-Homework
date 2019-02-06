@@ -26,10 +26,9 @@ public class SmartList<E> extends AbstractList<E> {
             return (E) data;
         }
         if (size >= 2 && size <= 5) {
-            return ((E[])data)[index];
-        }
-        else {
-            return ((ArrayList<E>)data).get(index);
+            return ((E[]) data)[index];
+        } else {
+            return ((ArrayList<E>) data).get(index);
         }
     }
 
@@ -48,9 +47,9 @@ public class SmartList<E> extends AbstractList<E> {
             data = element;
             return (E) tmp;
         } else if (size >= 2 && size <= 5) {
-            Object tmp = ((Object[]) data)[index];
+            E tmp = ((E[]) data)[index];
             ((Object[]) data)[index] = element;
-            return (E) tmp;
+            return tmp;
 
         } else {
             return ((ArrayList<E>) data).set(index, element);
@@ -84,8 +83,7 @@ public class SmartList<E> extends AbstractList<E> {
                     ((ArrayList<E>) data).add(((E[]) tmp)[i]);
                 }
                 ((ArrayList<E>) data).add(element);
-            }
-            else {
+            } else {
                 ((Object[]) data)[index] = element;
             }
 
@@ -107,13 +105,13 @@ public class SmartList<E> extends AbstractList<E> {
             Object tmp = data;
             data = null;
             size = 0;
-            return (E)tmp;
+            return (E) tmp;
         }
         if (size == 2) {
             int indexToStay = index == 0 ? 1 : 0;
-            E tmp = ((E[])data)[index];
+            E tmp = ((E[]) data)[index];
             size--;
-            data = ((E[])data)[indexToStay];
+            data = ((E[]) data)[indexToStay];
             return tmp;
         }
 
@@ -128,18 +126,18 @@ public class SmartList<E> extends AbstractList<E> {
             return result;
         }
         if (size == 6) {
-            ArrayList<E> arrayList = (ArrayList<E>)data;
+            ArrayList<E> arrayList = (ArrayList<E>) data;
             E tmp = arrayList.remove(index);
             data = new Object[5];
             for (int i = 0; i < 5; i++) {
-                ((E[])data)[i] = arrayList.get(i);
+                ((E[]) data)[i] = arrayList.get(i);
             }
             size--;
             return tmp;
         }
         if (size > 6) {
             size--;
-            return ((ArrayList<E>)data).remove(index);
+            return ((ArrayList<E>) data).remove(index);
         }
         return null;
 
