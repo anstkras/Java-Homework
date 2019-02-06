@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class SmartListTest {
@@ -23,9 +23,6 @@ public class SmartListTest {
         assertEquals(Arrays.asList(1, 2), list);
     }
 
-//    private void assertEqualsLists(List<Integer> emptyList, List<Integer> list) {
-//        for (int i = 0; i < emptyList)
-//    }
 
     @Test
     public void testGetSet() {
@@ -71,38 +68,35 @@ public class SmartListTest {
         assertEquals(Collections.emptyList(), list);
     }
 
-//    @Test
-//    public void testIteratorRemove() throws Exception {
-//        List<Object> list = newList();
-//        assertFalse(list.iterator().hasNext());
-//
-//        list.add(1);
-//
-//        Iterator<Object> iterator = list.iterator();
-//        assertTrue(iterator.hasNext());
-//        assertEquals(1, iterator.next());
-//
-//        iterator.remove();
-//        assertFalse(iterator.hasNext());
-//        assertEquals(Collections.emptyList(), list);
-//
-//        list.addAll(Arrays.asList(1, 2));
-//
-//        iterator = list.iterator();
-//        assertTrue(iterator.hasNext());
-//        assertEquals(1, iterator.next());
-//
-//        iterator.remove();
-//        assertTrue(iterator.hasNext());
-//        assertEquals(Collections.singletonList(2), list);
-//        assertEquals(2, iterator.next());
-//
-//        iterator.remove();
-//        assertFalse(iterator.hasNext());
-//        assertEquals(Collections.emptyList(), list);
-//    }
+    @Test
+    public void testIteratorRemove() throws Exception {
+        List<Object> list = newList();
+        assertFalse(list.iterator().hasNext());
 
-    private void assertFalse(boolean hasNext) {
+        list.add(1);
+
+        Iterator<Object> iterator = list.iterator();
+        assertTrue(iterator.hasNext());
+        assertEquals(1, iterator.next());
+
+        iterator.remove();
+        assertFalse(iterator.hasNext());
+        assertEquals(Collections.emptyList(), list);
+
+        list.addAll(Arrays.asList(1, 2));
+
+        iterator = list.iterator();
+        assertTrue(iterator.hasNext());
+        assertEquals(1, iterator.next());
+
+        iterator.remove();
+        assertTrue(iterator.hasNext());
+        assertEquals(Collections.singletonList(2), list);
+        assertEquals(2, iterator.next());
+
+        iterator.remove();
+        assertFalse(iterator.hasNext());
+        assertEquals(Collections.emptyList(), list);
     }
 
 
@@ -117,23 +111,23 @@ public class SmartListTest {
                 Arrays.asList(1, 2),
                 newList(Arrays.asList(1, 2)));
     }
-//
-//    @Test
-//    public void testAddManyElementsThenRemove() throws Exception {
-//        List<Object> list = newList();
-//        for (int i = 0; i < 7; i++) {
-//            list.add(i + 1);
-//        }
-//
-//        assertEquals(Arrays.asList(1, 2, 3, 4, 5, 6, 7), list);
-//
-//        for (int i = 0; i < 7; i++) {
-//            list.remove(list.size() - 1);
-//            assertEquals(6 - i, list.size());
-//        }
-//
-//        assertEquals(Collections.emptyList(), list);
-//    }
+
+    @Test
+    public void testAddManyElementsThenRemove() throws Exception {
+        List<Object> list = newList();
+        for (int i = 0; i < 7; i++) {
+            list.add(i + 1);
+        }
+
+        assertEquals(Arrays.asList(1, 2, 3, 4, 5, 6, 7), list);
+
+        for (int i = 0; i < 7; i++) {
+            list.remove(list.size() - 1);
+            assertEquals(6 - i, list.size());
+        }
+
+        assertEquals(Collections.emptyList(), list);
+    }
 
     private static <T> List<T> newList() {
         try {
