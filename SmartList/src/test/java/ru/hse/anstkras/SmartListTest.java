@@ -129,6 +129,30 @@ public class SmartListTest {
         assertEquals(Collections.emptyList(), list);
     }
 
+    @Test
+    public void addAtIllegalIndex() {
+        List<Object> list = newList();
+        assertThrows(IndexOutOfBoundsException.class, () -> list.add(1, 2));
+    }
+
+    @Test
+    public void removeFromIllegalIndex() {
+        List<Object> list = newList();
+        for (int i = 0; i < 7; i++) {
+            list.add(i + 1);
+        }
+        assertThrows(IndexOutOfBoundsException.class, () -> list.remove(8));
+    }
+
+    @Test
+    public void setAtIllegalIndex() {
+        List<Object> list = newList();
+        for (int i = 0; i < 7; i++) {
+            list.add(i + 1);
+        }
+        assertThrows(IndexOutOfBoundsException.class, () -> list.set(-23, "42"));
+    }
+
     private static <T> List<T> newList() {
         try {
             return (List<T>) getListClass().getConstructor().newInstance();
