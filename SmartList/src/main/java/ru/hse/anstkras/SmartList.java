@@ -13,7 +13,7 @@ public class SmartList<E> extends AbstractList<E> {
     }
 
     public SmartList(Collection<? extends E> collection) {
-
+        addAll(collection);
     }
 
     @Override
@@ -98,7 +98,47 @@ public class SmartList<E> extends AbstractList<E> {
 
     @Override
     public E remove(int index) {
-        throw new UnsupportedOperationException();
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        if (size == 1) {
+            Object tmp = data;
+            data = null;
+            size = 0;
+            return (E)tmp;
+        }
+        if (size == 2) {
+            int indexToStay = index == 0 ? 1 : 0;
+            E tmp = ((E[])data)[index];
+            size--;
+            data = ((E[])data)[indexToStay];
+            return tmp;
+        }
+
+        if (size > 2 && size <= 5) {
+            E[] array = (E[]) data;
+            E result = array[index];
+            for (int i = index; i < 4; i++) {
+                array[i] = array[i + 1];
+            }
+            array[4] = null;
+            return result;
+        }
+        if (size == 6) {
+            ArrayList<E> arrayList = (ArrayList<E>)data;
+            E tmp = arrayList.remove(index);
+            data = new Object[5];
+            for (int i = 0; i < 5; i++) {
+                ((E[])data)[i] = arrayList.get(i);
+            }
+            return tmp;
+        }
+        if (size > 6) {
+            return ((ArrayList<E>)data).remove(index);
+        }
+        return null;
+
     }
 }
 
