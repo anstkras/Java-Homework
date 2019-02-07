@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -148,9 +151,7 @@ class TrieTest {
         }
     }
 
-    @Test
-    void serializeAndDeserialize() throws IOException {
-        String[] strings = {"123", "1245", "12345", "145", "232", "3"};
+    private void serializeAndDeserializeStrings(Collection<String> strings) throws IOException {
         for (String string : strings) {
             trie.add(string);
         }
@@ -163,17 +164,21 @@ class TrieTest {
     }
 
     @Test
+    void serializeAndDeserialize() throws IOException {
+        var strings = new ArrayList<>(Arrays.asList("123", "1245", "12345", "145", "232", "3"));
+        serializeAndDeserializeStrings(strings);
+    }
+
+    @Test
     void serializeAndDeserializeWith2BytesSymbols() throws IOException {
-        String[] strings = {"\u20AC\u040b", "\u20AC24q", "12345", "145", "232", "3\u1270"};
-        for (String string : strings) {
-            trie.add(string);
-        }
-        var trie2 = new Trie();
-        var byteArrayOutputStream = new ByteArrayOutputStream();
-        trie.serialize(byteArrayOutputStream);
-        var byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-        trie2.deserialize(byteArrayInputStream);
-        assertEquals(trie, trie2);
+        var strings = new ArrayList<>(Arrays.asList("\u20AC\u040b", "\u20AC24q", "12345", "145", "232", "3\u1270"));
+        serializeAndDeserializeStrings(strings);
+    }
+
+    @Test
+    void serializeEmptyTrie() throws IOException {
+        var strings = new ArrayList<String>();
+        serializeAndDeserializeStrings(strings);
     }
 
     @Test
@@ -203,15 +208,5 @@ class TrieTest {
         }
         assertNotEquals(trie.hashCode(), trie2.hashCode());
         assertNotEquals(trie, trie2);
-    }
-
-    @Test
-    void serializeEmptyTrie() throws IOException {
-        var byteArrayOutputStream = new ByteArrayOutputStream();
-        trie.serialize(byteArrayOutputStream);
-        var byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-        var trie2 = new Trie();
-        trie2.deserialize(byteArrayInputStream);
-        assertEquals(trie, trie2);
     }
 }
