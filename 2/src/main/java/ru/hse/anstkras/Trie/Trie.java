@@ -38,7 +38,7 @@ public class Trie implements Serializable {
             } else {
                 var newNode = new TrieNode();
                 newNode.size = 1;
-                curNode.next.put(c, newNode);
+                curNode.addEdge(c, newNode);
                 curNode = newNode;
 
             }
@@ -197,7 +197,7 @@ public class Trie implements Serializable {
         int nextSize = dataInputStream.readInt();
         for (int i = 0; i < nextSize; i++) {
             char c = dataInputStream.readChar();
-            newNode.next.put(c, deserializeNode(in));
+            newNode.addEdge(c, deserializeNode(in));
         }
         return newNode;
     }
@@ -255,6 +255,10 @@ public class Trie implements Serializable {
                 size += curNode.countSize();
             }
             return size;
+        }
+
+        private void addEdge(char symbol, TrieNode node) {
+            next.put(symbol, node);
         }
     }
 }
