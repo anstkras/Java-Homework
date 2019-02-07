@@ -5,6 +5,7 @@ import ru.hse.anstkras.Serializable.Serializable;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 /** Implements a tree data structure that stores strings */
 public class Trie implements Serializable {
@@ -220,28 +221,12 @@ public class Trie implements Serializable {
                 return false;
             }
 
-            if (next.size() != otherNode.next.size()) {
-                return false;
-            }
-            for (var entry : next.entrySet()) {
-                if (!otherNode.hasEdge(entry.getKey())) {
-                    return false;
-                }
-                if (!entry.getValue().equals(otherNode.getChild(entry.getKey()))) {
-                    return false;
-                }
-            }
-            return true;
+            return next.equals(otherNode.next);
         }
 
         @Override
         public int hashCode() {
-            int hashCode = 0;
-            for (var entry : next.entrySet()) {
-                hashCode += entry.getKey().hashCode();
-                hashCode += entry.getValue().hashCode();
-            }
-            return hashCode;
+            return Objects.hash(next, isTerminal, size);
         }
 
         private int countSize() {
