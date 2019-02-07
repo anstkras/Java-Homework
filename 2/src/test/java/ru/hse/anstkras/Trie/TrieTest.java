@@ -203,4 +203,14 @@ public class TrieTest {
         assertNotEquals(trie.hashCode(), trie2.hashCode());
         assertNotEquals(trie, trie2);
     }
+
+    @Test
+    void serializeEmptyTrie() throws IOException {
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        trie.serialize(byteArrayOutputStream);
+        var byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        var trie2 = new Trie();
+        trie2.deserialize(byteArrayInputStream);
+        assertEquals(trie, trie2);
+    }
 }
