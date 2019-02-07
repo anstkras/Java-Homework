@@ -32,7 +32,7 @@ public class Trie implements Serializable {
 
         for (int i = 0; i < element.length(); i++) {
             char c = element.charAt(i);
-            if (curNode.hasChild(c)) {
+            if (curNode.hasEdge(c)) {
                 curNode = curNode.getChild(c);
                 nodes.add(curNode);
             } else {
@@ -69,7 +69,7 @@ public class Trie implements Serializable {
         TrieNode curNode = root;
         for (int i = 0; i < element.length(); i++) {
             char c = element.charAt(i);
-            if (curNode.hasChild(c)) {
+            if (curNode.hasEdge(c)) {
                 curNode = curNode.getChild(c);
             } else {
                 return false;
@@ -99,7 +99,7 @@ public class Trie implements Serializable {
         nodes.add(root);
         for (int i = 0; i < element.length(); i++) {
             char c = element.charAt(i);
-            if (curNode.hasChild(c)) {
+            if (curNode.hasEdge(c)) {
                 curNode = curNode.getChild(c);
                 nodes.add(curNode);
             } else {
@@ -134,7 +134,7 @@ public class Trie implements Serializable {
         TrieNode curNode = root;
         for (int i = 0; i < prefix.length(); i++) {
             char c = prefix.charAt(i);
-            if (curNode.hasChild(c)) {
+            if (curNode.hasEdge(c)) {
                 curNode = curNode.getChild(c);
             } else {
                 return 0;
@@ -223,7 +223,7 @@ public class Trie implements Serializable {
                 return false;
             }
             for (var entry : next.entrySet()) {
-                if (!otherNode.hasChild(entry.getKey())) {
+                if (!otherNode.hasEdge(entry.getKey())) {
                     return false;
                 }
                 if (!entry.getValue().equals(otherNode.getChild(entry.getKey()))) {
@@ -263,7 +263,7 @@ public class Trie implements Serializable {
             return next.get(symbol);
         }
 
-        private boolean hasChild(char symbol) {
+        private boolean hasEdge(char symbol) {
             return next.containsKey(symbol);
         }
     }
