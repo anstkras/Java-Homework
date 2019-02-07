@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /** Implements a tree data structure that stores strings */
-
 public class Trie implements Serializable {
     protected final static String NULL_ERROR = "Null can not be an element in the trie";
     protected TrieNode root = new TrieNode();
@@ -22,7 +21,6 @@ public class Trie implements Serializable {
      * @return false if element is already in the
      * trie, true otherwise
      */
-
     public boolean add(String element) {
         if (element == null) {
             throw new IllegalArgumentException(NULL_ERROR);
