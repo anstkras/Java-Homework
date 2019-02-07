@@ -15,11 +15,11 @@ public class Trie implements Serializable {
      * Adds the element in the trie if the trie
      * did not contain the element.
      * Takes linear time of element's length
-     * Throws {@code IllegalArgumentException} in case of null argument
      *
      * @param element string to add
      * @return false if element is already in the
      * trie, true otherwise
+     * @throws IllegalArgumentException in case of null argument
      */
     public boolean add(String element) {
         if (element == null) {
