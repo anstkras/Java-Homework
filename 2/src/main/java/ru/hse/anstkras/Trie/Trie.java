@@ -32,8 +32,8 @@ public class Trie implements Serializable {
 
         for (int i = 0; i < element.length(); i++) {
             char c = element.charAt(i);
-            if (curNode.next.containsKey(c)) {
-                curNode = curNode.next.get(c);
+            if (curNode.hasChild(c)) {
+                curNode = curNode.getChild(c);
                 nodes.add(curNode);
             } else {
                 var newNode = new TrieNode();
@@ -71,8 +71,8 @@ public class Trie implements Serializable {
         TrieNode curNode = root;
         for (int i = 0; i < element.length(); i++) {
             char c = element.charAt(i);
-            if (curNode.next.containsKey(c)) {
-                curNode = curNode.next.get(c);
+            if (curNode.hasChild(c)) {
+                curNode = curNode.getChild(c);
             } else {
                 return false;
             }
@@ -101,8 +101,8 @@ public class Trie implements Serializable {
         nodes.add(root);
         for (int i = 0; i < element.length(); i++) {
             char c = element.charAt(i);
-            if (curNode.next.containsKey(c)) {
-                curNode = curNode.next.get(c);
+            if (curNode.hasChild(c)) {
+                curNode = curNode.getChild(c);
                 nodes.add(curNode);
             } else {
                 return false;
@@ -136,8 +136,8 @@ public class Trie implements Serializable {
         TrieNode curNode = root;
         for (int i = 0; i < prefix.length(); i++) {
             char c = prefix.charAt(i);
-            if (curNode.next.containsKey(c)) {
-                curNode = curNode.next.get(c);
+            if (curNode.hasChild(c)) {
+                curNode = curNode.getChild(c);
             } else {
                 return 0;
             }
@@ -225,10 +225,10 @@ public class Trie implements Serializable {
                 return false;
             }
             for (var entry : next.entrySet()) {
-                if (!otherNode.next.containsKey(entry.getKey())) {
+                if (!otherNode.hasChild(entry.getKey())) {
                     return false;
                 }
-                if (!entry.getValue().equals(otherNode.next.get(entry.getKey()))) {
+                if (!entry.getValue().equals(otherNode.getChild(entry.getKey()))) {
                     return false;
                 }
             }
@@ -259,6 +259,14 @@ public class Trie implements Serializable {
 
         private void addEdge(char symbol, TrieNode node) {
             next.put(symbol, node);
+        }
+
+        private TrieNode getChild(char symbol) {
+            return next.get(symbol);
+        }
+
+        private boolean hasChild(char symbol) {
+            return next.containsKey(symbol);
         }
     }
 }
