@@ -17,8 +17,8 @@ public class Trie implements Serializable {
      * Takes linear time of element's length
      *
      * @param element string to add
-     * @return false if element is already in the
-     * trie, true otherwise
+     * @return {@code false} if element is already in the
+     * trie, {@code true} otherwise
      * @throws IllegalArgumentException in case of null argument
      */
     public boolean add(String element) {
@@ -56,10 +56,10 @@ public class Trie implements Serializable {
     /**
      * Checks if the trie contains the given element.
      * Takes linear time of element's length
-     * Throws {@code IllegalArgumentException} in case of null argument
      *
      * @return {@code true} if the element is presented in the trie
      * {@code false} otherwise
+     * @throws IllegalArgumentException in case of null argument
      */
     public boolean contains(String element) {
         if (element == null) {
@@ -82,12 +82,12 @@ public class Trie implements Serializable {
      * Removes the element if it's presented in
      * the trie
      * Takes linear time of element's length
-     * Throws {@code IllegalArgumentException} in case of null argument
      *
      * @param element String to remove
      * @return {@code true} if the element was removed,
      * {@code false} if the element was not presented in
      * the trie
+     * @throws IllegalArgumentException in case of null argument
      */
     public boolean remove(String element) {
         if (element == null) {
