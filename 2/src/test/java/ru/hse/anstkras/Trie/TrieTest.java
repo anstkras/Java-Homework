@@ -11,7 +11,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class TrieTest {
+class TrieTest {
     private Trie trie;
 
     @BeforeEach
@@ -25,12 +25,12 @@ public class TrieTest {
     }
 
     @Test
-    public void empty() {
+    void empty() {
         assertTrue(trie.empty());
     }
 
     @Test
-    public void addAndCheckSize() {
+    void addAndCheckSize() {
         String[] strings = {"123", "1245", "12345", "145", "232", "3"};
         for (String string : strings) {
             trie.add(string);
@@ -39,14 +39,14 @@ public class TrieTest {
     }
 
     @Test
-    public void addOneStringAndCheckContains() {
+    void addOneStringAndCheckContains() {
         String s = "123";
         trie.add(s);
         assertTrue(trie.contains("123"));
     }
 
     @Test
-    public void addSeveralStringsAndCheckContainsTrue() {
+    void addSeveralStringsAndCheckContainsTrue() {
         String[] strings = {"123", "1245", "12345", "145", "232", "3"};
         for (String string : strings) {
             trie.add(string);
@@ -57,7 +57,7 @@ public class TrieTest {
     }
 
     @Test
-    public void addSeveralStringsAndCheckContainsFalse() {
+    void addSeveralStringsAndCheckContainsFalse() {
         String[] strings = {"123", "1245", "12345", "145", "232", "3"};
         for (String string : strings) {
             trie.add(string);
@@ -69,40 +69,40 @@ public class TrieTest {
     }
 
     @Test
-    public void addNewElement() {
+    void addNewElement() {
         assertTrue(trie.add("qwe"));
     }
 
     @Test
-    public void addTheSameElement() {
+    void addTheSameElement() {
         String s = "qwe";
         trie.add(s);
         assertFalse(trie.add(s));
     }
 
     @Test
-    public void addNullElement() {
+    void addNullElement() {
         assertThrows(IllegalArgumentException.class, () -> trie.add(null));
     }
 
     @Test
-    public void containsNullElement() {
+    void containsNullElement() {
         assertThrows(IllegalArgumentException.class, () -> trie.contains(null));
     }
 
     @Test
-    public void addShorterString() {
+    void addShorterString() {
         trie.add("123");
         assertTrue(trie.add("12"));
     }
 
     @Test
-    public void howManyStartWithNullPrefix() {
+    void howManyStartWithNullPrefix() {
         assertThrows(IllegalArgumentException.class, () -> trie.howManyStartWithPrefix(null));
     }
 
     @Test
-    public void howManyStartWithPrefix() {
+    void howManyStartWithPrefix() {
         String[] strings = {"123", "1245", "12345", "145", "232", "3"};
         for (String string : strings) {
             trie.add(string);
@@ -114,19 +114,19 @@ public class TrieTest {
     }
 
     @Test
-    public void removeNullElement() {
+    void removeNullElement() {
         assertThrows(IllegalArgumentException.class, () -> trie.remove(null));
     }
 
     @Test
-    public void addOneElementAndRemove() {
+    void addOneElementAndRemove() {
         String s = "123";
         trie.add(s);
         assertTrue(trie.remove(s));
     }
 
     @Test
-    public void addSeveralElementsAndRemove() {
+    void addSeveralElementsAndRemove() {
         String[] strings = {"123", "1245", "12345", "145", "232", "3"};
         for (String string : strings) {
             trie.add(string);
