@@ -40,7 +40,6 @@ public class Trie implements Serializable {
                 newNode.size = 1;
                 curNode.addEdge(c, newNode);
                 curNode = newNode;
-
             }
         }
 
@@ -50,7 +49,6 @@ public class Trie implements Serializable {
                 node.size++;
             }
             return true;
-
         }
         return false;
     }
