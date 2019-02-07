@@ -8,8 +8,8 @@ import java.util.HashMap;
 
 /** Implements a tree data structure that stores strings */
 public class Trie implements Serializable {
-    protected final static String NULL_ERROR = "Null can not be an element in the trie";
-    protected TrieNode root = new TrieNode();
+    private final static String NULL_ERROR = "Null can not be an element in the trie";
+    private TrieNode root = new TrieNode();
 
     /**
      * Adds the element in the trie if the trie
@@ -172,7 +172,7 @@ public class Trie implements Serializable {
         return root.hashCode();
     }
 
-    protected void serializeNode(TrieNode node, OutputStream out) throws IOException {
+    private void serializeNode(TrieNode node, OutputStream out) throws IOException {
         var dataOutputStream = new DataOutputStream(out);
         dataOutputStream.writeBoolean(node.isTerminal);
         dataOutputStream.writeInt(node.next.size());
@@ -182,7 +182,7 @@ public class Trie implements Serializable {
         }
     }
 
-    protected TrieNode deserializeNode(InputStream in) throws IOException {
+    private TrieNode deserializeNode(InputStream in) throws IOException {
         var dataInputStream = new DataInputStream(in);
         var newNode = new TrieNode();
         newNode.isTerminal = dataInputStream.readBoolean();
@@ -194,12 +194,12 @@ public class Trie implements Serializable {
         return newNode;
     }
 
-    protected static class TrieNode {
-        protected final HashMap<Character, TrieNode> next = new HashMap<>();
-        protected boolean isTerminal;
-        protected int size;
+    private static class TrieNode {
+        private final HashMap<Character, TrieNode> next = new HashMap<>();
+        private boolean isTerminal;
+        private int size;
 
-        protected TrieNode() {
+        private TrieNode() {
         }
 
         @Override
@@ -237,7 +237,7 @@ public class Trie implements Serializable {
             return hashCode;
         }
 
-        protected int countSize() {
+        private int countSize() {
             size = 0;
             if (isTerminal) {
                 size++;
