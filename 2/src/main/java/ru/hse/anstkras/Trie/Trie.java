@@ -147,11 +147,13 @@ public class Trie implements Serializable {
         return curNode.size;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void serialize(OutputStream out) throws IOException {
         serializeNode(root, out);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void deserialize(InputStream in) throws IOException {
         root = deserializeNode(in);
