@@ -148,12 +148,20 @@ public class Trie implements Serializable {
     /** {@inheritDoc} */
     @Override
     public void serialize(OutputStream out) throws IOException {
+        if (out == null) {
+            throw new IllegalArgumentException("The out can not be null");
+        }
+
         serializeNode(root, out);
     }
 
     /** {@inheritDoc} */
     @Override
     public void deserialize(InputStream in) throws IOException {
+        if (in == null) {
+            throw new IllegalArgumentException("The in can not be null");
+        }
+
         root = deserializeNode(in);
         root.countSize();
     }
