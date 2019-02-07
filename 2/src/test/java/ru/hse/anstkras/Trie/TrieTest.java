@@ -182,6 +182,18 @@ class TrieTest {
     }
 
     @Test
+    void serializeNull() {
+        trie.add("123");
+        assertThrows(IllegalArgumentException.class, () -> trie.serialize(null));
+    }
+
+    @Test
+    void deserializeNull() {
+        trie.add("123");
+        assertThrows(IllegalArgumentException.class, () -> trie.deserialize(null));
+    }
+
+    @Test
     void equalsAndHashCode() {
         String[] strings = {"\u20AC\u040b", "\u20AC24q", "12345", "145", "232", "3\u1270"};
         for (String string : strings) {
