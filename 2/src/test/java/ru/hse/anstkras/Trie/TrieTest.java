@@ -42,6 +42,7 @@ public class TrieTest {
     public void addOneStringAndCheckContains() {
         String s = "123";
         trie.add(s);
+        assertTrue(trie.contains("123"));
     }
 
     @Test
