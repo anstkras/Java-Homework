@@ -22,11 +22,6 @@ class TrieTest {
         trie = new Trie();
     }
 
-    @AfterEach
-    private void makeNull() {
-        trie = null;
-    }
-
     @Test
     void empty() {
         assertTrue(trie.empty());
