@@ -116,6 +116,13 @@ class TrieTest {
     }
 
     @Test
+    void remove() {
+        assertTrue(trie.add("abc"));
+        assertTrue(trie.remove("abc"));
+        assertTrue(trie.add("abc"));
+    }
+
+    @Test
     void addOneElementAndRemove() {
         String s = "123";
         trie.add(s);

@@ -110,6 +110,7 @@ public class Trie implements Serializable {
             for (TrieNode node : nodes) {
                 node.size--;
             }
+            curNode.isTerminal = false;
             return true;
         }
         return false;
