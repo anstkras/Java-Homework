@@ -229,6 +229,11 @@ public class Trie implements Serializable {
             return Objects.hash(next, isTerminal, size);
         }
 
+        /**
+         * Updates the sizes of every node in the trie
+         * @return the number of terminal nodes in the given
+         * node's subtree
+         */
         private int countSize() {
             size = 0;
             if (isTerminal) {
