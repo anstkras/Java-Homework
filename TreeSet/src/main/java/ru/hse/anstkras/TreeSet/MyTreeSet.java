@@ -1,4 +1,4 @@
-package ru.hse.anstkras;
+package ru.hse.anstkras.TreeSet;
 
 import java.util.Iterator;
 import java.util.Set;
