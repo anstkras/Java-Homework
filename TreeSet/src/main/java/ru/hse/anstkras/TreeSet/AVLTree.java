@@ -1,13 +1,22 @@
 package ru.hse.anstkras.TreeSet;
 
 import java.util.AbstractSet;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
-    private TreeNode root;
     private final TreeNode NULL = new TreeNode(null, 0, this.NULL, this.NULL);
+    private final Comparator<? super E> comparator;
+    private TreeNode root = NULL;
 
+    public AVLTree() {
+        comparator = null;
+    }
+
+    public AVLTree(Comparator<? super E> comparator) {
+        this.comparator = comparator;
+    }
 
     @Override
     public Iterator<E> iterator() {
@@ -17,6 +26,39 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     @Override
     public int size() {
         return 0;
+    }
+
+    @Override
+    public boolean add(E e) {
+        if (root == NULL) {
+            root = new TreeNode(e);
+            return true;
+        }
+
+        TreeNode node = root;
+        TreeNode parent = NULL;
+
+        while (node != NULL) {
+            if (compare(e, node.value) == 0) {
+                return false;
+            }
+
+            parent = node;
+            if (compare(e, node.value) < 0) {
+                node = node.left;
+            } else {
+                node = node.right;
+            }
+        }
+
+        if (compare(e, parent.value) < 0) {
+            parent.left = new TreeNode(e, parent);
+        } else {
+            parent.right = new TreeNode(e, parent);
+        }
+        balance(parent);
+
+        return true;
     }
 
     @Override
@@ -120,6 +162,28 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
+    private int compare(E value1, E value2) {
+        if (comparator == null) {
+            var comparableValue1 = (Comparable<E>) value1;
+            return (comparableValue1.compareTo(value2));
+        } else {
+            return comparator.compare(value1, value2);
+        }
+    }
+
+    private class AVLIterator implements Iterator {
+
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        public Object next() {
+            return null;
+        }
+    }
+
     private class TreeNode {
         private E value;
         private int height;
@@ -132,6 +196,15 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
             this.height = height;
             this.left = left;
             this.right = right;
+        }
+
+        private TreeNode(E value, TreeNode parent) {
+            this.value = value;
+            this.parent = parent;
+        }
+
+        private TreeNode(E value) {
+            this.value = value;
         }
 
         private int balanceFactor() {
