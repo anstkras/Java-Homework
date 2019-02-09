@@ -116,7 +116,7 @@ class TrieTest {
     }
 
     @Test
-    void remove() {
+    void addElementRemoveThanAddAgain() {
         assertTrue(trie.add("abc"));
         assertTrue(trie.remove("abc"));
         assertTrue(trie.add("abc"));
