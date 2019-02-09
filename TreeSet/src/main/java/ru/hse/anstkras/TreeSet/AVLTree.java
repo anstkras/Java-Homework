@@ -9,6 +9,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     private final TreeNode NULL = new TreeNode(null, 0, this.NULL, this.NULL);
     private final Comparator<? super E> comparator;
     private TreeNode root = NULL;
+    private int size;
 
     public AVLTree() {
         comparator = null;
@@ -25,7 +26,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
@@ -57,7 +58,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
             parent.right = new TreeNode(e, parent);
         }
         balance(parent);
-
+        size++;
         return true;
     }
 
