@@ -64,7 +64,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     @Override
-    public TreeSet<E> descendingSet() {
+    public MyTreeSet<E> descendingSet() {
         return null;
     }
 

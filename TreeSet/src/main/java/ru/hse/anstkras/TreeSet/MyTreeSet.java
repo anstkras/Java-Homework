@@ -10,7 +10,7 @@ public interface MyTreeSet<E> extends Set<E> {
     Iterator<E> descendingIterator();
 
     /** {@link TreeSet#descendingSet()} **/
-    TreeSet<E> descendingSet();
+    MyTreeSet<E> descendingSet();
 
 
     /** {@link TreeSet#first()} **/
