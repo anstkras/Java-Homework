@@ -23,9 +23,7 @@ public class Trie implements Serializable {
      * @throws IllegalArgumentException in case of null argument
      */
     public boolean add(String element) {
-        if (element == null) {
-            throw new IllegalArgumentException(NULL_ERROR);
-        }
+        checkIsNull(element, NULL_ERROR);
 
         var nodes = new ArrayList<TrieNode>();
         TrieNode curNode = root;
@@ -63,9 +61,7 @@ public class Trie implements Serializable {
      * @throws IllegalArgumentException in case of null argument
      */
     public boolean contains(String element) {
-        if (element == null) {
-            throw new IllegalArgumentException(NULL_ERROR);
-        }
+        checkIsNull(element, NULL_ERROR);
 
         TrieNode curNode = root;
         for (int i = 0; i < element.length(); i++) {
@@ -91,9 +87,7 @@ public class Trie implements Serializable {
      * @throws IllegalArgumentException in case of null argument
      */
     public boolean remove(String element) {
-        if (element == null) {
-            throw new IllegalArgumentException(NULL_ERROR);
-        }
+        checkIsNull(element, NULL_ERROR);
 
         var nodes = new ArrayList<TrieNode>();
         TrieNode curNode = root;
@@ -129,9 +123,7 @@ public class Trie implements Serializable {
 
     /** Counts the number of element in the trie that starts with the given prefix */
     public int howManyStartWithPrefix(String prefix) {
-        if (prefix == null) {
-            throw new IllegalArgumentException(NULL_ERROR);
-        }
+        checkIsNull(prefix, NULL_ERROR);
 
         TrieNode curNode = root;
         for (int i = 0; i < prefix.length(); i++) {
@@ -148,9 +140,7 @@ public class Trie implements Serializable {
     /** {@inheritDoc} */
     @Override
     public void serialize(OutputStream out) throws IOException {
-        if (out == null) {
-            throw new IllegalArgumentException("The out can not be null");
-        }
+        checkIsNull(out, "The output stream can not be null");
 
         serializeNode(root, out);
     }
@@ -158,9 +148,7 @@ public class Trie implements Serializable {
     /** {@inheritDoc} */
     @Override
     public void deserialize(InputStream in) throws IOException {
-        if (in == null) {
-            throw new IllegalArgumentException("The in can not be null");
-        }
+        checkIsNull(in, "The input stream can not be null");
 
         root = deserializeNode(in);
         root.countSize();
@@ -200,6 +188,12 @@ public class Trie implements Serializable {
             newNode.addEdge(c, deserializeNode(in));
         }
         return newNode;
+    }
+
+    private <T> void checkIsNull(T argument, String message) {
+        if (argument == null) {
+            throw new IllegalArgumentException(message);
+        }
     }
 
     private static class TrieNode {
