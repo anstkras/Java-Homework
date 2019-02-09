@@ -35,8 +35,7 @@ public class Trie implements Serializable {
                 curNode = curNode.getChild(c);
                 nodes.add(curNode);
             } else {
-                var newNode = new TrieNode();
-                newNode.size = 1;
+                var newNode = new TrieNode(1);
                 curNode.addEdge(c, newNode);
                 curNode = newNode;
             }
@@ -202,6 +201,10 @@ public class Trie implements Serializable {
         private int size;
 
         private TrieNode() {
+        }
+
+        private TrieNode(int size) {
+            this.size = size;
         }
 
         @Override
