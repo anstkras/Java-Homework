@@ -30,24 +30,38 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     @Override
     public boolean remove(Object value) {
         E eValue = (E) value;
-        if (root == null) {
+        TreeNode node = getByValue(eValue);
+        if (node == null) {
             return false;
+        } else {
+            removeNode(node);
+            return true;
+        }
+    }
+
+    @Override
+    public boolean contains(Object value) {
+        return getByValue((E) value) != null;
+    }
+
+    private TreeNode getByValue(E value) {
+        if (root == null) {
+            return null;
         }
 
         TreeNode child = root;
         while (child != null) {
             TreeNode node = child;
-            if (compare(node.value, eValue) <= 0) {
+            if (compare(node.value, value) <= 0) {
                 child = node.right;
             } else {
                 child = node.left;
             }
-            if (compare(eValue, node.value) == 0) {
-                removeNode(node);
-                return true;
+            if (compare(value, node.value) == 0) {
+                return node;
             }
         }
-        return false;
+        return null;
     }
 
     @Override
