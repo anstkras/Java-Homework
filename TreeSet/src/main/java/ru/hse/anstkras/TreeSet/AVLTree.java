@@ -28,6 +28,29 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     @Override
+    public boolean remove(Object value) {
+        E eValue = (E) value;
+        if (root == null) {
+            return false;
+        }
+
+        TreeNode child = root;
+        while (child != null) {
+            TreeNode node = child;
+            if (compare(node.value, eValue) <= 0) {
+                child = node.right;
+            } else {
+                child = node.left;
+            }
+            if (compare(eValue, node.value) == 0) {
+                removeNode(node);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public Iterator<E> iterator() {
         return new AVLIterator();
     }
@@ -209,6 +232,39 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return height(node.right) - height(node.left);
     }
 
+    private void removeNode(TreeNode node) {
+        if (node.left(isReverse) == null && node.right(isReverse) == null) {
+            if (node == root) {
+                root = null;
+            } else {
+                TreeNode parent = node.parent;
+                if (parent.left(isReverse) == node) {
+                    parent.left = null;
+                } else {
+                    parent.right = null;
+                }
+                balance(parent);
+            }
+            return;
+        }
+
+        if (node.left(isReverse) != null) {
+            TreeNode rightMostChild = node.left(isReverse);
+            while (rightMostChild.right(isReverse) != null) {
+                rightMostChild = rightMostChild.right(isReverse);
+            }
+            node.value = rightMostChild.value;
+            removeNode(rightMostChild);
+        } else {
+            TreeNode leftMostChild = node.right(isReverse);
+            while (leftMostChild.left(isReverse) != null) {
+                leftMostChild = leftMostChild.left(isReverse);
+            }
+            node.value = leftMostChild.value;
+            removeNode(leftMostChild);
+        }
+    }
+
     private class AVLIterator implements Iterator<E> {
         private TreeNode node;
         private TreeNode lastNode;
@@ -258,41 +314,8 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
             if (lastNode == null) {
                 throw new IllegalStateException();
             }
-            remove(lastNode);
+            removeNode(lastNode);
             lastNode = null;
-        }
-
-        private void remove(TreeNode node) {
-            if (node.left(isReverse) == null && node.right(isReverse) == null) {
-                if (node == root) {
-                    root = null;
-                } else {
-                    TreeNode parent = node.parent;
-                    if (parent.left(isReverse) == node) {
-                        parent.left = null;
-                    } else {
-                        parent.right = null;
-                    }
-                    balance(parent);
-                }
-                return;
-            }
-
-            if (node.left(isReverse) != null) {
-                TreeNode rightMostChild = node.left(isReverse);
-                while (rightMostChild.right(isReverse) != null) {
-                    rightMostChild = rightMostChild.right(isReverse);
-                }
-                node.value = rightMostChild.value;
-                remove(rightMostChild);
-            } else {
-                TreeNode leftMostChild = node.right(isReverse);
-                while (leftMostChild.left(isReverse) != null) {
-                    leftMostChild = leftMostChild.left(isReverse);
-                }
-                node.value = leftMostChild.value;
-                remove(leftMostChild);
-            }
         }
     }
 
