@@ -8,10 +8,10 @@ import java.util.NoSuchElementException;
 public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     private final Comparator<? super E> comparator;
     private final boolean isReverse;
-    private TreeNode root;
+    private TreeNode<E> root;
     private int size;
 
-    private AVLTree(TreeNode root, int size, Comparator<? super E> comparator, boolean isReverse) {
+    private AVLTree(TreeNode<E> root, int size, Comparator<? super E> comparator, boolean isReverse) {
         this.root = root;
         this.size = size;
         this.comparator = comparator;
@@ -30,7 +30,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     @Override
     public boolean remove(Object value) {
         E eValue = (E) value;
-        TreeNode node = getByValue(eValue);
+        TreeNode<E> node = getByValue(eValue);
         if (node == null) {
             return false;
         } else {
@@ -44,14 +44,14 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return getByValue((E) value) != null;
     }
 
-    private TreeNode getByValue(E value) {
+    private TreeNode<E> getByValue(E value) {
         if (root == null) {
             return null;
         }
 
-        TreeNode child = root;
+        TreeNode<E> child = root;
         while (child != null) {
-            TreeNode node = child;
+            TreeNode<E> node = child;
             if (compare(node.value, value) <= 0) {
                 child = node.right;
             } else {
@@ -77,12 +77,12 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     @Override
     public boolean add(E e) {
         if (root == null) {
-            root = new TreeNode(e);
+            root = new TreeNode<E>(e);
             return true;
         }
 
-        TreeNode node = root;
-        TreeNode parent = null;
+        TreeNode<E> node = root;
+        TreeNode<E> parent = null;
 
         while (node != null) {
             if (compare(e, node.value) == 0) {
@@ -98,9 +98,9 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
 
         if (compare(e, parent.value) < 0) {
-            parent.left = new TreeNode(e, parent);
+            parent.left = new TreeNode<E>(e, parent);
         } else {
-            parent.right = new TreeNode(e, parent);
+            parent.right = new TreeNode<E>(e, parent);
         }
         balance(parent);
         size++;
@@ -109,12 +109,12 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     @Override
     public Iterator<E> descendingIterator() {
-        return new AVLIterator(true);
+        return descendingSet().iterator();
     }
 
     @Override
     public MyTreeSet<E> descendingSet() {
-        return new AVLTree<>(root, size, comparator, true);
+        return new AVLTree<E>(root, size, comparator, !isReverse);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         if (root == null) {
             return null;
         }
-        TreeNode node = root;
+        TreeNode<E> node = root;
         while (node.left(isReverse) != null)
             node = node.left(isReverse);
         return node.value;
@@ -133,7 +133,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         if (root == null) {
             return null;
         }
-        TreeNode node = root;
+        TreeNode<E> node = root;
         while (node.right(isReverse) != null)
             node = node.right(isReverse);
         return node.value;
@@ -159,8 +159,8 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return null;
     }
 
-    private TreeNode rotateRight(TreeNode node) {
-        TreeNode pivot = node.left;
+    private TreeNode<E> rotateRight(TreeNode<E> node) {
+        TreeNode<E> pivot = node.left;
         pivot.parent = node.parent;
 
         node.left = pivot.right;
@@ -177,8 +177,8 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return pivot;
     }
 
-    private TreeNode rotateLeft(TreeNode node) {
-        TreeNode pivot = node.right;
+    private TreeNode<E> rotateLeft(TreeNode<E> node) {
+        TreeNode<E> pivot = node.right;
         pivot.parent = node.parent;
 
         node.right = pivot.left;
@@ -197,7 +197,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return pivot;
     }
 
-    private void balance(TreeNode node) {
+    private void balance(TreeNode<E> node) {
         updateHeight(node);
         if (balanceFactor(node) == 2) {
             if (balanceFactor(node.right) < 0) {
@@ -228,30 +228,30 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
-    private int height(TreeNode node) {
+    private int height(TreeNode<E> node) {
         return node == null ? 0 : node.height;
     }
 
-    private void updateHeight(TreeNode node) {
+    private void updateHeight(TreeNode<E> node) {
         if (node == null) {
             return;
         }
         node.height = Math.max(height(node.left), height(node.right)) + 1;
     }
 
-    private int balanceFactor(TreeNode node) {
+    private int balanceFactor(TreeNode<E> node) {
         if (node == null) {
             return 0;
         }
         return height(node.right) - height(node.left);
     }
 
-    private void removeNode(TreeNode node) {
+    private void removeNode(TreeNode<E> node) {
         if (node.left(isReverse) == null && node.right(isReverse) == null) {
             if (node == root) {
                 root = null;
             } else {
-                TreeNode parent = node.parent;
+                TreeNode<E> parent = node.parent;
                 if (parent.left(isReverse) == node) {
                     parent.left = null;
                 } else {
@@ -263,14 +263,14 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
 
         if (node.left(isReverse) != null) {
-            TreeNode rightMostChild = node.left(isReverse);
+            TreeNode<E> rightMostChild = node.left(isReverse);
             while (rightMostChild.right(isReverse) != null) {
                 rightMostChild = rightMostChild.right(isReverse);
             }
             node.value = rightMostChild.value;
             removeNode(rightMostChild);
         } else {
-            TreeNode leftMostChild = node.right(isReverse);
+            TreeNode<E> leftMostChild = node.right(isReverse);
             while (leftMostChild.left(isReverse) != null) {
                 leftMostChild = leftMostChild.left(isReverse);
             }
@@ -280,8 +280,8 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     private class AVLIterator implements Iterator<E> {
-        private TreeNode node;
-        private TreeNode lastNode;
+        private TreeNode<E> node;
+        private TreeNode<E> lastNode;
         private final boolean isReverse;
 
         public AVLIterator() {
@@ -333,21 +333,21 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
-    private class TreeNode {
+    private static class TreeNode<E> {
         private E value;
         private int height;
-        private TreeNode left;
-        private TreeNode right;
-        private TreeNode parent;
+        private TreeNode<E> left;
+        private TreeNode<E> right;
+        private TreeNode<E> parent;
 
-        private TreeNode(E value, int height, TreeNode left, TreeNode right) {
+        private TreeNode(E value, int height, TreeNode<E> left, TreeNode<E> right) {
             this.value = value;
             this.height = height;
             this.left = left;
             this.right = right;
         }
 
-        private TreeNode(E value, TreeNode parent) {
+        private TreeNode(E value, TreeNode<E> parent) {
             this.value = value;
             this.parent = parent;
         }
@@ -356,11 +356,11 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
             this.value = value;
         }
 
-        private TreeNode left(boolean isReverse) {
+        private TreeNode<E> left(boolean isReverse) {
             return isReverse ? right : left;
         }
 
-        private void left(boolean isReverse, TreeNode node) {
+        private void left(boolean isReverse, TreeNode<E> node) {
             if (isReverse) {
                 right = node;
             } else {
@@ -368,11 +368,11 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
             }
         }
 
-        private TreeNode right(boolean isReverse) {
+        private TreeNode<E> right(boolean isReverse) {
             return isReverse ? left : right;
         }
 
-        private void right(boolean isReverse, TreeNode node) {
+        private void right(boolean isReverse, TreeNode<E> node) {
             if (isReverse) {
                 left = node;
             } else {
@@ -380,7 +380,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
             }
         }
 
-        private void updateParent(TreeNode oldNode) {
+        private void updateParent(TreeNode<E> oldNode) {
             if (parent != null) {
                 if (parent.right == oldNode) {
                     parent.right = this;
