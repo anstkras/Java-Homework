@@ -96,4 +96,16 @@ class AVLTreeTest {
         assertEquals(100, (int)tree.last());
     }
 
+    @Test
+    void iteratorRemove() {
+        AVLTree<Integer> tree = new AVLTree<>();
+        Integer[] array = {5, 2, 6, 1, 3};
+        tree.addAll(Arrays.asList(array));
+        var it = tree.iterator();
+        it.next();
+        it.next();
+        it.remove();
+        assertEquals(3, (int) it.next());
+    }
+
 }
