@@ -211,6 +211,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     private class AVLIterator implements Iterator<E> {
         private TreeNode node;
+        private TreeNode lastNode;
         private final boolean isReverse;
 
         public AVLIterator() {
@@ -235,7 +236,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-
+            lastNode = node;
             E valueToReturn = node.value;
             if (node.right(isReverse) != null) {
                 node = node.right(isReverse);
@@ -254,7 +255,44 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException("remove");
+            if (lastNode == null) {
+                throw new IllegalStateException();
+            }
+            remove(lastNode);
+            lastNode = null;
+        }
+
+        private void remove(TreeNode node) {
+            if (node.left(isReverse) == null && node.right(isReverse) == null) {
+                if (node == root) {
+                    root = null;
+                } else {
+                    TreeNode parent = node.parent;
+                    if (parent.left(isReverse) == node) {
+                        parent.left = null;
+                    } else {
+                        parent.right = null;
+                    }
+                    balance(parent);
+                }
+                return;
+            }
+
+            if (node.left(isReverse) != null) {
+                TreeNode rightMostChild = node.left(isReverse);
+                while (rightMostChild.right(isReverse) != null) {
+                    rightMostChild = rightMostChild.right(isReverse);
+                }
+                node.value = rightMostChild.value;
+                remove(rightMostChild);
+            } else {
+                TreeNode leftMostChild = node.right(isReverse);
+                while (leftMostChild.left(isReverse) != null) {
+                    leftMostChild = leftMostChild.left(isReverse);
+                }
+                node.value = leftMostChild.value;
+                remove(leftMostChild);
+            }
         }
     }
 
