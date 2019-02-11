@@ -26,23 +26,23 @@ public class Trie implements Serializable {
         checkIsNull(element, NULL_ERROR);
 
         var nodes = new ArrayList<TrieNode>();
-        TrieNode curNode = root;
-        nodes.add(curNode);
+        TrieNode currentNode = root;
+        nodes.add(currentNode);
 
         for (int i = 0; i < element.length(); i++) {
-            char c = element.charAt(i);
-            if (curNode.hasEdge(c)) {
-                curNode = curNode.getChild(c);
-                nodes.add(curNode);
+            char symbol = element.charAt(i);
+            if (currentNode.hasEdge(symbol)) {
+                currentNode = currentNode.getChild(symbol);
+                nodes.add(currentNode);
             } else {
                 var newNode = new TrieNode(1);
-                curNode.addEdge(c, newNode);
-                curNode = newNode;
+                currentNode.addEdge(symbol, newNode);
+                currentNode = newNode;
             }
         }
 
-        if (!curNode.isTerminal) {
-            curNode.isTerminal = true;
+        if (!currentNode.isTerminal) {
+            currentNode.isTerminal = true;
             for (TrieNode node : nodes) {
                 node.size++;
             }
@@ -62,16 +62,16 @@ public class Trie implements Serializable {
     public boolean contains(String element) {
         checkIsNull(element, NULL_ERROR);
 
-        TrieNode curNode = root;
+        TrieNode currentNode = root;
         for (int i = 0; i < element.length(); i++) {
-            char c = element.charAt(i);
-            if (curNode.hasEdge(c)) {
-                curNode = curNode.getChild(c);
+            char symbol = element.charAt(i);
+            if (currentNode.hasEdge(symbol)) {
+                currentNode = currentNode.getChild(symbol);
             } else {
                 return false;
             }
         }
-        return curNode.isTerminal;
+        return currentNode.isTerminal;
     }
 
     /**
@@ -89,22 +89,22 @@ public class Trie implements Serializable {
         checkIsNull(element, NULL_ERROR);
 
         var nodes = new ArrayList<TrieNode>();
-        TrieNode curNode = root;
+        TrieNode currentNode = root;
         nodes.add(root);
         for (int i = 0; i < element.length(); i++) {
-            char c = element.charAt(i);
-            if (curNode.hasEdge(c)) {
-                curNode = curNode.getChild(c);
-                nodes.add(curNode);
+            char symbol = element.charAt(i);
+            if (currentNode.hasEdge(symbol)) {
+                currentNode = currentNode.getChild(symbol);
+                nodes.add(currentNode);
             } else {
                 return false;
             }
         }
-        if (curNode.isTerminal) {
+        if (currentNode.isTerminal) {
             for (TrieNode node : nodes) {
                 node.size--;
             }
-            curNode.isTerminal = false;
+            currentNode.isTerminal = false;
             return true;
         }
         return false;
@@ -124,16 +124,16 @@ public class Trie implements Serializable {
     public int howManyStartWithPrefix(String prefix) {
         checkIsNull(prefix, NULL_ERROR);
 
-        TrieNode curNode = root;
+        TrieNode currentNode = root;
         for (int i = 0; i < prefix.length(); i++) {
-            char c = prefix.charAt(i);
-            if (curNode.hasEdge(c)) {
-                curNode = curNode.getChild(c);
+            char symbol = prefix.charAt(i);
+            if (currentNode.hasEdge(symbol)) {
+                currentNode = currentNode.getChild(symbol);
             } else {
                 return 0;
             }
         }
-        return curNode.size;
+        return currentNode.size;
     }
 
     /** {@inheritDoc} */
@@ -183,8 +183,8 @@ public class Trie implements Serializable {
         newNode.isTerminal = dataInputStream.readBoolean();
         int nextSize = dataInputStream.readInt();
         for (int i = 0; i < nextSize; i++) {
-            char c = dataInputStream.readChar();
-            newNode.addEdge(c, deserializeNode(in));
+            char symbol = dataInputStream.readChar();
+            newNode.addEdge(symbol, deserializeNode(in));
         }
         return newNode;
     }
@@ -237,8 +237,8 @@ public class Trie implements Serializable {
                 size++;
             }
 
-            for (TrieNode curNode : next.values()) {
-                size += curNode.countSize();
+            for (TrieNode currentNode : next.values()) {
+                size += currentNode.countSize();
             }
             return size;
         }
