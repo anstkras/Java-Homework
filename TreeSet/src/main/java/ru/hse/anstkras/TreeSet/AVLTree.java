@@ -7,15 +7,13 @@ import java.util.NoSuchElementException;
 
 public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     private final Comparator<? super E> comparator;
-    private final boolean isReverse;
     private TreeNode<E> root;
     private int size;
 
-    private AVLTree(TreeNode<E> root, int size, Comparator<? super E> comparator, boolean isReverse) {
+    private AVLTree(TreeNode<E> root, int size, Comparator<? super E> comparator) {
         this.root = root;
         this.size = size;
         this.comparator = comparator;
-        this.isReverse = isReverse;
     }
 
     public AVLTree() {
@@ -24,7 +22,6 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     public AVLTree(Comparator<? super E> comparator) {
         this.comparator = comparator;
-        this.isReverse = false;
     }
 
     @Override
@@ -66,7 +63,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return new AVLIterator();
+        return new AVLIterator<>(firstNode());
     }
 
     @Override
@@ -77,7 +74,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     @Override
     public boolean add(E e) {
         if (root == null) {
-            root = new TreeNode<E>(e);
+            root = new TreeNode<>(e);
             size++;
             return true;
         }
@@ -99,9 +96,9 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
 
         if (compare(e, parent.value) < 0) {
-            parent.left = new TreeNode<E>(e, parent);
+            parent.left = new TreeNode<>(e, parent);
         } else {
-            parent.right = new TreeNode<E>(e, parent);
+            parent.right = new TreeNode<>(e, parent);
         }
         balance(parent);
         size++;
@@ -110,53 +107,155 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     @Override
     public Iterator<E> descendingIterator() {
-        return descendingSet().iterator();
+        return new DescendingAVLIterator(lastNode());
     }
 
     @Override
     public MyTreeSet<E> descendingSet() {
-        return new AVLTree<E>(root, size, comparator, !isReverse);
+        return new DescendingAVLTree(this);
     }
 
     @Override
     public E first() {
+        TreeNode<E> result = firstNode();
+        return result == null ? null : result.value;
+    }
+
+    private TreeNode<E> firstNode() {
         if (root == null) {
             return null;
         }
         TreeNode<E> node = root;
-        while (node.left(isReverse) != null)
-            node = node.left(isReverse);
-        return node.value;
+        while (node.left != null) {
+            node = node.left;
+        }
+        return node;
     }
 
     @Override
     public E last() {
+        TreeNode<E> result = lastNode();
+        return result == null ? null : result.value;
+    }
+
+    private TreeNode<E> lastNode() {
         if (root == null) {
             return null;
         }
         TreeNode<E> node = root;
-        while (node.right(isReverse) != null)
-            node = node.right(isReverse);
-        return node.value;
+        while (node.right != null) {
+            node = node.right;
+        }
+        return node;
     }
 
     @Override
     public E lower(E e) {
+        TreeNode<E> node = root;
+        while (node != null) {
+            if (compare(node.value, e) < 0) {
+                if (node.right == null) {
+                    return node.value;
+                } else {
+                    node = node.right;
+                }
+            } else {
+                if (node.left != null) {
+                    node = node.left;
+                } else {
+                    TreeNode<E> parent = node.parent;
+                    while (parent != null && parent.left == node) {
+                        node = parent;
+                        parent = parent.parent;
+                    }
+                    return parent == null ? null : parent.value;
+                }
+            }
+        }
         return null;
     }
 
     @Override
     public E floor(E e) {
+        TreeNode<E> node = root;
+        while (node != null) {
+            if (compare(node.value, e) == 0) {
+                return node.value;
+            }
+            if (compare(node.value, e) < 0) {
+                if (node.right == null) {
+                    return node.value;
+                } else {
+                    node = node.right;
+                }
+            } else {
+                if (node.left != null) {
+                    node = node.left;
+                } else {
+                    TreeNode<E> parent = node.parent;
+                    while (parent != null && parent.left == node) {
+                        node = parent;
+                        parent = parent.parent;
+                    }
+                    return parent == null ? null : parent.value;
+                }
+            }
+        }
         return null;
     }
 
     @Override
     public E ceiling(E e) {
+        TreeNode<E> node = root;
+        while (node != null) {
+            if (compare(node.value, e) == 0) {
+                return node.value;
+            }
+            if (compare(node.value, e) > 0) {
+                if (node.left == null) {
+                    return node.value;
+                } else {
+                    node = node.left;
+                }
+            } else {
+                if (node.right != null) {
+                    node = node.right;
+                } else {
+                    TreeNode<E> parent = node.parent;
+                    while (parent != null && parent.right == node) {
+                        node = parent;
+                        parent = parent.parent;
+                    }
+                    return parent == null ? null : parent.value;
+                }
+            }
+        }
         return null;
     }
 
     @Override
     public E higher(E e) {
+        TreeNode<E> node = root;
+        while (node != null) {
+            if (compare(node.value, e) > 0) {
+                if (node.left == null) {
+                    return node.value;
+                } else {
+                    node = node.left;
+                }
+            } else {
+                if (node.right != null) {
+                    node = node.right;
+                } else {
+                    TreeNode<E> parent = node.parent;
+                    while (parent != null && parent.right == node) {
+                        node = parent;
+                        parent = parent.parent;
+                    }
+                    return parent == null ? null : parent.value;
+                }
+            }
+        }
         return null;
     }
 
@@ -247,46 +346,6 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return height(node.right) - height(node.left);
     }
 
-    private void swapNodes(TreeNode<E> node1, TreeNode<E> node2) {
-        TreeNode<E> node1parent = node1.parent;
-        node1.parent = node2.parent;
-        if (node1.parent != null) {
-            if (node1.parent.left == node2) {
-                node1.parent.left = node1;
-            } else {
-                node1.parent.right = node1;
-            }
-        }
-        node2.parent = node1parent;
-        if (node2.parent != null) {
-            if (node2.parent.left == node1) {
-                node2.parent.left = node2;
-            } else {
-                node2.parent.right = node2;
-            }
-        }
-
-        if (node1.left != null) {
-            node1.left.parent = node2;
-        }
-        if (node1.right != null) {
-            node1.right.parent = node2;
-        }
-        if (node2.left != null) {
-            node2.left.parent = node1;
-        }
-        if (node2.right != null) {
-            node2.right.parent = node1;
-        }
-
-        TreeNode<E> tmp = node1.left;
-        node1.left = node2.left;
-        node2.left = tmp;
-        tmp = node1.right;
-        node1.right = node2.right;
-        node2.right = tmp;
-    }
-
     private void removeNode(TreeNode<E> node) {
         if (node.left == null && node.right == null) {
             if (node == root) {
@@ -308,69 +367,15 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
             while (rightMostChild.right != null) {
                 rightMostChild = rightMostChild.right;
             }
-            swapNodes(node, rightMostChild);
-            removeNode(node);
+            node.value = rightMostChild.value;
+            removeNode(rightMostChild);
         } else {
             TreeNode<E> leftMostChild = node.right;
             while (leftMostChild.left != null) {
                 leftMostChild = leftMostChild.left;
             }
-            swapNodes(node, leftMostChild);
-            removeNode(node);
-        }
-    }
-
-    private class AVLIterator implements Iterator<E> {
-        private TreeNode<E> node;
-        private TreeNode<E> lastNode;
-        private final boolean isReverse;
-
-        public AVLIterator() {
-            this(false);
-        }
-
-        public AVLIterator(boolean isReverse) {
-            this.isReverse = AVLTree.this.isReverse ^ isReverse;
-            node = root;
-            while (node.left(this.isReverse) != null) {
-                node = node.left(this.isReverse);
-            }
-        }
-
-        @Override
-        public boolean hasNext() {
-            return node != null;
-        }
-
-        @Override
-        public E next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-            lastNode = node;
-            E valueToReturn = node.value;
-            if (node.right(isReverse) != null) {
-                node = node.right(isReverse);
-                while (node.left(isReverse) != null) {
-                    node = node.left(isReverse);
-                }
-                return valueToReturn;
-            }
-
-            while (node != root && node.parent.left(isReverse) != node) {
-                node = node.parent;
-            }
-            node = node.parent;
-            return valueToReturn;
-        }
-
-        @Override
-        public void remove() {
-            if (lastNode == null) {
-                throw new IllegalStateException();
-            }
-            removeNode(lastNode);
-            lastNode = null;
+            node.value = leftMostChild.value;
+            removeNode(leftMostChild);
         }
     }
 
@@ -397,30 +402,6 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
             this.value = value;
         }
 
-        private TreeNode<E> left(boolean isReverse) {
-            return isReverse ? right : left;
-        }
-
-        private void left(boolean isReverse, TreeNode<E> node) {
-            if (isReverse) {
-                right = node;
-            } else {
-                left = node;
-            }
-        }
-
-        private TreeNode<E> right(boolean isReverse) {
-            return isReverse ? left : right;
-        }
-
-        private void right(boolean isReverse, TreeNode<E> node) {
-            if (isReverse) {
-                left = node;
-            } else {
-                right = node;
-            }
-        }
-
         private void updateParent(TreeNode<E> oldNode) {
             if (parent != null) {
                 if (parent.right == oldNode) {
@@ -429,6 +410,131 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
                     parent.left = this;
                 }
             }
+        }
+    }
+
+    private class DescendingAVLTree extends AbstractSet<E> implements MyTreeSet<E> {
+        private AVLTree<E> tree;
+
+        private DescendingAVLTree(AVLTree<E> tree) {
+            this.tree = tree;
+        }
+
+        @Override
+        public Iterator<E> iterator() {
+            return tree.descendingIterator();
+        }
+
+        @Override
+        public int size() {
+            return tree.size;
+        }
+
+        @Override
+        public Iterator<E> descendingIterator() {
+            return tree.iterator();
+        }
+
+        @Override
+        public MyTreeSet<E> descendingSet() {
+            return tree;
+        }
+
+        @Override
+        public E first() {
+            return tree.last();
+        }
+
+        @Override
+        public E last() {
+            return tree.first();
+        }
+
+        @Override
+        public E lower(E e) {
+            return AVLTree.this.higher(e);
+        }
+
+        @Override
+        public E floor(E e) {
+            return AVLTree.this.ceiling(e);
+        }
+
+        @Override
+        public E ceiling(E e) {
+            return AVLTree.this.floor(e);
+        }
+
+        @Override
+        public E higher(E e) {
+            return AVLTree.this.lower(e);
+        }
+    }
+
+    private class AVLIterator<E> implements Iterator<E> {
+        private TreeNode<E> node;
+
+        public AVLIterator(TreeNode<E> startNode) {
+            node = startNode;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return node != null;
+        }
+
+        @Override
+        public E next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            E valueToReturn = node.value;
+            if (node.right != null) {
+                node = node.right;
+                while (node.left != null) {
+                    node = node.left;
+                }
+                return valueToReturn;
+            }
+
+            while (node != root && node.parent.left != node) {
+                node = node.parent;
+            }
+            node = node.parent;
+            return valueToReturn;
+        }
+
+        E prev() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            E valueToReturn = node.value;
+            if (node.left != null) {
+                node = node.left;
+                while (node.right != null) {
+                    node = node.right;
+                }
+                return valueToReturn;
+            }
+
+            while (node != root && node.parent.right != node) {
+                node = node.parent;
+            }
+            node = node.parent;
+            return valueToReturn;
+        }
+    }
+
+    private class DescendingAVLIterator extends AVLIterator<E> {
+
+        public DescendingAVLIterator(TreeNode<E> startNode) {
+            super(startNode);
+        }
+
+        @Override
+        public E next() {
+            return prev();
         }
     }
 }

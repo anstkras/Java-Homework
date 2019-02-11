@@ -1,11 +1,9 @@
 package ru.hse.anstkras.TreeSet;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,7 +22,11 @@ class AVLTreeTest {
         Integer[] array = {4, 1, 100, 2, 51, 23, 12};
         tree.addAll(Arrays.asList(array));
         Integer[] newArray = new Integer[7];
-        tree.toArray(newArray);
+        var it = tree.iterator();
+        int i = 0;
+        while (it.hasNext()) {
+            newArray[i++] = it.next();
+        }
         Arrays.sort(array);
         assertArrayEquals(array, newArray);
     }
@@ -34,25 +36,26 @@ class AVLTreeTest {
         AVLTree<Integer> tree = new AVLTree<>();
         Integer[] array = {4, 1, 100, 2, 51, 23, 12};
         tree.addAll(Arrays.asList(array));
-        MyTreeSet<Integer> reverseTree = tree.descendingSet();
-        var it = tree.descendingIterator();
-        while (it.hasNext()) {
-            System.out.println(it.next());
-        }
         Integer[] newArray = new Integer[7];
-        reverseTree.toArray(newArray);
+        var it = tree.descendingIterator();
+        int i = 0;
+        while (it.hasNext()) {
+            newArray[i++] = it.next();
+        }
         Arrays.sort(array, Collections.reverseOrder());
         assertArrayEquals(array, newArray);
     }
 
     @Test
-    void addAndRemove() {
+    void descendingSet() {
         AVLTree<Integer> tree = new AVLTree<>();
-        assertTrue(tree.add(1));
-        var it = tree.iterator();
-        it.next();
-        it.remove();
-        assertTrue(tree.add(1));
+        Integer[] array = {4, 1, 100, 2, 51, 23, 12};
+        tree.addAll(Arrays.asList(array));
+        Integer[] newArray = new Integer[7];
+        MyTreeSet<Integer> reverseTree = tree.descendingSet();
+        reverseTree.toArray(newArray);
+        Arrays.sort(array, Collections.reverseOrder());
+        assertArrayEquals(array, newArray);
     }
 
     @Test
@@ -85,7 +88,7 @@ class AVLTreeTest {
         AVLTree<Integer> tree = new AVLTree<>();
         Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
         tree.addAll(Arrays.asList(array));
-        assertEquals(-21, (int)tree.first());
+        assertEquals(-21, (int) tree.first());
     }
 
     @Test
@@ -93,19 +96,38 @@ class AVLTreeTest {
         AVLTree<Integer> tree = new AVLTree<>();
         Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
         tree.addAll(Arrays.asList(array));
-        assertEquals(100, (int)tree.last());
+        assertEquals(100, (int) tree.last());
     }
 
     @Test
-    void iteratorRemove() {
+    void lower() {
         AVLTree<Integer> tree = new AVLTree<>();
-        Integer[] array = {5, 2, 6, 1, 3};
+        Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
         tree.addAll(Arrays.asList(array));
-        var it = tree.iterator();
-        it.next();
-        it.next();
-        it.remove();
-        assertEquals(3, (int) it.next());
+        assertEquals(12, (int) tree.lower(23));
     }
 
+    @Test
+    void higher() {
+        AVLTree<Integer> tree = new AVLTree<>();
+        Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
+        tree.addAll(Arrays.asList(array));
+        assertEquals(100, (int) tree.higher(88));
+    }
+
+    @Test
+    void ceiling() {
+        AVLTree<Integer> tree = new AVLTree<>();
+        Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
+        tree.addAll(Arrays.asList(array));
+        assertEquals(32, (int) tree.ceiling(31));
+    }
+
+    @Test
+    void floor() {
+        AVLTree<Integer> tree = new AVLTree<>();
+        Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
+        tree.addAll(Arrays.asList(array));
+        assertEquals(4, (int) tree.floor(11));
+    }
 }
