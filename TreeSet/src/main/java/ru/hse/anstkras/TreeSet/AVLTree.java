@@ -423,7 +423,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
-    private class DescendingAVLTree extends AbstractSet<E> implements MyTreeSet<E> {
+    private static class DescendingAVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         private final AVLTree<E> tree;
 
         private DescendingAVLTree(@NotNull AVLTree<E> tree) {
@@ -468,25 +468,25 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         @Override
         @Nullable
         public E lower(E e) {
-            return AVLTree.this.higher(e);
+            return tree.higher(e);
         }
 
         @Override
         @Nullable
         public E floor(E e) {
-            return AVLTree.this.ceiling(e);
+            return tree.ceiling(e);
         }
 
         @Override
         @Nullable
         public E ceiling(E e) {
-            return AVLTree.this.floor(e);
+            return tree.floor(e);
         }
 
         @Override
         @Nullable
         public E higher(E e) {
-            return AVLTree.this.lower(e);
+            return tree.lower(e);
         }
     }
 
