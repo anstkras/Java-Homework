@@ -12,6 +12,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     private final Comparator<? super E> comparator;
     private TreeNode<E> root;
     private int size;
+    private MyTreeSet<E> cashedDescendingTree;
 
     public AVLTree() {
         this(null);
@@ -113,7 +114,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     @Override
     @NotNull
     public MyTreeSet<E> descendingSet() {
-        return new DescendingAVLTree(this);
+        return cashedDescendingTree == null ? new DescendingAVLTree(this) : cashedDescendingTree;
     }
 
     @Override
