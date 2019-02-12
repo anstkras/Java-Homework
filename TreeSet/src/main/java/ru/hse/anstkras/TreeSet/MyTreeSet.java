@@ -4,6 +4,9 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+/** Defines an interface of tree set that allows
+ * logarithmic complexity of main operations
+ * */
 public interface MyTreeSet<E> extends Set<E> {
 
     /** {@link TreeSet#descendingIterator()} **/
