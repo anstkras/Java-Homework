@@ -10,12 +10,6 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     private TreeNode<E> root;
     private int size;
 
-    private AVLTree(TreeNode<E> root, int size, Comparator<? super E> comparator) {
-        this.root = root;
-        this.size = size;
-        this.comparator = comparator;
-    }
-
     public AVLTree() {
         this(null);
     }
