@@ -40,10 +40,10 @@ class AVLTreeTest {
     void ascendingIterator() {
         var tree = getIntegerFilledTree();
         Integer[] newArray = new Integer[integerArray.length];
-        var it = tree.iterator();
+        var iterator = tree.iterator();
         int i = 0;
-        while (it.hasNext()) {
-            newArray[i++] = it.next();
+        while (iterator.hasNext()) {
+            newArray[i++] = iterator.next();
         }
         Arrays.sort(integerArray);
         assertArrayEquals(integerArray, newArray);
@@ -53,10 +53,10 @@ class AVLTreeTest {
     void descendingIterator() {
         AVLTree<Integer> tree = getIntegerFilledTree();
         Integer[] newArray = new Integer[integerArray.length];
-        var it = tree.descendingIterator();
+        var iterator = tree.descendingIterator();
         int i = 0;
-        while (it.hasNext()) {
-            newArray[i++] = it.next();
+        while (iterator.hasNext()) {
+            newArray[i++] = iterator.next();
         }
         Arrays.sort(integerArray, Collections.reverseOrder());
         assertArrayEquals(integerArray, newArray);
