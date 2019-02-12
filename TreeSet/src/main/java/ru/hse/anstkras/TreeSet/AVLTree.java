@@ -24,8 +24,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     @Override
     public boolean remove(@NotNull Object value) {
-        E eValue = (E) value;
-        TreeNode<E> node = getByValue(eValue);
+        TreeNode<E> node = getByValue(value);
         if (node == null) {
             return false;
         } else {
@@ -114,7 +113,10 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     @Override
     @NotNull
     public MyTreeSet<E> descendingSet() {
-        return cashedDescendingTree == null ? new DescendingAVLTree(this) : cashedDescendingTree;
+        if (cashedDescendingTree == null) {
+            cashedDescendingTree = new DescendingAVLTree(this);
+        }
+        return cashedDescendingTree;
     }
 
     @Override
@@ -331,6 +333,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     private int compare(E value1, E value2) {
         if (comparator == null) {
+            @SuppressWarnings("unchecked")
             var comparableValue1 = (Comparable<? super E>) value1;
             return (comparableValue1.compareTo(value2));
         } else {
@@ -340,10 +343,13 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     private int compareObjectToE(Object value1, E value2) {
         if (comparator == null) {
+            @SuppressWarnings("unchecked")
             var comparableValue1 = (Comparable<? super E>) value1;
             return (comparableValue1.compareTo(value2));
         } else {
-            return comparator.compare((E) value1, value2);
+            @SuppressWarnings("unchecked")
+            E eValue1 = (E) value1;
+            return comparator.compare(eValue1, value2);
         }
     }
 
@@ -405,13 +411,6 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         private TreeNode<E> right;
         private TreeNode<E> parent;
 
-        private TreeNode(E value, int height, TreeNode<E> left, TreeNode<E> right) {
-            this.value = value;
-            this.height = height;
-            this.left = left;
-            this.right = right;
-        }
-
         private TreeNode(E value, TreeNode<E> parent) {
             this.value = value;
             this.parent = parent;
@@ -433,7 +432,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     private class DescendingAVLTree extends AbstractSet<E> implements MyTreeSet<E> {
-        private AVLTree<E> tree;
+        private final AVLTree<E> tree;
 
         private DescendingAVLTree(@NotNull AVLTree<E> tree) {
             this.tree = tree;
