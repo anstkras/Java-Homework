@@ -38,27 +38,6 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return getByValue(value) != null;
     }
 
-    @Nullable
-    private TreeNode<E> getByValue(@Nullable Object value) {
-        if (root == null) {
-            return null;
-        }
-
-        TreeNode<E> child = root;
-        while (child != null) {
-            TreeNode<E> node = child;
-            if (compareObjectToE(value, node.value) >= 0) {
-                child = node.right;
-            } else {
-                child = node.left;
-            }
-            if (compareObjectToE(value, node.value) == 0) {
-                return node;
-            }
-        }
-        return null;
-    }
-
     @Override
     @NotNull
     public Iterator<E> iterator() {
@@ -126,35 +105,11 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return result == null ? null : result.value;
     }
 
-    @Nullable
-    private TreeNode<E> firstNode() {
-        if (root == null) {
-            return null;
-        }
-        TreeNode<E> node = root;
-        while (node.left != null) {
-            node = node.left;
-        }
-        return node;
-    }
-
     @Override
     @Nullable
     public E last() {
         TreeNode<E> result = lastNode();
         return result == null ? null : result.value;
-    }
-
-    @Nullable
-    private TreeNode<E> lastNode() {
-        if (root == null) {
-            return null;
-        }
-        TreeNode<E> node = root;
-        while (node.right != null) {
-            node = node.right;
-        }
-        return node;
     }
 
     @Override
@@ -258,6 +213,51 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
                     }
                     return node.parent == null ? null : node.parent.value;
                 }
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private TreeNode<E> firstNode() {
+        if (root == null) {
+            return null;
+        }
+        TreeNode<E> node = root;
+        while (node.left != null) {
+            node = node.left;
+        }
+        return node;
+    }
+
+    @Nullable
+    private TreeNode<E> lastNode() {
+        if (root == null) {
+            return null;
+        }
+        TreeNode<E> node = root;
+        while (node.right != null) {
+            node = node.right;
+        }
+        return node;
+    }
+
+    @Nullable
+    private TreeNode<E> getByValue(@Nullable Object value) {
+        if (root == null) {
+            return null;
+        }
+
+        TreeNode<E> child = root;
+        while (child != null) {
+            TreeNode<E> node = child;
+            if (compareObjectToE(value, node.value) >= 0) {
+                child = node.right;
+            } else {
+                child = node.left;
+            }
+            if (compareObjectToE(value, node.value) == 0) {
+                return node;
             }
         }
         return null;
