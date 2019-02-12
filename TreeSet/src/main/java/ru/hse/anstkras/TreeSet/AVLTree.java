@@ -243,7 +243,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     @Nullable
-    private TreeNode<E> getByValue(@Nullable Object value) {
+    private TreeNode<E> getByValue(@NotNull Object value) {
         if (root == null) {
             return null;
         }
