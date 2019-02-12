@@ -114,7 +114,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     @NotNull
     public MyTreeSet<E> descendingSet() {
         if (cashedDescendingTree == null) {
-            cashedDescendingTree = new DescendingAVLTree(this);
+            cashedDescendingTree = new DescendingAVLTree<>(this);
         }
         return cashedDescendingTree;
     }
@@ -490,10 +490,10 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
-    private class AVLIterator<E> implements Iterator<E> {
-        private TreeNode<E> node;
+    private class AVLIterator<T> implements Iterator<T> {
+        private TreeNode<T> node;
 
-        private AVLIterator(@Nullable TreeNode<E> startNode) {
+        private AVLIterator(@Nullable TreeNode<T> startNode) {
             node = startNode;
         }
 
@@ -503,11 +503,11 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
 
         @Override
-        public E next() {
+        public T next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            E valueToReturn = node.value;
+            T valueToReturn = node.value;
             if (node.right != null) {
                 node = node.right;
                 while (node.left != null) {
@@ -523,12 +523,12 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
             return valueToReturn;
         }
 
-        E prev() {
+        T prev() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
 
-            E valueToReturn = node.value;
+            T valueToReturn = node.value;
             if (node.left != null) {
                 node = node.left;
                 while (node.right != null) {
