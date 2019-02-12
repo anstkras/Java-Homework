@@ -172,12 +172,10 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
                 if (node.left != null) {
                     node = node.left;
                 } else {
-                    TreeNode<E> parent = node.parent;
-                    while (parent != null && parent.left == node) {
-                        node = parent;
-                        parent = parent.parent;
+                    while (node.parent != null && node.parent.left == node) {
+                        node = node.parent;
                     }
-                    return parent == null ? null : parent.value;
+                    return node.parent == null ? null : node.parent.value;
                 }
             }
         }
@@ -202,12 +200,10 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
                 if (node.left != null) {
                     node = node.left;
                 } else {
-                    TreeNode<E> parent = node.parent;
-                    while (parent != null && parent.left == node) {
-                        node = parent;
-                        parent = parent.parent;
+                    while (node.parent != null && node.parent.left == node) {
+                        node = node.parent;
                     }
-                    return parent == null ? null : parent.value;
+                    return node.parent == null ? null : node.parent.value;
                 }
             }
         }
@@ -232,12 +228,10 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
                 if (node.right != null) {
                     node = node.right;
                 } else {
-                    TreeNode<E> parent = node.parent;
-                    while (parent != null && parent.right == node) {
-                        node = parent;
-                        parent = parent.parent;
+                    while (node.parent != null && node.parent.right == node) {
+                        node = node.parent;
                     }
-                    return parent == null ? null : parent.value;
+                    return node.parent == null ? null : node.parent.value;
                 }
             }
         }
@@ -259,12 +253,10 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
                 if (node.right != null) {
                     node = node.right;
                 } else {
-                    TreeNode<E> parent = node.parent;
-                    while (parent != null && parent.right == node) {
-                        node = parent;
-                        parent = parent.parent;
+                    while (node.parent != null && node.parent.right == node) {
+                        node = node.parent;
                     }
-                    return parent == null ? null : parent.value;
+                    return node.parent == null ? null : node.parent.value;
                 }
             }
         }
