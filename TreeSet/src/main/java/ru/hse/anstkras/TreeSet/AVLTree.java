@@ -1,5 +1,8 @@
 package ru.hse.anstkras.TreeSet;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.AbstractSet;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -19,7 +22,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     @Override
-    public boolean remove(Object value) {
+    public boolean remove(@NotNull Object value) {
         E eValue = (E) value;
         TreeNode<E> node = getByValue(eValue);
         if (node == null) {
@@ -31,11 +34,12 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     @Override
-    public boolean contains(Object value) {
+    public boolean contains(@NotNull Object value) {
         return getByValue((E) value) != null;
     }
 
-    private TreeNode<E> getByValue(E value) {
+    @Nullable
+    private TreeNode<E> getByValue(@Nullable E value) {
         if (root == null) {
             return null;
         }
@@ -56,6 +60,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     @Override
+    @NotNull
     public Iterator<E> iterator() {
         return new AVLIterator<>(firstNode());
     }
@@ -66,7 +71,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     @Override
-    public boolean add(E e) {
+    public boolean add(@NotNull E e) {
         if (root == null) {
             root = new TreeNode<>(e);
             size++;
@@ -100,21 +105,25 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     @Override
+    @NotNull
     public Iterator<E> descendingIterator() {
         return new DescendingAVLIterator(lastNode());
     }
 
     @Override
+    @NotNull
     public MyTreeSet<E> descendingSet() {
         return new DescendingAVLTree(this);
     }
 
     @Override
+    @Nullable
     public E first() {
         TreeNode<E> result = firstNode();
         return result == null ? null : result.value;
     }
 
+    @Nullable
     private TreeNode<E> firstNode() {
         if (root == null) {
             return null;
@@ -127,11 +136,13 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     @Override
+    @Nullable
     public E last() {
         TreeNode<E> result = lastNode();
         return result == null ? null : result.value;
     }
 
+    @Nullable
     private TreeNode<E> lastNode() {
         if (root == null) {
             return null;
@@ -144,6 +155,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     @Override
+    @Nullable
     public E lower(E e) {
         TreeNode<E> node = root;
         while (node != null) {
@@ -170,6 +182,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     @Override
+    @Nullable
     public E floor(E e) {
         TreeNode<E> node = root;
         while (node != null) {
@@ -199,6 +212,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     @Override
+    @Nullable
     public E ceiling(E e) {
         TreeNode<E> node = root;
         while (node != null) {
@@ -228,6 +242,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     @Override
+    @Nullable
     public E higher(E e) {
         TreeNode<E> node = root;
         while (node != null) {
@@ -253,7 +268,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return null;
     }
 
-    private TreeNode<E> rotateRight(TreeNode<E> node) {
+    private TreeNode<E> rotateRight(@NotNull TreeNode<E> node) {
         TreeNode<E> pivot = node.left;
         pivot.parent = node.parent;
 
@@ -271,7 +286,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return pivot;
     }
 
-    private TreeNode<E> rotateLeft(TreeNode<E> node) {
+    private TreeNode<E> rotateLeft(@NotNull TreeNode<E> node) {
         TreeNode<E> pivot = node.right;
         pivot.parent = node.parent;
 
@@ -291,7 +306,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return pivot;
     }
 
-    private void balance(TreeNode<E> node) {
+    private void balance(@NotNull TreeNode<E> node) {
         updateHeight(node);
         if (balanceFactor(node) == 2) {
             if (balanceFactor(node.right) < 0) {
@@ -322,25 +337,25 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
-    private int height(TreeNode<E> node) {
+    private int height(@Nullable TreeNode<E> node) {
         return node == null ? 0 : node.height;
     }
 
-    private void updateHeight(TreeNode<E> node) {
+    private void updateHeight(@Nullable TreeNode<E> node) {
         if (node == null) {
             return;
         }
         node.height = Math.max(height(node.left), height(node.right)) + 1;
     }
 
-    private int balanceFactor(TreeNode<E> node) {
+    private int balanceFactor(@Nullable TreeNode<E> node) {
         if (node == null) {
             return 0;
         }
         return height(node.right) - height(node.left);
     }
 
-    private void removeNode(TreeNode<E> node) {
+    private void removeNode(@NotNull TreeNode<E> node) {
         if (node.left == null && node.right == null) {
             if (node == root) {
                 root = null;
@@ -396,7 +411,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
             this.value = value;
         }
 
-        private void updateParent(TreeNode<E> oldNode) {
+        private void updateParent(@Nullable TreeNode<E> oldNode) {
             if (parent != null) {
                 if (parent.right == oldNode) {
                     parent.right = this;
@@ -410,11 +425,12 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     private class DescendingAVLTree extends AbstractSet<E> implements MyTreeSet<E> {
         private AVLTree<E> tree;
 
-        private DescendingAVLTree(AVLTree<E> tree) {
+        private DescendingAVLTree(@NotNull AVLTree<E> tree) {
             this.tree = tree;
         }
 
         @Override
+        @NotNull
         public Iterator<E> iterator() {
             return tree.descendingIterator();
         }
@@ -425,41 +441,49 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
 
         @Override
+        @NotNull
         public Iterator<E> descendingIterator() {
             return tree.iterator();
         }
 
         @Override
+        @NotNull
         public MyTreeSet<E> descendingSet() {
             return tree;
         }
 
         @Override
+        @Nullable
         public E first() {
             return tree.last();
         }
 
         @Override
+        @Nullable
         public E last() {
             return tree.first();
         }
 
         @Override
+        @Nullable
         public E lower(E e) {
             return AVLTree.this.higher(e);
         }
 
         @Override
+        @Nullable
         public E floor(E e) {
             return AVLTree.this.ceiling(e);
         }
 
         @Override
+        @Nullable
         public E ceiling(E e) {
             return AVLTree.this.floor(e);
         }
 
         @Override
+        @Nullable
         public E higher(E e) {
             return AVLTree.this.lower(e);
         }
@@ -468,7 +492,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     private class AVLIterator<E> implements Iterator<E> {
         private TreeNode<E> node;
 
-        public AVLIterator(TreeNode<E> startNode) {
+        public AVLIterator(@Nullable TreeNode<E> startNode) {
             node = startNode;
         }
 
@@ -522,7 +546,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     private class DescendingAVLIterator extends AVLIterator<E> {
 
-        public DescendingAVLIterator(TreeNode<E> startNode) {
+        public DescendingAVLIterator(@Nullable TreeNode<E> startNode) {
             super(startNode);
         }
 
