@@ -18,3 +18,9 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+apply plugin: 'org.jetbrains.intellij'
+
+intellij {
+    instrumentCode = true
+    downloadSources = false
+}
