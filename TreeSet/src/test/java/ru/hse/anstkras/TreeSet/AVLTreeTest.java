@@ -11,14 +11,30 @@ class AVLTreeTest {
 
     @Test
     void addTheSameValue() {
-        AVLTree<Integer> tree = new AVLTree<>();
+        var tree = new AVLTree<Integer>();
         assertTrue(tree.add(1));
         assertFalse(tree.add(1));
     }
 
     @Test
+    void removeTheSameValue() {
+        var tree = new AVLTree<Integer>();
+        assertTrue(tree.add(1));
+        assertTrue(tree.remove(1));
+        assertFalse(tree.remove(1));
+    }
+
+    @Test
+    void addRemoveThanAddAgain() {
+        var tree = new AVLTree<Integer>();
+        assertTrue(tree.add(1));
+        assertTrue(tree.remove(1));
+        assertTrue(tree.add(1));
+    }
+
+    @Test
     void ascendingIterator() {
-        AVLTree<Integer> tree = new AVLTree<>();
+        var tree = new AVLTree<Integer>();
         Integer[] array = {4, 1, 100, 2, 51, 23, 12};
         tree.addAll(Arrays.asList(array));
         Integer[] newArray = new Integer[7];
@@ -70,6 +86,18 @@ class AVLTreeTest {
         AVLTree<Integer> tree = new AVLTree<>();
         assertTrue(tree.add(1));
         assertThrows(ClassCastException.class, () -> tree.remove("1"));
+    }
+
+    @Test
+    void removeAndAddMultipleTimes() {
+        var tree = getIntegerFilledTree();
+        assertTrue(tree.remove(100));
+        assertTrue(tree.remove(23));
+        assertFalse(tree.remove(11));
+        assertFalse(tree.remove(23));
+        assertTrue(tree.add(42));
+        assertTrue(tree.remove(-21));
+        assertTrue(tree.add(23));
     }
 
     @Test
@@ -129,5 +157,12 @@ class AVLTreeTest {
         Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
         tree.addAll(Arrays.asList(array));
         assertEquals(4, (int) tree.floor(11));
+    }
+
+    private AVLTree<Integer> getIntegerFilledTree() {
+        var tree = new AVLTree<Integer>();
+        Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
+        tree.addAll(Arrays.asList(array));
+        return tree;
     }
 }
