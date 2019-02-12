@@ -36,11 +36,11 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     @Override
     public boolean contains(@NotNull Object value) {
-        return getByValue((E) value) != null;
+        return getByValue(value) != null;
     }
 
     @Nullable
-    private TreeNode<E> getByValue(@Nullable E value) {
+    private TreeNode<E> getByValue(@Nullable Object value) {
         if (root == null) {
             return null;
         }
@@ -48,12 +48,12 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         TreeNode<E> child = root;
         while (child != null) {
             TreeNode<E> node = child;
-            if (compare(node.value, value) <= 0) {
+            if (compareObjectToE(value, node.value) >= 0) {
                 child = node.right;
             } else {
                 child = node.left;
             }
-            if (compare(value, node.value) == 0) {
+            if (compareObjectToE(value, node.value) == 0) {
                 return node;
             }
         }
@@ -331,10 +331,19 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     private int compare(E value1, E value2) {
         if (comparator == null) {
-            var comparableValue1 = (Comparable<E>) value1;
+            var comparableValue1 = (Comparable<? super E>) value1;
             return (comparableValue1.compareTo(value2));
         } else {
             return comparator.compare(value1, value2);
+        }
+    }
+
+    private int compareObjectToE(Object value1, E value2) {
+        if (comparator == null) {
+            var comparableValue1 = (Comparable<? super E>) value1;
+            return (comparableValue1.compareTo(value2));
+        } else {
+            return comparator.compare((E) value1, value2);
         }
     }
 
