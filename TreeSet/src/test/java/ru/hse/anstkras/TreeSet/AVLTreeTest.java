@@ -34,44 +34,38 @@ class AVLTreeTest {
 
     @Test
     void ascendingIterator() {
-        var tree = new AVLTree<Integer>();
-        Integer[] array = {4, 1, 100, 2, 51, 23, 12};
-        tree.addAll(Arrays.asList(array));
-        Integer[] newArray = new Integer[7];
+        var tree = getIntegerFilledTree();
+        Integer[] newArray = new Integer[integerArray.length];
         var it = tree.iterator();
         int i = 0;
         while (it.hasNext()) {
             newArray[i++] = it.next();
         }
-        Arrays.sort(array);
-        assertArrayEquals(array, newArray);
+        Arrays.sort(integerArray);
+        assertArrayEquals(integerArray, newArray);
     }
 
     @Test
     void descendingIterator() {
-        AVLTree<Integer> tree = new AVLTree<>();
-        Integer[] array = {4, 1, 100, 2, 51, 23, 12};
-        tree.addAll(Arrays.asList(array));
-        Integer[] newArray = new Integer[7];
+        AVLTree<Integer> tree = getIntegerFilledTree();
+        Integer[] newArray = new Integer[integerArray.length];
         var it = tree.descendingIterator();
         int i = 0;
         while (it.hasNext()) {
             newArray[i++] = it.next();
         }
-        Arrays.sort(array, Collections.reverseOrder());
-        assertArrayEquals(array, newArray);
+        Arrays.sort(integerArray, Collections.reverseOrder());
+        assertArrayEquals(integerArray, newArray);
     }
 
     @Test
     void descendingSet() {
-        AVLTree<Integer> tree = new AVLTree<>();
-        Integer[] array = {4, 1, 100, 2, 51, 23, 12};
-        tree.addAll(Arrays.asList(array));
-        Integer[] newArray = new Integer[7];
+        AVLTree<Integer> tree = getIntegerFilledTree();
+        Integer[] newArray = new Integer[integerArray.length];
         MyTreeSet<Integer> reverseTree = tree.descendingSet();
         reverseTree.toArray(newArray);
-        Arrays.sort(array, Collections.reverseOrder());
-        assertArrayEquals(array, newArray);
+        Arrays.sort(integerArray, Collections.reverseOrder());
+        assertArrayEquals(integerArray, newArray);
     }
 
     @Test
@@ -90,7 +84,7 @@ class AVLTreeTest {
 
     @Test
     void removeAndAddMultipleTimes() {
-        var tree = getIntegerFilledTree();
+        AVLTree<Integer> tree = getIntegerFilledTree();
         assertTrue(tree.remove(100));
         assertTrue(tree.remove(23));
         assertFalse(tree.remove(11));
@@ -113,56 +107,45 @@ class AVLTreeTest {
 
     @Test
     void first() {
-        AVLTree<Integer> tree = new AVLTree<>();
-        Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
-        tree.addAll(Arrays.asList(array));
+        AVLTree<Integer> tree = getIntegerFilledTree();
         assertEquals(-21, (int) tree.first());
     }
 
     @Test
     void last() {
-        AVLTree<Integer> tree = new AVLTree<>();
-        Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
-        tree.addAll(Arrays.asList(array));
+        AVLTree<Integer> tree = getIntegerFilledTree();
         assertEquals(100, (int) tree.last());
     }
 
     @Test
     void lower() {
-        AVLTree<Integer> tree = new AVLTree<>();
-        Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
-        tree.addAll(Arrays.asList(array));
+        AVLTree<Integer> tree = getIntegerFilledTree();
         assertEquals(12, (int) tree.lower(23));
     }
 
     @Test
     void higher() {
-        AVLTree<Integer> tree = new AVLTree<>();
-        Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
-        tree.addAll(Arrays.asList(array));
+        AVLTree<Integer> tree = getIntegerFilledTree();
         assertEquals(100, (int) tree.higher(88));
     }
 
     @Test
     void ceiling() {
-        AVLTree<Integer> tree = new AVLTree<>();
-        Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
-        tree.addAll(Arrays.asList(array));
+        AVLTree<Integer> tree = getIntegerFilledTree();
         assertEquals(32, (int) tree.ceiling(31));
     }
 
     @Test
     void floor() {
-        AVLTree<Integer> tree = new AVLTree<>();
-        Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
-        tree.addAll(Arrays.asList(array));
+        AVLTree<Integer> tree = getIntegerFilledTree();
         assertEquals(4, (int) tree.floor(11));
     }
 
+    private Integer[] integerArray = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
+
     private AVLTree<Integer> getIntegerFilledTree() {
         var tree = new AVLTree<Integer>();
-        Integer[] array = {-10, 4, 1, 100, 2, -21, 88, 32, 51, 23, 12};
-        tree.addAll(Arrays.asList(array));
+        tree.addAll(Arrays.asList(integerArray));
         return tree;
     }
 }
