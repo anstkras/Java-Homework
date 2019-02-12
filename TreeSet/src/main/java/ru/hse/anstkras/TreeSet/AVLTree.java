@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/** Implementation of MyTreeSet that represents a balanced AVL tree */
 public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     private final Comparator<? super E> comparator;
     private TreeNode<E> root;
@@ -22,6 +23,10 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         this.comparator = comparator;
     }
 
+    /** Removes the value from the tree that is equal to given value.
+     * @throws ClassCastException if the value are not comparable with
+     * values in the tree
+     */
     @Override
     public boolean remove(@NotNull Object value) {
         TreeNode<E> node = getByValue(value);
@@ -33,6 +38,10 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
+    /** Checks if the tree contains the given value
+     * @throws ClassCastException if the value are not comparable with
+     * values in the tree
+     */
     @Override
     public boolean contains(@NotNull Object value) {
         return getByValue(value) != null;
@@ -49,6 +58,10 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return size;
     }
 
+    /**
+     * Adds the given element to the tree.
+     * @return {@true} in case of the element was not presented in the tree
+     */
     @Override
     public boolean add(@NotNull E e) {
         if (root == null) {
@@ -89,6 +102,9 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return new DescendingAVLIterator(lastNode());
     }
 
+    /**
+     * Returns the tree with reverse ordering
+     */
     @Override
     @NotNull
     public MyTreeSet<E> descendingSet() {
@@ -98,6 +114,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return cashedDescendingTree;
     }
 
+    /** Returns the first element in given order */
     @Override
     @Nullable
     public E first() {
@@ -105,6 +122,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return result == null ? null : result.value;
     }
 
+    /** Returns the last element in given order */
     @Override
     @Nullable
     public E last() {
@@ -112,6 +130,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return result == null ? null : result.value;
     }
 
+    /** Returns the greatest element than is smaller than the given element */
     @Override
     @Nullable
     public E lower(@NotNull E e) {
@@ -137,6 +156,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return null;
     }
 
+    /** Returns the greatest element than is smaller or equal to the given element */
     @Override
     @Nullable
     public E floor(@NotNull E e) {
@@ -165,6 +185,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return null;
     }
 
+    /** Returns the least element than is greater or equal to the given element */
     @Override
     @Nullable
     public E ceiling(@NotNull E e) {
@@ -193,6 +214,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return null;
     }
 
+    /** Returns the least element than is greater than the given element */
     @Override
     @Nullable
     public E higher(@NotNull E e) {
