@@ -1,5 +1,6 @@
 package ru.hse.anstkras.phonebook.Entities;
 
+import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
@@ -10,7 +11,7 @@ import java.util.List;
 @Entity
 public class PhoneNumber {
     @Id
-    private long id;
+    private ObjectId id;
     private String number;
     @Reference
     private List<User> users = new ArrayList<>();
