@@ -4,6 +4,7 @@ import ru.hse.anstkras.phonebook.Entities.PhoneNumber;
 import ru.hse.anstkras.phonebook.Entities.User;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
@@ -49,6 +50,29 @@ public class Main {
                     break;
                 }
 
+                case 4: {
+                    System.out.println("Enter name:");
+                    String name = scanner.next();
+                    System.out.println("Enter phone number");
+                    String phoneNumber = scanner.next();
+                    if (phoneBook.deleteEntry(name, phoneNumber)) {
+                        System.out.println("Entry successfully deleted");
+                    } else {
+                        System.out.println("Such an entry does not exist in the phone book");
+                    }
+                    break;
+                }
+
+                case 5: {
+
+                }
+
+                case 7: {
+                    Map<User, List<PhoneNumber>> pairs = phoneBook.getAllPairs();
+                    pairs.forEach((user, phoneNumbers) -> {
+                        phoneNumbers.forEach(phoneNumber -> System.out.println(user.getName() + " " + phoneNumber.getNumber()));
+                    });
+                }
             }
         }
     }

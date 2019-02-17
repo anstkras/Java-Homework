@@ -30,4 +30,14 @@ public class PhoneNumber {
     public String getNumber() {
         return number;
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || !getClass().equals(object.getClass())) {
+            return false;
+        }
+
+        var otherPhoneNumber = (PhoneNumber) object;
+        return otherPhoneNumber.number.equals(number);
+    }
 }

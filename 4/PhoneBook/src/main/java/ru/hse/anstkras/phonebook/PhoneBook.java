@@ -9,6 +9,9 @@ import ru.hse.anstkras.phonebook.Entities.PhoneNumber;
 import ru.hse.anstkras.phonebook.Entities.User;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class PhoneBook {
     private final Morphia morphia = new Morphia();
@@ -84,5 +87,35 @@ public class PhoneBook {
         }
 
         return phoneNumber.getUsers();
+    }
+
+    public boolean deleteEntry(@NotNull String name, @NotNull String number) {
+        User user = getUser(name);
+        PhoneNumber phoneNumber = getPhoneNumber(number);
+        if (user == null || phoneNumber == null || !user.getPhoneNumbers().contains(phoneNumber)) {
+            return false;
+        }
+
+        if (!phoneNumber.getUsers().contains(user)) {
+            throw new IllegalStateException();
+        }
+        user.getPhoneNumbers().remove(phoneNumber);
+        datastore.save(user);
+        phoneNumber.getUsers().remove(user);
+        datastore.save(phoneNumber);
+
+        if (user.getPhoneNumbers().isEmpty()) {
+            datastore.delete(user);
+        }
+        if (phoneNumber.getUsers().isEmpty()) {
+            datastore.delete(phoneNumber);
+        }
+        return true;
+    }
+
+    @NotNull
+    public Map<User, List<PhoneNumber>> getAllPairs() {
+        List<User> users = datastore.createQuery(User.class).asList();
+        return users.stream().collect(Collectors.toMap(Function.identity(), User::getPhoneNumbers));
     }
 }

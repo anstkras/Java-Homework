@@ -31,4 +31,14 @@ public class User {
     public List<PhoneNumber> getPhoneNumbers() {
         return phoneNumbers;
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || !getClass().equals(object.getClass())) {
+            return false;
+        }
+
+        var otherUser = (User) object;
+        return otherUser.name.equals(name);
+    }
 }
