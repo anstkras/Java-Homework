@@ -141,7 +141,7 @@ public class Trie implements Serializable {
     public void serialize(OutputStream out) throws IOException {
         checkIsNull(out, "The output stream can not be null");
 
-        serializeNode(root, out);
+        serializeNode(root, new DataOutputStream(out));
     }
 
     /** {@inheritDoc} */
@@ -149,7 +149,7 @@ public class Trie implements Serializable {
     public void deserialize(InputStream in) throws IOException {
         checkIsNull(in, "The input stream can not be null");
 
-        root = deserializeNode(in);
+        root = deserializeNode(new DataInputStream(in));
         root.countSize();
     }
 
@@ -167,24 +167,22 @@ public class Trie implements Serializable {
         return root.hashCode();
     }
 
-    private void serializeNode(TrieNode node, OutputStream out) throws IOException {
-        var dataOutputStream = new DataOutputStream(out);
+    private void serializeNode(TrieNode node, DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeBoolean(node.isTerminal);
         dataOutputStream.writeInt(node.next.size());
         for (var entry : node.next.entrySet()) {
             dataOutputStream.writeChar(entry.getKey());
-            serializeNode(entry.getValue(), out);
+            serializeNode(entry.getValue(), dataOutputStream);
         }
     }
 
-    private TrieNode deserializeNode(InputStream in) throws IOException {
-        var dataInputStream = new DataInputStream(in);
+    private TrieNode deserializeNode(DataInputStream dataInputStream) throws IOException {
         var newNode = new TrieNode();
         newNode.isTerminal = dataInputStream.readBoolean();
         int nextSize = dataInputStream.readInt();
         for (int i = 0; i < nextSize; i++) {
             char symbol = dataInputStream.readChar();
-            newNode.addEdge(symbol, deserializeNode(in));
+            newNode.addEdge(symbol, deserializeNode(dataInputStream));
         }
         return newNode;
     }
