@@ -92,7 +92,7 @@ public class PhoneBook {
     public boolean deleteEntry(@NotNull String name, @NotNull String number) {
         User user = getUser(name);
         PhoneNumber phoneNumber = getPhoneNumber(number);
-        if (user == null || phoneNumber == null || !user.getPhoneNumbers().contains(phoneNumber)) {
+        if (checkEntryExists(user, phoneNumber)) {
             return false;
         }
 
@@ -117,5 +117,49 @@ public class PhoneBook {
     public Map<User, List<PhoneNumber>> getAllPairs() {
         List<User> users = datastore.createQuery(User.class).asList();
         return users.stream().collect(Collectors.toMap(Function.identity(), User::getPhoneNumbers));
+    }
+
+    public boolean changeName(@NotNull String oldName, @NotNull String number, @NotNull String newName) {
+        User oldUser = getUser(oldName);
+        PhoneNumber phoneNumber = getPhoneNumber(number);
+        if (!checkEntryExists(oldUser, phoneNumber)) {
+            return false;
+        }
+        oldUser.getPhoneNumbers().remove(phoneNumber);
+        datastore.save(oldUser);
+        if (oldUser.getPhoneNumbers().isEmpty()) {
+            datastore.delete(oldUser);
+        }
+        User newUser = getOrCreateUser(newName);
+        phoneNumber.getUsers().remove(oldUser);
+        phoneNumber.getUsers().add(newUser);
+        datastore.save(phoneNumber);
+        newUser.getPhoneNumbers().add(phoneNumber);
+        datastore.save(newUser);
+        return true;
+    }
+
+    public boolean changeNumber(@NotNull String oldNumber, @NotNull String name, @NotNull String newNumber) {
+        PhoneNumber oldPhoneNumber = getPhoneNumber(oldNumber);
+        User user = getUser(name);
+        if (!checkEntryExists(user, oldPhoneNumber)) {
+            return false;
+        }
+        oldPhoneNumber.getUsers().remove(user);
+        datastore.save(oldPhoneNumber);
+        if (oldPhoneNumber.getUsers().isEmpty()) {
+            datastore.delete(oldPhoneNumber);
+        }
+        PhoneNumber newPhoneNumber = getOrCreateNumber(newNumber);
+        user.getPhoneNumbers().remove(oldPhoneNumber);
+        user.getPhoneNumbers().add(newPhoneNumber);
+        datastore.save(user);
+        newPhoneNumber.getUsers().add(user);
+        datastore.save(newPhoneNumber);
+        return true;
+    }
+
+    private boolean checkEntryExists(@Nullable User user, @Nullable PhoneNumber phoneNumber) {
+        return user != null && phoneNumber != null && user.getPhoneNumbers().contains(phoneNumber);
     }
 }

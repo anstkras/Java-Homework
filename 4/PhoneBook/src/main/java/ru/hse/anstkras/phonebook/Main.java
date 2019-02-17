@@ -72,7 +72,27 @@ public class Main {
                 }
 
                 case 5: {
+                    String name = getName();
+                    String phone = getNumber();
+                    System.out.println("Enter new name:");
+                    String newName = scanner.next();
+                    if (phoneBook.changeName(name, phone, newName)) {
+                        System.out.println("Name changed successfully");
+                    } else {
+                        System.out.println("Such an entry does not exist in the phone book");
+                    }
+                }
 
+                case 6: {
+                    String name = getName();
+                    String phone = getNumber();
+                    System.out.println("Enter new number:");
+                    String newNumber = scanner.next();
+                    if (phoneBook.changeNumber(phone, name, newNumber)) {
+                        System.out.println("Number changed successfully");
+                    } else {
+                        System.out.println("Such an entry does not exist in the phone book");
+                    }
                 }
 
                 case 7: {
