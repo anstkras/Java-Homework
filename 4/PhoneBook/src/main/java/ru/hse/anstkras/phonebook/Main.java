@@ -1,5 +1,6 @@
 package ru.hse.anstkras.phonebook;
 
+import org.jetbrains.annotations.NotNull;
 import ru.hse.anstkras.phonebook.Entities.PhoneNumber;
 import ru.hse.anstkras.phonebook.Entities.User;
 
@@ -8,25 +9,35 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
+    private static Scanner scanner = new Scanner(System.in);
+
+    @NotNull
+    private static String getName() {
+        System.out.println("Enter name:");
+        return scanner.next();
+    }
+
+    @NotNull
+    private static String getNumber() {
+        System.out.println("Enter phone number:");
+        return scanner.next();
+    }
+
     public static void main(String[] args) {
         var phoneBook = new PhoneBook("phonebook");
-        Scanner scanner = new Scanner(System.in);
         while (true) {
             int command = scanner.nextInt();
             switch (command) {
                 case 0:
                     return;
                 case 1: {
-                    System.out.println("Enter name:");
-                    String name = scanner.next();
-                    System.out.println("Enter phone number");
-                    String phoneNumber = scanner.next();
+                    String name = getName();
+                    String phoneNumber = getNumber();
                     phoneBook.addEntry(name, phoneNumber);
                     break;
                 }
                 case 2: {
-                    System.out.println("Enter name:");
-                    String name = scanner.next();
+                    String name = getName();
                     List<PhoneNumber> numbers = phoneBook.getPhoneNumbersByName(name);
                     if (numbers == null) {
                         System.out.println("There is no such a user in the phone book");
@@ -38,8 +49,7 @@ public class Main {
                     break;
                 }
                 case 3: {
-                    System.out.println("Enter number:");
-                    String number = scanner.next();
+                    String number = getNumber();
                     List<User> users = phoneBook.getNamesByPhoneNumber(number);
                     if (users == null) {
                         System.out.println("There is no such a number in the phone book");
@@ -51,10 +61,8 @@ public class Main {
                 }
 
                 case 4: {
-                    System.out.println("Enter name:");
-                    String name = scanner.next();
-                    System.out.println("Enter phone number");
-                    String phoneNumber = scanner.next();
+                    String name = getName();
+                    String phoneNumber = getNumber();
                     if (phoneBook.deleteEntry(name, phoneNumber)) {
                         System.out.println("Entry successfully deleted");
                     } else {
@@ -69,9 +77,7 @@ public class Main {
 
                 case 7: {
                     Map<User, List<PhoneNumber>> pairs = phoneBook.getAllPairs();
-                    pairs.forEach((user, phoneNumbers) -> {
-                        phoneNumbers.forEach(phoneNumber -> System.out.println(user.getName() + " " + phoneNumber.getNumber()));
-                    });
+                    pairs.forEach((user, phoneNumbers) -> phoneNumbers.forEach(phoneNumber -> System.out.println(user.getName() + " " + phoneNumber.getNumber())));
                 }
             }
         }
