@@ -3,7 +3,10 @@ package ru.hse.anstkras.Trie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -220,6 +223,35 @@ class TrieTest {
 
         assertArrayEquals(byteArrayCheckStream.toByteArray(), trieStream.toByteArray());
 
+    }
+
+    @Test
+    void deserializeProtocol() throws IOException {
+        var byteArrayCheckStream = new ByteArrayOutputStream();
+        var dataOutputCheckStream = new DataOutputStream(byteArrayCheckStream);
+        dataOutputCheckStream.writeBoolean(false);
+        dataOutputCheckStream.writeInt(2);
+        dataOutputCheckStream.writeChar('q');
+        dataOutputCheckStream.writeBoolean(false);
+        dataOutputCheckStream.writeInt(2);
+        dataOutputCheckStream.writeChar('b');
+        dataOutputCheckStream.writeBoolean(true);
+        dataOutputCheckStream.writeInt(0);
+        dataOutputCheckStream.writeChar('w');
+        dataOutputCheckStream.writeBoolean(true);
+        dataOutputCheckStream.writeInt(0);
+        dataOutputCheckStream.writeChar('a');
+        dataOutputCheckStream.writeBoolean(true);
+        dataOutputCheckStream.writeInt(0);
+
+        var trieStream = new ByteArrayInputStream(byteArrayCheckStream.toByteArray());
+        trie.deserialize(trieStream);
+
+        var checkTrie = new Trie();
+        checkTrie.add("qw");
+        checkTrie.add("qb");
+        checkTrie.add("a");
+        assertEquals(checkTrie, trie);
     }
 
     @Test
