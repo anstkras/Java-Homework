@@ -81,6 +81,7 @@ public class Main {
                     } else {
                         System.out.println("Such an entry does not exist in the phone book");
                     }
+                    break;
                 }
 
                 case 6: {
@@ -93,11 +94,16 @@ public class Main {
                     } else {
                         System.out.println("Such an entry does not exist in the phone book");
                     }
+                    break;
                 }
 
                 case 7: {
                     Map<User, List<PhoneNumber>> pairs = phoneBook.getAllPairs();
                     pairs.forEach((user, phoneNumbers) -> phoneNumbers.forEach(phoneNumber -> System.out.println(user.getName() + " " + phoneNumber.getNumber())));
+                    break;
+                }
+                default: {
+                    System.out.println("There is no such command");
                 }
             }
         }
