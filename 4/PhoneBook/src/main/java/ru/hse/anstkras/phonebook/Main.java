@@ -98,8 +98,8 @@ public class Main {
                 }
 
                 case 7: {
-                    Map<User, List<PhoneNumber>> pairs = phoneBook.getAllPairs();
-                    pairs.forEach((user, phoneNumbers) -> phoneNumbers.forEach(phoneNumber -> System.out.println(user.getName() + " " + phoneNumber.getNumber())));
+                    List<PhoneBook.Entry> pairs = phoneBook.getAllPairs();
+                    pairs.forEach(entry -> System.out.println(entry.getUser() + " " + entry.getPhoneNumber()));
                     break;
                 }
                 default: {

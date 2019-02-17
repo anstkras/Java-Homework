@@ -9,8 +9,6 @@ import ru.hse.anstkras.phonebook.Entities.PhoneNumber;
 import ru.hse.anstkras.phonebook.Entities.User;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class PhoneBook {
@@ -18,9 +16,13 @@ public class PhoneBook {
 
     private Datastore datastore;
 
-    public PhoneBook(String name) {
-        datastore = morphia.createDatastore(new MongoClient(), name);
+    public PhoneBook(MongoClient mongoClient, String name) {
+        datastore = morphia.createDatastore(mongoClient, name);
         morphia.mapPackage("ru.hse.anstkras.phonebook.Entities");
+    }
+
+    public PhoneBook(String name) {
+        this(new MongoClient(), name);
     }
 
     /**
@@ -114,9 +116,10 @@ public class PhoneBook {
     }
 
     @NotNull
-    public Map<User, List<PhoneNumber>> getAllPairs() {
+    public List<Entry> getAllPairs() {
         List<User> users = datastore.createQuery(User.class).asList();
-        return users.stream().collect(Collectors.toMap(Function.identity(), User::getPhoneNumbers));
+        return users.stream().flatMap(user -> user.getPhoneNumbers().stream().
+                map(number -> new Entry(user, number))).collect(Collectors.toList());
     }
 
     public boolean changeName(@NotNull String oldName, @NotNull String number, @NotNull String newName) {
@@ -161,5 +164,24 @@ public class PhoneBook {
 
     private boolean checkEntryExists(@Nullable User user, @Nullable PhoneNumber phoneNumber) {
         return user != null && phoneNumber != null && user.getPhoneNumbers().contains(phoneNumber);
+    }
+
+    public static class Entry {
+        private User user;
+        private PhoneNumber phoneNumber;
+
+
+        public Entry(User user, PhoneNumber phoneNumber) {
+            this.user = user;
+            this.phoneNumber = phoneNumber;
+        }
+
+        public User getUser() {
+            return user;
+        }
+
+        public PhoneNumber getPhoneNumber() {
+            return phoneNumber;
+        }
     }
 }
