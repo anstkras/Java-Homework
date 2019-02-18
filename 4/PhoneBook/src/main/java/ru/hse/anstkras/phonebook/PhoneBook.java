@@ -187,5 +187,13 @@ public class PhoneBook {
         public PhoneNumber getPhoneNumber() {
             return phoneNumber;
         }
+
+        public String getUserName() {
+            return user.getName();
+        }
+
+        public String getNumber() {
+            return phoneNumber.getNumber();
+        }
     }
 }
