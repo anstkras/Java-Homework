@@ -62,13 +62,17 @@ public class PhoneBook {
         return datastore.createQuery(PhoneNumber.class).field("number").equal(phoneNumber).get();
     }
 
-    public void addEntry(@NotNull String name, @NotNull String phoneNumber) {
+    public boolean addEntry(@NotNull String name, @NotNull String phoneNumber) {
         User user = getOrCreateUser(name);
         PhoneNumber number = getOrCreateNumber(phoneNumber);
+        if (user.getPhoneNumbers().contains(number)) {
+            return false;
+        }
         user.getPhoneNumbers().add(number);
         number.getUsers().add(user);
         datastore.save(user);
         datastore.save(number);
+        return true;
     }
 
     @Nullable
@@ -94,7 +98,7 @@ public class PhoneBook {
     public boolean deleteEntry(@NotNull String name, @NotNull String number) {
         User user = getUser(name);
         PhoneNumber phoneNumber = getPhoneNumber(number);
-        if (checkEntryExists(user, phoneNumber)) {
+        if (!checkEntryExists(user, phoneNumber)) {
             return false;
         }
 
