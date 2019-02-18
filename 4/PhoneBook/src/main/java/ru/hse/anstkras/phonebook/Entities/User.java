@@ -7,6 +7,7 @@ import org.mongodb.morphia.annotations.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Represents a user Morphia entity */
 @Entity
 public class User {
     @Reference
