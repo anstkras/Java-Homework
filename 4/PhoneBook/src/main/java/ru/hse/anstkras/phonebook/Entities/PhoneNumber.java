@@ -14,7 +14,7 @@ public class PhoneNumber {
     @Indexed(options = @IndexOptions(unique = true))
     private String number;
     @Reference
-    private List<User> users = new ArrayList<>();
+    private final List<User> users = new ArrayList<>();
 
     public PhoneNumber(String number) {
         this.number = number;

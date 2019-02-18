@@ -15,7 +15,7 @@ public class User {
     private String name;
 
     @Reference
-    private List<PhoneNumber> phoneNumbers = new ArrayList<>();
+    private final List<PhoneNumber> phoneNumbers = new ArrayList<>();
 
     public User(String name) {
         this.name = name;
