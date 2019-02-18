@@ -73,8 +73,8 @@ public class PhoneBook {
         if (user.getPhoneNumbers().contains(phoneNumber)) {
             return false;
         }
-        user.getPhoneNumbers().add(phoneNumber);
-        phoneNumber.getUsers().add(user);
+        user.addPhoneNumber(phoneNumber);
+        phoneNumber.addUser(user);
         datastore.save(user);
         datastore.save(phoneNumber);
         return true;
@@ -111,15 +111,15 @@ public class PhoneBook {
         if (!checkEntryExists(user, phoneNumber)) {
             return false;
         }
-        user.getPhoneNumbers().remove(phoneNumber);
+        user.removePhoneNumber(phoneNumber);
         datastore.save(user);
-        phoneNumber.getUsers().remove(user);
+        phoneNumber.removeUser(user);
         datastore.save(phoneNumber);
 
-        if (user.getPhoneNumbers().isEmpty()) {
+        if (user.hasNoPhoneNumbers()) {
             datastore.delete(user);
         }
-        if (phoneNumber.getUsers().isEmpty()) {
+        if (phoneNumber.hasNoUsers()) {
             datastore.delete(phoneNumber);
         }
         return true;

@@ -1,6 +1,7 @@
 package ru.hse.anstkras.phonebook.Entities;
 
 import org.bson.types.ObjectId;
+import org.jetbrains.annotations.NotNull;
 import org.mongodb.morphia.annotations.*;
 
 import java.util.ArrayList;
@@ -30,6 +31,18 @@ public class User {
 
     public List<PhoneNumber> getPhoneNumbers() {
         return phoneNumbers;
+    }
+
+    public void addPhoneNumber(@NotNull PhoneNumber phoneNumber) {
+        phoneNumbers.add(phoneNumber);
+    }
+
+    public void removePhoneNumber(@NotNull PhoneNumber phoneNumber) {
+        phoneNumbers.remove(phoneNumber);
+    }
+
+    public boolean hasNoPhoneNumbers() {
+        return phoneNumbers.isEmpty();
     }
 
     @Override
