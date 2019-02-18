@@ -33,8 +33,8 @@ class PhoneBookTest {
         phoneBook.addEntry(name, number);
         List<PhoneBook.Entry> allPairs = phoneBook.getAllPairs();
         assertEquals(1, allPairs.size());
-        assertEquals(name, allPairs.get(0).getUser().getName());
-        assertEquals(number, allPairs.get(0).getPhoneNumber().getNumber());
+        assertEquals(name, allPairs.get(0).getUserName());
+        assertEquals(number, allPairs.get(0).getNumber());
     }
 
     private void fillWithPhoneNumbers(@NotNull String name, @NotNull List<String> phoneNumbers) {
