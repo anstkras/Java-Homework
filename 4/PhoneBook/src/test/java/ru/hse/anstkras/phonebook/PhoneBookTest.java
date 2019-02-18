@@ -2,6 +2,8 @@ package ru.hse.anstkras.phonebook;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.hse.anstkras.phonebook.Entities.PhoneNumber;
@@ -14,25 +16,29 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PhoneBookTest {
+    private final List<String> names = Arrays.asList("name1", "name2", "name3", "name4");
+    private final List<String> numbers = Arrays.asList("number1", "number2", "number3", "number4");
     private PhoneBook phoneBook;
 
     @BeforeEach
     void setup() {
-        Fongo fongo = new Fongo("fongo_mock_server");
+        Fongo fongo = new Fongo("fongo_server");
         MongoClient mongoClient = fongo.getMongo();
         phoneBook = new PhoneBook(mongoClient, "test_phone_book");
     }
 
     @Test
     void addEntry() {
-        phoneBook.addEntry("name", "number");
+        final String name = "name";
+        final String number = "number";
+        phoneBook.addEntry(name, number);
         List<PhoneBook.Entry> allPairs = phoneBook.getAllPairs();
         assertEquals(1, allPairs.size());
-        assertEquals("name", allPairs.get(0).getUser().getName());
-        assertEquals("number", allPairs.get(0).getPhoneNumber().getNumber());
+        assertEquals(name, allPairs.get(0).getUser().getName());
+        assertEquals(number, allPairs.get(0).getPhoneNumber().getNumber());
     }
 
-    private void fillWithPhoneNumbers(String name, List<String> phoneNumbers) {
+    private void fillWithPhoneNumbers(@NotNull String name, @NotNull List<String> phoneNumbers) {
         phoneNumbers.forEach(phoneNumber -> phoneBook.addEntry(name, phoneNumber));
     }
 
@@ -50,7 +56,7 @@ class PhoneBookTest {
 
     }
 
-    private void fillWithUsers(String number, List<String> users) {
+    private void fillWithUsers(@NotNull String number, @NotNull List<String> users) {
         users.forEach(user -> phoneBook.addEntry(user, number));
     }
 
@@ -73,62 +79,60 @@ class PhoneBookTest {
         assertNull(namesFromPhoneBook);
     }
 
+    private void fill(@NotNull List<String> names, @NotNull List<String> numbers) {
+        for (int i = 0; i < names.size(); i++) {
+            phoneBook.addEntry(names.get(i), numbers.get(i));
+        }
+    }
+
     @Test
     void deleteExistingEntry() {
-        for (int i = 0; i < 10; i++) {
-            phoneBook.addEntry("name" + i, "number" + i);
-        }
+        fill(names, numbers);
         assertTrue(phoneBook.deleteEntry("name3", "number3"));
     }
 
     @Test
     void deleteNotExistingEntry() {
-        for (int i = 0; i < 10; i++) {
-            phoneBook.addEntry("name" + i, "number" + i);
-        }
+        fill(names, numbers);
         assertFalse(phoneBook.deleteEntry("name100", "number100"));
     }
 
     @Test
     void addDeleteAndAddAgain() {
-        for (int i = 0; i < 10; i++) {
-            phoneBook.addEntry("name" + i, "number" + i);
-        }
-        assertTrue(phoneBook.deleteEntry("name3", "number3"));
-        assertTrue(phoneBook.addEntry("name3", "number3"));
+        fill(names, numbers);
+        final String name = "name3";
+        final String number = "number3";
+        assertTrue(phoneBook.deleteEntry(name, number));
+        assertTrue(phoneBook.addEntry(name, number));
     }
 
     @Test
     void changeNameForNotExistingEntry() {
-        for (int i = 0; i < 10; i++) {
-            phoneBook.addEntry("name" + i, "number" + i);
-        }
+        fill(names, numbers);
         assertFalse(phoneBook.changeName("qwe", "number1", "asd"));
     }
 
     @Test
     void changeName() {
-        for (int i = 0; i < 10; i++) {
-            phoneBook.addEntry("name" + i, "number" + i);
-        }
-        phoneBook.addEntry("asd", "123");
-        assertTrue(phoneBook.changeName("name1", "number1", "asd"));
-        List<PhoneNumber> phoneNumbers = phoneBook.getPhoneNumbersByName("asd");
+        fill(names, numbers);
+        final String newName = "asd";
+        phoneBook.addEntry(newName, "123");
+        assertTrue(phoneBook.changeName("name1", "number1", newName));
+        final List<PhoneNumber> phoneNumbers = phoneBook.getPhoneNumbersByName(newName);
         assertNotNull(phoneNumbers);
-        List<String> phoneNumbersStrings = phoneNumbers.stream().map(PhoneNumber::getNumber).collect(Collectors.toList());
+        final List<String> phoneNumbersStrings = phoneNumbers.stream().map(PhoneNumber::getNumber).collect(Collectors.toList());
         assertEquals(Arrays.asList("123", "number1"), phoneNumbersStrings);
     }
 
     @Test
     void changeNumber() {
-        for (int i = 0; i < 10; i++) {
-            phoneBook.addEntry("name" + i, "number" + i);
-        }
-        phoneBook.addEntry("qwe", "1234");
-        assertTrue(phoneBook.changeNumber("number1", "name1", "1234"));
-        List<User> users = phoneBook.getNamesByPhoneNumber("1234");
+        fill(names, numbers);
+        final String newNumber = "1234";
+        phoneBook.addEntry("qwe", newNumber);
+        assertTrue(phoneBook.changeNumber("number1", "name1", newNumber));
+        final List<User> users = phoneBook.getNamesByPhoneNumber(newNumber);
         assertNotNull(users);
-        List<String> usersString = users.stream().map(User::getName).collect(Collectors.toList());
+        final List<String> usersString = users.stream().map(User::getName).collect(Collectors.toList());
         assertEquals(Arrays.asList("qwe", "name1"), usersString);
     }
 }
