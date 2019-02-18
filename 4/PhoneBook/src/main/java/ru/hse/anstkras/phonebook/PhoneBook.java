@@ -69,17 +69,6 @@ public class PhoneBook {
         return addEntry(user, phoneNumber);
     }
 
-    private boolean addEntry(@NotNull User user, @NotNull PhoneNumber phoneNumber) {
-        if (user.getPhoneNumbers().contains(phoneNumber)) {
-            return false;
-        }
-        user.addPhoneNumber(phoneNumber);
-        phoneNumber.addUser(user);
-        datastore.save(user);
-        datastore.save(phoneNumber);
-        return true;
-    }
-
     @Nullable
     public List<PhoneNumber> getPhoneNumbersByName(@NotNull String name) {
         final User user = getUser(name);
@@ -105,24 +94,6 @@ public class PhoneBook {
             return false;
         }
         return deleteEntry(user, phoneNumber);
-    }
-
-    private boolean deleteEntry(@NotNull User user, @NotNull PhoneNumber phoneNumber) {
-        if (!checkEntryExists(user, phoneNumber)) {
-            return false;
-        }
-        user.removePhoneNumber(phoneNumber);
-        datastore.save(user);
-        phoneNumber.removeUser(user);
-        datastore.save(phoneNumber);
-
-        if (user.hasNoPhoneNumbers()) {
-            datastore.delete(user);
-        }
-        if (phoneNumber.hasNoUsers()) {
-            datastore.delete(phoneNumber);
-        }
-        return true;
     }
 
     @NotNull
@@ -160,6 +131,35 @@ public class PhoneBook {
 
     private boolean checkEntryExists(@Nullable User user, @Nullable PhoneNumber phoneNumber) {
         return user != null && phoneNumber != null && user.getPhoneNumbers().contains(phoneNumber);
+    }
+
+    private boolean addEntry(@NotNull User user, @NotNull PhoneNumber phoneNumber) {
+        if (user.getPhoneNumbers().contains(phoneNumber)) {
+            return false;
+        }
+        user.addPhoneNumber(phoneNumber);
+        phoneNumber.addUser(user);
+        datastore.save(user);
+        datastore.save(phoneNumber);
+        return true;
+    }
+
+    private boolean deleteEntry(@NotNull User user, @NotNull PhoneNumber phoneNumber) {
+        if (!checkEntryExists(user, phoneNumber)) {
+            return false;
+        }
+        user.removePhoneNumber(phoneNumber);
+        datastore.save(user);
+        phoneNumber.removeUser(user);
+        datastore.save(phoneNumber);
+
+        if (user.hasNoPhoneNumbers()) {
+            datastore.delete(user);
+        }
+        if (phoneNumber.hasNoUsers()) {
+            datastore.delete(phoneNumber);
+        }
+        return true;
     }
 
     public static class Entry {
