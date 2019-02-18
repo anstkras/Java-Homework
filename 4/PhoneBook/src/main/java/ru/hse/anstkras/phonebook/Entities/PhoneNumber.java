@@ -9,12 +9,12 @@ import java.util.List;
 
 @Entity
 public class PhoneNumber {
+    @Reference
+    private final List<User> users = new ArrayList<>();
     @Id
     private ObjectId id;
     @Indexed(options = @IndexOptions(unique = true))
     private String number;
-    @Reference
-    private final List<User> users = new ArrayList<>();
 
     public PhoneNumber(String number) {
         this.number = number;
@@ -52,5 +52,10 @@ public class PhoneNumber {
 
         var otherPhoneNumber = (PhoneNumber) object;
         return otherPhoneNumber.number.equals(number);
+    }
+
+    @Override
+    public int hashCode() {
+        return number.hashCode();
     }
 }
