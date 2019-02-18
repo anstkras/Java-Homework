@@ -19,6 +19,7 @@ public class PhoneBook {
     public PhoneBook(MongoClient mongoClient, String name) {
         datastore = morphia.createDatastore(mongoClient, name);
         morphia.mapPackage("ru.hse.anstkras.phonebook.Entities");
+        datastore.ensureIndexes();
     }
 
     public PhoneBook(String name) {
