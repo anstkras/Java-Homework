@@ -14,15 +14,15 @@ import java.util.stream.Collectors;
 public class PhoneBook {
     private final Morphia morphia = new Morphia();
 
-    private Datastore datastore;
+    private final Datastore datastore;
 
-    public PhoneBook(MongoClient mongoClient, String name) {
+    public PhoneBook(@NotNull MongoClient mongoClient, @NotNull String name) {
         datastore = morphia.createDatastore(mongoClient, name);
         morphia.mapPackage("ru.hse.anstkras.phonebook.Entities");
         datastore.ensureIndexes();
     }
 
-    public PhoneBook(String name) {
+    public PhoneBook(@NotNull String name) {
         this(new MongoClient(), name);
     }
 
@@ -49,62 +49,67 @@ public class PhoneBook {
     }
 
     @NotNull
-    public PhoneNumber getOrCreateNumber(@NotNull String phoneNumber) {
-        PhoneNumber number = getPhoneNumber(phoneNumber);
-        if (number == null) {
-            number = new PhoneNumber(phoneNumber);
-            datastore.save(number);
+    public PhoneNumber getOrCreateNumber(@NotNull String stringNumber) {
+        PhoneNumber phoneNumber = getPhoneNumber(stringNumber);
+        if (phoneNumber == null) {
+            phoneNumber = new PhoneNumber(stringNumber);
+            datastore.save(phoneNumber);
         }
-        return number;
+        return phoneNumber;
     }
 
     @Nullable
-    public PhoneNumber getPhoneNumber(@NotNull String phoneNumber) {
-        return datastore.createQuery(PhoneNumber.class).field("number").equal(phoneNumber).get();
+    public PhoneNumber getPhoneNumber(@NotNull String stringNumber) {
+        return datastore.createQuery(PhoneNumber.class).field("number").equal(stringNumber).get();
     }
 
-    public boolean addEntry(@NotNull String name, @NotNull String phoneNumber) {
-        User user = getOrCreateUser(name);
-        PhoneNumber number = getOrCreateNumber(phoneNumber);
-        if (user.getPhoneNumbers().contains(number)) {
+    public boolean addEntry(@NotNull String name, @NotNull String stringNumber) {
+        final User user = getOrCreateUser(name);
+        final PhoneNumber phoneNumber = getOrCreateNumber(stringNumber);
+        return addEntry(user, phoneNumber);
+    }
+
+    private boolean addEntry(@NotNull User user, @NotNull PhoneNumber phoneNumber) {
+        if (user.getPhoneNumbers().contains(phoneNumber)) {
             return false;
         }
-        user.getPhoneNumbers().add(number);
-        number.getUsers().add(user);
+        user.getPhoneNumbers().add(phoneNumber);
+        phoneNumber.getUsers().add(user);
         datastore.save(user);
-        datastore.save(number);
+        datastore.save(phoneNumber);
         return true;
     }
 
     @Nullable
     public List<PhoneNumber> getPhoneNumbersByName(@NotNull String name) {
-        User user = getUser(name);
+        final User user = getUser(name);
         if (user == null) {
             return null;
         }
-
         return user.getPhoneNumbers();
     }
 
     @Nullable
-    public List<User> getNamesByPhoneNumber(@NotNull String number) {
-        PhoneNumber phoneNumber = getPhoneNumber(number);
+    public List<User> getNamesByPhoneNumber(@NotNull String stringNumber) {
+        final PhoneNumber phoneNumber = getPhoneNumber(stringNumber);
         if (phoneNumber == null) {
             return null;
         }
-
         return phoneNumber.getUsers();
     }
 
-    public boolean deleteEntry(@NotNull String name, @NotNull String number) {
-        User user = getUser(name);
-        PhoneNumber phoneNumber = getPhoneNumber(number);
-        if (!checkEntryExists(user, phoneNumber)) {
+    public boolean deleteEntry(@NotNull String name, @NotNull String stringNumber) {
+        final User user = getUser(name);
+        final PhoneNumber phoneNumber = getPhoneNumber(stringNumber);
+        if (user == null || phoneNumber == null) {
             return false;
         }
+        return deleteEntry(user, phoneNumber);
+    }
 
-        if (!phoneNumber.getUsers().contains(user)) {
-            throw new IllegalStateException();
+    private boolean deleteEntry(@NotNull User user, @NotNull PhoneNumber phoneNumber) {
+        if (!checkEntryExists(user, phoneNumber)) {
+            return false;
         }
         user.getPhoneNumbers().remove(phoneNumber);
         datastore.save(user);
@@ -122,49 +127,35 @@ public class PhoneBook {
 
     @NotNull
     public List<Entry> getAllPairs() {
-        List<User> users = datastore.createQuery(User.class).asList();
+        final List<User> users = datastore.createQuery(User.class).asList();
         return users.stream().flatMap(user -> user.getPhoneNumbers().stream().
                 map(number -> new Entry(user, number))).collect(Collectors.toList());
     }
 
-    public boolean changeName(@NotNull String oldName, @NotNull String number, @NotNull String newName) {
+    public boolean changeName(@NotNull String oldName, @NotNull String stringNumber, @NotNull String newName) {
         User oldUser = getUser(oldName);
-        PhoneNumber phoneNumber = getPhoneNumber(number);
-        if (!checkEntryExists(oldUser, phoneNumber)) {
+        PhoneNumber phoneNumber = getPhoneNumber(stringNumber);
+        if (oldUser == null || phoneNumber == null) {
             return false;
         }
-        oldUser.getPhoneNumbers().remove(phoneNumber);
-        datastore.save(oldUser);
-        if (oldUser.getPhoneNumbers().isEmpty()) {
-            datastore.delete(oldUser);
+        if (!deleteEntry(oldUser, phoneNumber)) {
+            return false;
         }
         User newUser = getOrCreateUser(newName);
-        phoneNumber.getUsers().remove(oldUser);
-        phoneNumber.getUsers().add(newUser);
-        datastore.save(phoneNumber);
-        newUser.getPhoneNumbers().add(phoneNumber);
-        datastore.save(newUser);
-        return true;
+        return addEntry(newUser, phoneNumber);
     }
 
     public boolean changeNumber(@NotNull String oldNumber, @NotNull String name, @NotNull String newNumber) {
         PhoneNumber oldPhoneNumber = getPhoneNumber(oldNumber);
         User user = getUser(name);
-        if (!checkEntryExists(user, oldPhoneNumber)) {
+        if (oldPhoneNumber == null || user == null) {
             return false;
         }
-        oldPhoneNumber.getUsers().remove(user);
-        datastore.save(oldPhoneNumber);
-        if (oldPhoneNumber.getUsers().isEmpty()) {
-            datastore.delete(oldPhoneNumber);
+        if (!deleteEntry(user, oldPhoneNumber)) {
+            return false;
         }
         PhoneNumber newPhoneNumber = getOrCreateNumber(newNumber);
-        user.getPhoneNumbers().remove(oldPhoneNumber);
-        user.getPhoneNumbers().add(newPhoneNumber);
-        datastore.save(user);
-        newPhoneNumber.getUsers().add(user);
-        datastore.save(newPhoneNumber);
-        return true;
+        return addEntry(user, newPhoneNumber);
     }
 
     private boolean checkEntryExists(@Nullable User user, @Nullable PhoneNumber phoneNumber) {
@@ -172,27 +163,30 @@ public class PhoneBook {
     }
 
     public static class Entry {
-        private User user;
-        private PhoneNumber phoneNumber;
+        private final User user;
+        private final PhoneNumber phoneNumber;
 
-
-        public Entry(User user, PhoneNumber phoneNumber) {
+        public Entry(@NotNull User user, @NotNull PhoneNumber phoneNumber) {
             this.user = user;
             this.phoneNumber = phoneNumber;
         }
 
+        @NotNull
         public User getUser() {
             return user;
         }
 
+        @NotNull
         public PhoneNumber getPhoneNumber() {
             return phoneNumber;
         }
 
+        @NotNull
         public String getUserName() {
             return user.getName();
         }
 
+        @NotNull
         public String getNumber() {
             return phoneNumber.getNumber();
         }
