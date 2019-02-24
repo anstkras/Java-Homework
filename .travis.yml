@@ -1,8 +1,16 @@
 language: java
 jdk:
-  - openjdk11
+- openjdk11
+services: 
+- mongodb
 os:
 - linux
 env:
 - PROJECT_DIR=1/ru.hse.anstkras
-script: cd $PROJECT_DIR && ./gradlew check
+- PROJECT_DIR=2
+- PROJECT_DIR=3/TreeSet
+- PROJECT_DIR=4/PhoneBook
+script: 
+- if [ -d "$PROJECT_DIR" ]; then
+  cd $PROJECT_DIR && ./gradlew check;
+  fi
