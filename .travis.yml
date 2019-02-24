@@ -6,5 +6,5 @@ services:
 os:
 - linux
 env:
-- PROJECT_DIR=4
+- PROJECT_DIR=4/PhoneBook
 script: cd $PROJECT_DIR && ./gradlew check
