@@ -6,5 +6,11 @@ services:
 os:
 - linux
 env:
+- PROJECT_DIR=1/ru.hse.anstkras
+- PROJECT_DIR=2
+- PROJECT_DIR=3/TreeSet
 - PROJECT_DIR=4/PhoneBook
-script: cd $PROJECT_DIR && ./gradlew check
+script: 
+  if [ -d "$PROJECT_DIR" ]; then
+    cd $PROJECT_DIR && ./gradlew check
+  fi
