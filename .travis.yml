@@ -2,5 +2,5 @@ language: java
 os:
 - linux
 env:
-- PROJECT_DIR=hw4
+- PROJECT_DIR=4
 script: cd $PROJECT_DIR && ./gradlew check
