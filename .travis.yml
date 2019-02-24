@@ -1,0 +1,6 @@
+language: java
+os:
+- linux
+env:
+- PROJECT_DIR=1
+script: cd $PROJECT_DIR && ./gradlew check
