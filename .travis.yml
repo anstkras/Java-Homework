@@ -2,5 +2,5 @@ language: java
 os:
 - linux
 env:
-- PROJECT_DIR=1
+- PROJECT_DIR=1/ru.hse.anstkras
 script: cd $PROJECT_DIR && ./gradlew check
