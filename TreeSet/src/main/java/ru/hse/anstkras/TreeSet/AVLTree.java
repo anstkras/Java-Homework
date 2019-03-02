@@ -54,7 +54,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     @Override
     @NotNull
     public Iterator<E> iterator() {
-        return new AVLIterator<>(firstNode());
+        return new AVLIterator(firstNode());
     }
 
     @Override
@@ -482,10 +482,10 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
-    private class AVLIterator<T> implements Iterator<T> {
-        private TreeNode<T> node;
+    private class AVLIterator implements Iterator<E> {
+        private TreeNode<E> node;
 
-        private AVLIterator(@Nullable TreeNode<T> startNode) {
+        private AVLIterator(@Nullable TreeNode<E> startNode) {
             node = startNode;
         }
 
@@ -496,11 +496,11 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
         @Override
         @NotNull
-        public T next() {
+        public E next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            T valueToReturn = node.value;
+            E valueToReturn = node.value;
             if (node.right != null) {
                 node = node.right;
                 while (node.left != null) {
@@ -517,12 +517,12 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
 
         @NotNull
-        T prev() {
+        E prev() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
 
-            T valueToReturn = node.value;
+            E valueToReturn = node.value;
             if (node.left != null) {
                 node = node.left;
                 while (node.right != null) {
@@ -539,7 +539,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
-    private class DescendingAVLIterator extends AVLIterator<E> {
+    private class DescendingAVLIterator extends AVLIterator {
 
         private DescendingAVLIterator(@Nullable TreeNode<E> startNode) {
             super(startNode);
