@@ -26,9 +26,13 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     /** Removes the value from the tree that is equal to given value.
      * @throws ClassCastException if the value are not comparable with
      * values in the tree
+     * @throws NullPointerException if the value is null
      */
     @Override
-    public boolean remove(@NotNull Object value) {
+    public boolean remove(Object value) {
+        if (value == null) {
+            throw new NullPointerException();
+        }
         TreeNode<E> node = getByValue(value);
         if (node == null) {
             return false;
