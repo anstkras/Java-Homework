@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -227,7 +228,7 @@ class AVLTreeTest {
 
     @Test
     void testRemoveToDescendingSetChangeSet() {
-        AVLTree<Integer> tree = getIntegerFilledTree();
+        MyTreeSet<Integer> tree = getIntegerFilledTree();
         MyTreeSet<Integer> descendingTree = tree.descendingSet();
         assertTrue(descendingTree.remove(100));
         assertFalse(descendingTree.contains(100));
@@ -287,6 +288,16 @@ class AVLTreeTest {
         }
         var tree = new AVLTree<NonComparable>();
         assertThrows(ClassCastException.class, () -> tree.add(new NonComparable()));
+    }
+
+    @Test
+    void testIteratorNoSuchElementException() {
+        MyTreeSet<Integer> tree = getIntegerFilledTree();
+        Iterator<Integer> iterator = tree.iterator();
+        while (iterator.hasNext()) {
+            iterator.next();
+        }
+        assertThrows(NoSuchElementException.class, iterator::next);
     }
 
     private AVLTree<Integer> getIntegerFilledTree() {
