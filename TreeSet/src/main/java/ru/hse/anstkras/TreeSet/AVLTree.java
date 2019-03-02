@@ -488,7 +488,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     private class AVLIterator implements Iterator<E> {
-        private TreeNode<E> node;
+        TreeNode<E> node;
 
         private AVLIterator(@Nullable TreeNode<E> startNode) {
             node = startNode;
@@ -520,9 +520,16 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
             node = node.parent;
             return valueToReturn;
         }
+    }
 
+    private class DescendingAVLIterator extends AVLIterator {
+        private DescendingAVLIterator(@Nullable TreeNode<E> startNode) {
+            super(startNode);
+        }
+
+        @Override
         @NotNull
-        E prev() {
+        public E next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -541,19 +548,6 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
             }
             node = node.parent;
             return valueToReturn;
-        }
-    }
-
-    private class DescendingAVLIterator extends AVLIterator {
-
-        private DescendingAVLIterator(@Nullable TreeNode<E> startNode) {
-            super(startNode);
-        }
-
-        @Override
-        @NotNull
-        public E next() {
-            return prev();
         }
     }
 }
