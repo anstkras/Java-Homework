@@ -234,6 +234,34 @@ class AVLTreeTest {
         assertEquals("eQD", tree.lower("EQb"));
     }
 
+    @Test
+    void addNullToEmptyTreeWithNaturalOrdering() {
+        var tree = new AVLTree<String>();
+        assertThrows(NullPointerException.class, () -> tree.add(null));
+    }
+
+    @Test
+    void addNullToFilledTreeWithNaturalOrdering() {
+        AVLTree<Integer> tree = getIntegerFilledTree();
+        assertThrows(NullPointerException.class, () -> tree.add(null));
+    }
+
+    @Test
+    void addNullToFilledTreeWithComparator() {
+        var tree = new AVLTree<String>((o1, o2) -> {
+            if (o1 == null && o2 == null) {
+                return 0;
+            }
+            if (o1 == null) {
+                return -1;
+            }
+            if (o2 == null) {
+                return 1;
+            }
+            return o1.compareTo(o2);
+        });
+        assertDoesNotThrow(() -> tree.add(null));
+    }
 
     private AVLTree<Integer> getIntegerFilledTree() {
         var tree = new AVLTree<Integer>();

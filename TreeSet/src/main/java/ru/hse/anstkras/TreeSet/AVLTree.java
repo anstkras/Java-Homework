@@ -19,7 +19,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         this(null);
     }
 
-    public AVLTree(Comparator<? super E> comparator) {
+    public AVLTree(@Nullable Comparator<? super E> comparator) {
         this.comparator = comparator;
     }
 
@@ -29,12 +29,11 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
      * @throws ClassCastException   if the value are not comparable with
      *                              values in the tree
      * @throws NullPointerException if the value is null
+     *                              and the tree uses natural ordering, or the comparator
+     *                              does not permit null values
      */
     @Override
-    public boolean remove(Object value) {
-        if (value == null) {
-            throw new NullPointerException();
-        }
+    public boolean remove(@Nullable Object value) {
         TreeNode<E> node = getByValue(value);
         if (node == null) {
             return false;
@@ -47,11 +46,14 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     /**
      * Checks if the tree contains the given value
      *
-     * @throws ClassCastException if the value are not comparable with
-     *                            values in the tree
+     * @throws ClassCastException   if the value are not comparable with
+     *                              values in the tree
+     * @throws NullPointerException if the value is null
+     *                              and the tree uses natural ordering, or the comparator
+     *                              does not permit null values
      */
     @Override
-    public boolean contains(@NotNull Object value) {
+    public boolean contains(@Nullable Object value) {
         return getByValue(value) != null;
     }
 
@@ -69,11 +71,15 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     /**
      * Adds the given element to the tree.
      *
-     * @return {@true} in case of the element was not presented in the tree
+     * @return {@code true} in case of the element was not presented in the tree
+     * @throws NullPointerException if the value is null
+     *                              and the tree uses natural ordering, or the comparator
+     *                              does not permit null values
      */
     @Override
-    public boolean add(@NotNull E e) {
+    public boolean add(@Nullable E e) {
         if (root == null) {
+            compare(e, e);
             root = new TreeNode<>(e);
             size++;
             return true;
@@ -139,10 +145,16 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return result == null ? null : result.value;
     }
 
-    /** Returns the greatest element than is smaller than the given element */
+    /**
+     * Returns the greatest element than is smaller than the given element
+     *
+     * @throws NullPointerException if the value is null
+     *                              and the tree uses natural ordering, or the comparator
+     *                              does not permit null values
+     */
     @Override
     @Nullable
-    public E lower(@NotNull E e) {
+    public E lower(@Nullable E e) {
         TreeNode<E> node = root;
         while (node != null) {
             if (compare(node.value, e) < 0) {
@@ -165,10 +177,16 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return null;
     }
 
-    /** Returns the greatest element than is smaller or equal to the given element */
+    /**
+     * Returns the greatest element than is smaller or equal to the given element
+     *
+     * @throws NullPointerException if the value is null
+     *                              and the tree uses natural ordering, or the comparator
+     *                              does not permit null values
+     */
     @Override
     @Nullable
-    public E floor(@NotNull E e) {
+    public E floor(@Nullable E e) {
         TreeNode<E> node = getByValue(e);
         if (node != null) {
             return node.value;
@@ -176,10 +194,16 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return lower(e);
     }
 
-    /** Returns the least element than is greater or equal to the given element */
+    /**
+     * Returns the least element than is greater or equal to the given element
+     *
+     * @throws NullPointerException if the value is null
+     *                              and the tree uses natural ordering, or the comparator
+     *                              does not permit null values
+     */
     @Override
     @Nullable
-    public E ceiling(@NotNull E e) {
+    public E ceiling(@Nullable E e) {
         TreeNode<E> node = getByValue(e);
         if (node != null) {
             return node.value;
@@ -187,10 +211,16 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return higher(e);
     }
 
-    /** Returns the least element than is greater than the given element */
+    /**
+     * Returns the least element than is greater than the given element
+     *
+     * @throws NullPointerException if the value is null
+     *                              and the tree uses natural ordering, or the comparator
+     *                              does not permit null values
+     */
     @Override
     @Nullable
-    public E higher(@NotNull E e) {
+    public E higher(@Nullable E e) {
         TreeNode<E> node = root;
         while (node != null) {
             if (compare(node.value, e) > 0) {
@@ -238,7 +268,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     @Nullable
-    private TreeNode<E> getByValue(@NotNull Object value) {
+    private TreeNode<E> getByValue(@Nullable Object value) {
         if (root == null) {
             return null;
         }
@@ -320,18 +350,21 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
-    private int compare(@NotNull E value1, @NotNull E value2) {
-        if (comparator == null) {
-            @SuppressWarnings("unchecked")
-            var comparableValue1 = (Comparable<? super E>) value1;
-            return (comparableValue1.compareTo(value2));
-        } else {
-            return comparator.compare(value1, value2);
-        }
+    // Throws NullPointerException if the value is null
+    // and the tree uses natural ordering, or the comparator
+    // does not permit null values
+    private int compare(@Nullable E value1, @Nullable E value2) {
+        return compareObjectToE(value1, value2);
     }
 
-    private int compareObjectToE(@NotNull Object value1, @NotNull E value2) {
+    // Throws NullPointerException if the value is null
+    // and the tree uses natural ordering, or the comparator
+    // does not permit null values
+    private int compareObjectToE(@Nullable Object value1, @Nullable E value2) {
         if (comparator == null) {
+            if (value1 == null || value2 == null) {
+                throw new NullPointerException();
+            }
             @SuppressWarnings("unchecked")
             var comparableValue1 = (Comparable<? super E>) value1;
             return (comparableValue1.compareTo(value2));
@@ -400,12 +433,12 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         private TreeNode<E> right;
         private TreeNode<E> parent;
 
-        private TreeNode(@NotNull E value, @Nullable TreeNode<E> parent) {
+        private TreeNode(@Nullable E value, @Nullable TreeNode<E> parent) {
             this.value = value;
             this.parent = parent;
         }
 
-        private TreeNode(E value) {
+        private TreeNode(@Nullable E value) {
             this.value = value;
         }
 
