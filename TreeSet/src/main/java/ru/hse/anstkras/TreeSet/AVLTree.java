@@ -23,9 +23,11 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         this.comparator = comparator;
     }
 
-    /** Removes the value from the tree that is equal to given value.
-     * @throws ClassCastException if the value are not comparable with
-     * values in the tree
+    /**
+     * Removes the value from the tree that is equal to given value.
+     *
+     * @throws ClassCastException   if the value are not comparable with
+     *                              values in the tree
      * @throws NullPointerException if the value is null
      */
     @Override
@@ -42,9 +44,11 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
-    /** Checks if the tree contains the given value
+    /**
+     * Checks if the tree contains the given value
+     *
      * @throws ClassCastException if the value are not comparable with
-     * values in the tree
+     *                            values in the tree
      */
     @Override
     public boolean contains(@NotNull Object value) {
@@ -64,6 +68,7 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     /**
      * Adds the given element to the tree.
+     *
      * @return {@true} in case of the element was not presented in the tree
      */
     @Override
