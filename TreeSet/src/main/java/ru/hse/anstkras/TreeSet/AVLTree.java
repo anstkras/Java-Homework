@@ -160,58 +160,22 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
     @Override
     @Nullable
     public E floor(@NotNull E e) {
-        TreeNode<E> node = root;
-        while (node != null) {
-            if (compare(node.value, e) == 0) {
-                return node.value;
-            }
-            if (compare(node.value, e) < 0) {
-                if (node.right == null) {
-                    return node.value;
-                } else {
-                    node = node.right;
-                }
-            } else {
-                if (node.left != null) {
-                    node = node.left;
-                } else {
-                    while (node.parent != null && node.parent.left == node) {
-                        node = node.parent;
-                    }
-                    return node.parent == null ? null : node.parent.value;
-                }
-            }
+        TreeNode<E> node = getByValue(e);
+        if (node != null) {
+            return node.value;
         }
-        return null;
+        return lower(e);
     }
 
     /** Returns the least element than is greater or equal to the given element */
     @Override
     @Nullable
     public E ceiling(@NotNull E e) {
-        TreeNode<E> node = root;
-        while (node != null) {
-            if (compare(node.value, e) == 0) {
-                return node.value;
-            }
-            if (compare(node.value, e) > 0) {
-                if (node.left == null) {
-                    return node.value;
-                } else {
-                    node = node.left;
-                }
-            } else {
-                if (node.right != null) {
-                    node = node.right;
-                } else {
-                    while (node.parent != null && node.parent.right == node) {
-                        node = node.parent;
-                    }
-                    return node.parent == null ? null : node.parent.value;
-                }
-            }
+        TreeNode<E> node = getByValue(e);
+        if (node != null) {
+            return node.value;
         }
-        return null;
+        return higher(e);
     }
 
     /** Returns the least element than is greater than the given element */
