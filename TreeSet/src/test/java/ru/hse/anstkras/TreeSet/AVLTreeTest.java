@@ -217,20 +217,38 @@ class AVLTreeTest {
     }
 
     @Test
+    void testAddToDescendingSetChangeSet() {
+        AVLTree<Integer> tree = getIntegerFilledTree();
+        MyTreeSet<Integer> descendingTree = tree.descendingSet();
+        assertTrue(descendingTree.add(8));
+        assertTrue(descendingTree.contains(8));
+        assertTrue(tree.contains(8));
+    }
+
+    @Test
+    void testRemoveToDescendingSetChangeSet() {
+        AVLTree<Integer> tree = getIntegerFilledTree();
+        MyTreeSet<Integer> descendingTree = tree.descendingSet();
+        assertTrue(descendingTree.remove(100));
+        assertFalse(descendingTree.contains(100));
+        assertFalse(tree.contains(100));
+    }
+
+    @Test
     void firstWithComparator() {
-        AVLTree<String> tree = getStringFilledTreeWithComparator();
+        MyTreeSet<String> tree = getStringFilledTreeWithComparator();
         assertEquals("Fsd", tree.first());
     }
 
     @Test
     void removeWithComparator() {
-        AVLTree<String> tree = getStringFilledTreeWithComparator();
+        MyTreeSet<String> tree = getStringFilledTreeWithComparator();
         assertTrue(tree.remove("E"));
     }
 
     @Test
     void lowerWithComparator() {
-        AVLTree<String> tree = getStringFilledTreeWithComparator();
+        MyTreeSet<String> tree = getStringFilledTreeWithComparator();
         assertEquals("eQD", tree.lower("EQb"));
     }
 
@@ -242,7 +260,7 @@ class AVLTreeTest {
 
     @Test
     void addNullToFilledTreeWithNaturalOrdering() {
-        AVLTree<Integer> tree = getIntegerFilledTree();
+        MyTreeSet<Integer> tree = getIntegerFilledTree();
         assertThrows(NullPointerException.class, () -> tree.add(null));
     }
 
@@ -261,6 +279,14 @@ class AVLTreeTest {
             return o1.compareTo(o2);
         });
         assertDoesNotThrow(() -> tree.add(null));
+    }
+
+    @Test
+    void testTreeSetOfNonComparableElements() {
+        class NonComparable {
+        }
+        var tree = new AVLTree<NonComparable>();
+        assertThrows(ClassCastException.class, () -> tree.add(new NonComparable()));
     }
 
     private AVLTree<Integer> getIntegerFilledTree() {
