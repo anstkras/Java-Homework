@@ -1,11 +1,9 @@
 package ru.hse.anstkras.TreeSet;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -291,6 +289,21 @@ class AVLTreeTest {
     }
 
     @Test
+    void testContainsForOtherType() {
+        MyTreeSet<Integer> tree = getIntegerFilledTree();
+        var comparableWithInteger = new ComparableWithInteger(100);
+        assertTrue(tree.contains(comparableWithInteger));
+    }
+
+    @Test
+    void removeForOtherType() {
+        MyTreeSet<Integer> tree = getIntegerFilledTree();
+        var comparableWithInteger = new ComparableWithInteger(100);
+        assertTrue(tree.remove(comparableWithInteger));
+        assertFalse(tree.contains(100));
+    }
+
+    @Test
     void testIteratorNoSuchElementException() {
         MyTreeSet<Integer> tree = getIntegerFilledTree();
         Iterator<Integer> iterator = tree.iterator();
@@ -310,6 +323,19 @@ class AVLTreeTest {
     void testLastEmptyTreeSet() {
         MyTreeSet<Integer> tree = new AVLTree<>();
         assertThrows(NoSuchElementException.class, tree::last);
+    }
+
+    private class ComparableWithInteger implements Comparable<Integer> {
+        private final Integer value;
+
+        private ComparableWithInteger(int value) {
+            this.value = value;
+        }
+
+        @Override
+        public int compareTo(@NotNull Integer valueToCompare) {
+            return value.compareTo(valueToCompare);
+        }
     }
 
     private AVLTree<Integer> getIntegerFilledTree() {
