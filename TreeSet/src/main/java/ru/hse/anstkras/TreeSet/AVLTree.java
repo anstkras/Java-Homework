@@ -129,20 +129,34 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return cashedDescendingTree;
     }
 
-    /** Returns the first element in given order */
+    /**
+     * Returns the first element in given order
+     *
+     * @throws NoSuchElementException if the method is called on the empty set
+     */
     @Override
     @Nullable
     public E first() {
         TreeNode result = firstNode();
-        return result == null ? null : result.value;
+        if (result == null) {
+            throw new NoSuchElementException();
+        }
+        return result.value;
     }
 
-    /** Returns the last element in given order */
+    /**
+     * Returns the last element in given order
+     *
+     * @throws NoSuchElementException if the method is called on the empty set
+     */
     @Override
     @Nullable
     public E last() {
         TreeNode result = lastNode();
-        return result == null ? null : result.value;
+        if (result == null) {
+            throw new NoSuchElementException();
+        }
+        return result.value;
     }
 
     /**
@@ -426,33 +440,6 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
-    private class TreeNode {
-        private E value;
-        private int height;
-        private TreeNode left;
-        private TreeNode right;
-        private TreeNode parent;
-
-        private TreeNode(@Nullable E value, @Nullable TreeNode parent) {
-            this.value = value;
-            this.parent = parent;
-        }
-
-        private TreeNode(@Nullable E value) {
-            this.value = value;
-        }
-
-        private void replaceParent(@Nullable TreeNode oldNode) {
-            if (parent != null) {
-                if (parent.right == oldNode) {
-                    parent.right = this;
-                } else {
-                    parent.left = this;
-                }
-            }
-        }
-    }
-
     private static class DescendingAVLTree<E> extends AVLTree<E> implements MyTreeSet<E> {
         private final AVLTree<E> tree;
 
@@ -532,6 +519,33 @@ public class AVLTree<E> extends AbstractSet<E> implements MyTreeSet<E> {
         @Nullable
         public E higher(@Nullable E e) {
             return tree.lower(e);
+        }
+    }
+
+    private class TreeNode {
+        private E value;
+        private int height;
+        private TreeNode left;
+        private TreeNode right;
+        private TreeNode parent;
+
+        private TreeNode(@Nullable E value, @Nullable TreeNode parent) {
+            this.value = value;
+            this.parent = parent;
+        }
+
+        private TreeNode(@Nullable E value) {
+            this.value = value;
+        }
+
+        private void replaceParent(@Nullable TreeNode oldNode) {
+            if (parent != null) {
+                if (parent.right == oldNode) {
+                    parent.right = this;
+                } else {
+                    parent.left = this;
+                }
+            }
         }
     }
 

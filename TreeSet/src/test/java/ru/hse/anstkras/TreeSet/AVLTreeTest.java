@@ -300,6 +300,18 @@ class AVLTreeTest {
         assertThrows(NoSuchElementException.class, iterator::next);
     }
 
+    @Test
+    void testFirstEmptyTreeSet() {
+        MyTreeSet<Integer> tree = new AVLTree<>();
+        assertThrows(NoSuchElementException.class, tree::first);
+    }
+
+    @Test
+    void testLastEmptyTreeSet() {
+        MyTreeSet<Integer> tree = new AVLTree<>();
+        assertThrows(NoSuchElementException.class, tree::last);
+    }
+
     private AVLTree<Integer> getIntegerFilledTree() {
         var tree = new AVLTree<Integer>();
         tree.addAll(Arrays.asList(integerArray));
