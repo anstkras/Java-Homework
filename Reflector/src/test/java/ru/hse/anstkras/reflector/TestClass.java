@@ -13,18 +13,19 @@ public class TestClass<E extends List<Set<E>> & Comparable<List<? super E>>, T> 
     public List<E> liste;
     static final List<? super Collection<? extends List<? super String>>>[] arr = null;
 
-    @Override
-    public int compareTo(@NotNull T o) {
+    public int compareTo(T o) {
         return 0;
     }
 
-    @Override
     public Iterator<E> iterator() {
         return null;
     }
 
-    @Override
     public int size() {
         return 0;
+    }
+
+    public static final <T, E> int psf(int i, T ttt) {
+        throw new UnsupportedOperationException();
     }
 }

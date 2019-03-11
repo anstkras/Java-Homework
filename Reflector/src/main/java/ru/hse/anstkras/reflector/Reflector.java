@@ -39,7 +39,46 @@ public class Reflector {
         }
         fileWriter.write(" {\n");
         printFields(clazz, indent, fileWriter);
+        printMethods(clazz, indent + TAB_SIZE, fileWriter);
         fileWriter.write(" ".repeat(indent) + "}");
+    }
+
+    private static void printMethods(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
+        Method[] methods = clazz.getDeclaredMethods();
+        if (methods.length != 0) {
+            fileWriter.write("\n");
+        }
+        for (Method method : methods) {
+            printMethod(method, indent, fileWriter);
+            fileWriter.write("\n");
+        }
+    }
+
+    private static void printMethod(Method method, int indent, FileWriter fileWriter) throws IOException {
+        fileWriter.write(" ".repeat(indent));
+        String modifiers = Modifier.toString(method.getModifiers());
+        if (modifiers.length() > 0) {
+            fileWriter.write(modifiers + " ");
+        }
+
+        TypeVariable<?>[] typeParameters = method.getTypeParameters();
+        StringJoiner stringJoiner = new StringJoiner(", ", "<", ">");
+        stringJoiner.setEmptyValue("");
+        for (Type type : typeParameters) {
+            stringJoiner.add(typeToString(type));
+        }
+        fileWriter.write(stringJoiner + " " + typeToString(method.getReturnType()) + " " + method.getName() + "(");
+        Class<?>[] paramTypes = method.getParameterTypes();
+        for (int i = 0; i < paramTypes.length; i++) {
+            fileWriter.write(typeToString(paramTypes[i]) + " " + "name" + i);
+            if (i != paramTypes.length - 1) {
+                fileWriter.write(", ");
+            }
+        }
+        fileWriter.write(") {\n");
+        fileWriter.write(" ".repeat(indent + TAB_SIZE));
+        fileWriter.write("throw new UnsupportedOperationException();\n");
+        fileWriter.write(" ".repeat(indent) + "}\n");
     }
 
     private static void printFields(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
