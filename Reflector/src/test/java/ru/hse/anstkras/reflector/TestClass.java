@@ -32,4 +32,32 @@ public class TestClass<E extends List<Set<E>> & Comparable<List<? super E>>, T> 
     public static final <T, E> int psf(int i, T ttt) {
         throw new UnsupportedOperationException();
     }
+
+    private static class A {
+        int a;
+        public A(int aaa) {
+
+        }
+        public static class B {
+            static List<? super Collection<? extends List<? super String>>>[] arr = null;
+
+        }
+    }
+
+    private class B {
+        String b;
+        private B(int a) {
+
+        }
+        private class C {
+
+        }
+    }
+
+    private abstract static interface inter {
+        public abstract void q();
+        default int v() {
+            return 1;
+        }
+    }
 }

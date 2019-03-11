@@ -18,8 +18,12 @@ public class Reflector {
 
     private static void printClass(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
         fileWriter.write(" ".repeat(indent));
-        fileWriter.write("public class ");
-
+        String modifiers = Modifier.toString(clazz.getModifiers());
+        if (clazz.isInterface()) {
+            fileWriter.write(modifiers + " ");
+        } else {
+            fileWriter.write(modifiers + " class ");
+        }
         fileWriter.write(typeToString(clazz, true));
 
         Class<?> superClass = clazz.getSuperclass();
@@ -41,6 +45,7 @@ public class Reflector {
         printFields(clazz, indent, fileWriter);
         printConstructors(clazz, indent + TAB_SIZE, fileWriter);
         printMethods(clazz, indent + TAB_SIZE, fileWriter);
+        printClasses(clazz, indent, fileWriter);
         fileWriter.write(" ".repeat(indent) + "}");
     }
 
@@ -50,8 +55,10 @@ public class Reflector {
             fileWriter.write("\n");
         }
         for (Constructor constructor : constructors) {
-            printConstructor(constructor, indent, fileWriter);
-            fileWriter.write("\n");
+            if (!constructor.isSynthetic()) {
+                printConstructor(constructor, indent, fileWriter);
+                fileWriter.write("\n");
+            }
         }
     }
 
@@ -70,7 +77,11 @@ public class Reflector {
         }
         fileWriter.write(stringJoiner + " " + constructor.getDeclaringClass().getSimpleName() + "(");
         Class<?>[] paramTypes = constructor.getParameterTypes();
-        for (int i = 0; i < paramTypes.length; i++) {
+        int start = 0;
+        if (isNested(constructor.getDeclaringClass())) {
+            start = 1;
+        }
+        for (int i = start; i < paramTypes.length; i++) {
             fileWriter.write(typeToString(paramTypes[i], false) + " " + "name" + i);
             if (i != paramTypes.length - 1) {
                 fileWriter.write(", ");
@@ -85,13 +96,26 @@ public class Reflector {
             fileWriter.write("\n");
         }
         for (Method method : methods) {
-            printMethod(method, indent, fileWriter);
+            if (!method.isSynthetic()) {
+                printMethod(method, indent, fileWriter);
+                fileWriter.write("\n");
+            }
+        }
+    }
+
+    private static void printClasses(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
+        Class<?>[] classes = clazz.getDeclaredClasses();
+        for (Class<?> insideClass : classes) {
+            printClass(insideClass, indent + TAB_SIZE, fileWriter);
             fileWriter.write("\n");
         }
     }
 
     private static void printMethod(Method method, int indent, FileWriter fileWriter) throws IOException {
         fileWriter.write(" ".repeat(indent));
+        if (method.isDefault()) {
+            fileWriter.write("default ");
+        }
         String modifiers = Modifier.toString(method.getModifiers());
         if (modifiers.length() > 0) {
             fileWriter.write(modifiers + " ");
@@ -111,16 +135,22 @@ public class Reflector {
                 fileWriter.write(", ");
             }
         }
-        fileWriter.write(") {\n");
-        fileWriter.write(" ".repeat(indent + TAB_SIZE));
-        fileWriter.write("throw new UnsupportedOperationException();\n");
-        fileWriter.write(" ".repeat(indent) + "}\n");
+        if (Modifier.isAbstract(method.getModifiers())) {
+            fileWriter.write(");\n");
+        } else {
+            fileWriter.write(") {\n");
+            fileWriter.write(" ".repeat(indent + TAB_SIZE));
+            fileWriter.write("throw new UnsupportedOperationException();\n");
+            fileWriter.write(" ".repeat(indent) + "}\n");
+        }
     }
 
     private static void printFields(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
-            printField(field, indent + TAB_SIZE, fileWriter);
+            if (!field.isSynthetic()) {
+                printField(field, indent + TAB_SIZE, fileWriter);
+            }
         }
     }
 
@@ -173,13 +203,18 @@ public class Reflector {
                 var stringJoiner = new StringJoiner(" & ");
                 stringJoiner.setEmptyValue("");
                 for (Type boundType : bounds) {
-                    if (!type.equals(Object.class))
-                    stringJoiner.add(boundType.getTypeName());
+                    if (!type.equals(Object.class)) {
+                        stringJoiner.add(boundType.getTypeName());
+                    }
                 }
                 stringBuilder.append(stringJoiner);
             }
         } else {
             throw new IllegalArgumentException();
         }
+    }
+
+    private static boolean isNested(Class<?> clazz) {
+        return clazz.isMemberClass() && !Modifier.isStatic(clazz.getModifiers());
     }
 }
