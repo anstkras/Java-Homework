@@ -17,6 +17,10 @@ public class TestClass<E extends List<Set<E>> & Comparable<List<? super E>>, T> 
         return 0;
     }
 
+    public <T> TestClass() {
+        T t;
+    }
+
     public Iterator<E> iterator() {
         return null;
     }

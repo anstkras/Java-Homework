@@ -39,8 +39,44 @@ public class Reflector {
         }
         fileWriter.write(" {\n");
         printFields(clazz, indent, fileWriter);
+        printConstructors(clazz, indent + TAB_SIZE, fileWriter);
         printMethods(clazz, indent + TAB_SIZE, fileWriter);
         fileWriter.write(" ".repeat(indent) + "}");
+    }
+
+    private static void printConstructors(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
+        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+        if (constructors.length != 0) {
+            fileWriter.write("\n");
+        }
+        for (Constructor constructor : constructors) {
+            printConstructor(constructor, indent, fileWriter);
+            fileWriter.write("\n");
+        }
+    }
+
+    private static void printConstructor(Constructor<?> constructor, int indent, FileWriter fileWriter) throws IOException {
+        fileWriter.write(" ".repeat(indent));
+        String modifiers = Modifier.toString(constructor.getModifiers());
+        if (modifiers.length() > 0) {
+            fileWriter.write(modifiers + " ");
+        }
+
+        TypeVariable<?>[] typeParameters = constructor.getTypeParameters();
+        StringJoiner stringJoiner = new StringJoiner(", ", "<", ">");
+        stringJoiner.setEmptyValue("");
+        for (Type type : typeParameters) {
+            stringJoiner.add(typeToString(type, false));
+        }
+        fileWriter.write(stringJoiner + " " + constructor.getDeclaringClass().getSimpleName() + "(");
+        Class<?>[] paramTypes = constructor.getParameterTypes();
+        for (int i = 0; i < paramTypes.length; i++) {
+            fileWriter.write(typeToString(paramTypes[i], false) + " " + "name" + i);
+            if (i != paramTypes.length - 1) {
+                fileWriter.write(", ");
+            }
+        }
+        fileWriter.write(") {}\n");
     }
 
     private static void printMethods(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
