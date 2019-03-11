@@ -20,12 +20,12 @@ public class Reflector {
         fileWriter.write(" ".repeat(indent));
         fileWriter.write("public class ");
 
-        fileWriter.write(typeToString(clazz));
+        fileWriter.write(typeToString(clazz, true));
 
         Class<?> superClass = clazz.getSuperclass();
-        if (superClass != null) {
+        if (superClass != null && superClass != Object.class) {
             fileWriter.write(" extends ");
-            fileWriter.write(typeToString(superClass));
+            fileWriter.write(typeToString(superClass, false));
         }
         Class<?>[] interfaces = clazz.getInterfaces();
         if (interfaces.length != 0) {
@@ -33,7 +33,7 @@ public class Reflector {
             var stringJoiner = new StringJoiner(", ");
             stringJoiner.setEmptyValue("");
             for (Class<?> classInterface : interfaces) {
-                stringJoiner.add(typeToString(classInterface));
+                stringJoiner.add(typeToString(classInterface, false));
             }
             fileWriter.write(stringJoiner.toString());
         }
@@ -65,12 +65,12 @@ public class Reflector {
         StringJoiner stringJoiner = new StringJoiner(", ", "<", ">");
         stringJoiner.setEmptyValue("");
         for (Type type : typeParameters) {
-            stringJoiner.add(typeToString(type));
+            stringJoiner.add(typeToString(type, false));
         }
-        fileWriter.write(stringJoiner + " " + typeToString(method.getReturnType()) + " " + method.getName() + "(");
+        fileWriter.write(stringJoiner + " " + typeToString(method.getReturnType(), false) + " " + method.getName() + "(");
         Class<?>[] paramTypes = method.getParameterTypes();
         for (int i = 0; i < paramTypes.length; i++) {
-            fileWriter.write(typeToString(paramTypes[i]) + " " + "name" + i);
+            fileWriter.write(typeToString(paramTypes[i], false) + " " + "name" + i);
             if (i != paramTypes.length - 1) {
                 fileWriter.write(", ");
             }
@@ -99,13 +99,13 @@ public class Reflector {
         fileWriter.write(type + " " + field.getName() + ";\n");
     }
 
-    private static String typeToString(Type type) {
+    private static String typeToString(Type type, boolean simple) {
         var stringBuilder = new StringBuilder();
-        typeToString(stringBuilder, type);
+        typeToString(stringBuilder, type, simple);
         return stringBuilder.toString();
     }
 
-    private static void typeToString(StringBuilder stringBuilder, Type type) {
+    private static void typeToString(StringBuilder stringBuilder, Type type, boolean simple) {
         if (type instanceof ParameterizedType) {
             stringBuilder.append(type.getTypeName());
         } else if (type instanceof WildcardType) { // does it work?
@@ -116,9 +116,13 @@ public class Reflector {
             StringJoiner params = new StringJoiner(" ,", "<", ">");
             params.setEmptyValue("");
             for (Type typeParameter : typeParameters) {
-                params.add(typeToString(typeParameter));
+                params.add(typeToString(typeParameter, false));
             }
-            stringBuilder.append(classType.getName());
+            if (!simple) {
+                stringBuilder.append(classType.getName());
+            } else {
+                stringBuilder.append(classType.getSimpleName());
+            }
             stringBuilder.append(params.toString());
         } else if (type instanceof GenericArrayType) {
             var genericArrayType = (GenericArrayType) type;
@@ -127,13 +131,17 @@ public class Reflector {
         } else if (type instanceof TypeVariable<?>) {
             var typeVariable = (TypeVariable<?>) type;
             stringBuilder.append(typeVariable.getName());
-            stringBuilder.append(" extends ");
-            var stringJoiner = new StringJoiner(" & ");
-            stringJoiner.setEmptyValue("");
-            for (Type boundType : typeVariable.getBounds()) {
-                stringJoiner.add(boundType.getTypeName());
+            Type[] bounds = typeVariable.getBounds();
+            if (bounds.length != 1 || !bounds[0].equals(Object.class)) {
+                stringBuilder.append(" extends ");
+                var stringJoiner = new StringJoiner(" & ");
+                stringJoiner.setEmptyValue("");
+                for (Type boundType : bounds) {
+                    if (!type.equals(Object.class))
+                    stringJoiner.add(boundType.getTypeName());
+                }
+                stringBuilder.append(stringJoiner);
             }
-            stringBuilder.append(stringJoiner);
         } else {
             throw new IllegalArgumentException();
         }

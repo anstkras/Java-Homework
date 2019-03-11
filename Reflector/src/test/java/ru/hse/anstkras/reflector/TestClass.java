@@ -11,7 +11,7 @@ public class TestClass<E extends List<Set<E>> & Comparable<List<? super E>>, T> 
     public List<? super Collection<? extends List<? super E>>> list;
     public int[] array;
     public List<E> liste;
-    static final List<? super Collection<? extends List<? super String>>>[] arr = null;
+    static List<? super Collection<? extends List<? super String>>>[] arr = null;
 
     public int compareTo(T o) {
         return 0;
