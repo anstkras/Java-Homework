@@ -11,4 +11,9 @@ class ReflectorTest {
     void test() throws IOException {
         Reflector.printStructure(TestClass.class);
     }
+
+    @Test
+    void testDiffClasses() {
+        Reflector.diffClasses(A.class, B.class);
+    }
 }

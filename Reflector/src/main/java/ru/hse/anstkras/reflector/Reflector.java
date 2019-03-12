@@ -4,7 +4,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 public class Reflector {
     private static final int TAB_SIZE = 4;
@@ -15,6 +19,54 @@ public class Reflector {
         printClass(someClass, 0, fileWriter);
         fileWriter.close();
     }
+
+    public static void diffClasses(Class<?> firstClass, Class<?> secondClass) {
+        Set<String> firstFields = Arrays.stream(firstClass.getDeclaredFields()).
+                map(field -> fieldToString(field, 0)).collect(Collectors.toSet());
+        Set<String> secondFields = Arrays.stream(secondClass.getDeclaredFields()).
+                map(field -> fieldToString(field, 0)).collect(Collectors.toSet());
+
+        var firstFieldsCopy = new HashSet<>(firstFields);
+        firstFields.removeAll(secondFields);
+        secondFields.removeAll(firstFieldsCopy);
+        String firstName = firstClass.getSimpleName();
+        String secondName = secondClass.getSimpleName();
+        if (!firstFields.isEmpty()) {
+            System.out.println(firstName + " contains fields that " + secondName + " does not contain:");
+            for (String field : firstFields) {
+                System.out.println(field);
+            }
+        }
+
+        if (!secondFields.isEmpty()) {
+            System.out.println(secondName + " contains fields that " + firstName + " does not contain:");
+            for (String field : secondFields) {
+                System.out.println(field);
+            }
+        }
+
+        Set<String> firstMethods = Arrays.stream(firstClass.getDeclaredMethods()).
+                map(method -> methodToString(method, 0)).collect(Collectors.toSet());
+        Set<String> secondMethods = Arrays.stream(secondClass.getDeclaredMethods()).
+                map(method -> methodToString(method, 0)).collect(Collectors.toSet());
+
+        var firstMethodsCopy = new HashSet<>(firstMethods);
+        firstMethods.removeAll(secondMethods);
+        secondMethods.removeAll(firstMethodsCopy);
+        if (!firstMethods.isEmpty()) {
+            System.out.println(firstName + " contains methods that " + secondName + " does not contain:");
+            for (String method : firstMethods) {
+                System.out.println(method);
+            }
+        }
+
+        if (!secondMethods.isEmpty()) {
+            System.out.println(secondName + " contains methods that " + firstName + " does not contain:");
+            for (String method : secondMethods) {
+                System.out.println(method);
+            }
+        }
+     }
 
     private static void printClass(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
         fileWriter.write(" ".repeat(indent));
@@ -97,7 +149,7 @@ public class Reflector {
         }
         for (Method method : methods) {
             if (!method.isSynthetic()) {
-                printMethod(method, indent, fileWriter);
+                fileWriter.write(methodToString(method, indent));
                 fileWriter.write("\n");
             }
         }
@@ -111,14 +163,16 @@ public class Reflector {
         }
     }
 
-    private static void printMethod(Method method, int indent, FileWriter fileWriter) throws IOException {
-        fileWriter.write(" ".repeat(indent));
+    private static String methodToString(Method method, int indent) {
+        var stringBuilder = new StringBuilder();
+        stringBuilder.append(" ".repeat(indent));
         if (method.isDefault()) {
-            fileWriter.write("default ");
+            stringBuilder.append("default ");
         }
         String modifiers = Modifier.toString(method.getModifiers());
         if (modifiers.length() > 0) {
-            fileWriter.write(modifiers + " ");
+            stringBuilder.append(modifiers);
+            stringBuilder.append(" ");
         }
 
         TypeVariable<?>[] typeParameters = method.getTypeParameters();
@@ -127,42 +181,49 @@ public class Reflector {
         for (Type type : typeParameters) {
             stringJoiner.add(typeToString(type, false));
         }
-        fileWriter.write(stringJoiner + " " + typeToString(method.getReturnType(), false) + " " + method.getName() + "(");
+        stringBuilder.append(stringJoiner).append(" ").append(typeToString(method.getReturnType(), false)).append(" ").append(method.getName()).append("(");
         Class<?>[] paramTypes = method.getParameterTypes();
         for (int i = 0; i < paramTypes.length; i++) {
-            fileWriter.write(typeToString(paramTypes[i], false) + " " + "name" + i);
+            stringBuilder.append(typeToString(paramTypes[i], false)).append(" ").append("name").append(i);
             if (i != paramTypes.length - 1) {
-                fileWriter.write(", ");
+                stringBuilder.append(", ");
             }
         }
         if (Modifier.isAbstract(method.getModifiers())) {
-            fileWriter.write(");\n");
+            stringBuilder.append(");\n");
         } else {
-            fileWriter.write(") {\n");
-            fileWriter.write(" ".repeat(indent + TAB_SIZE));
-            fileWriter.write("throw new UnsupportedOperationException();\n");
-            fileWriter.write(" ".repeat(indent) + "}\n");
+            stringBuilder.append(") {\n");
+            stringBuilder.append(" ".repeat(indent + TAB_SIZE));
+            stringBuilder.append("throw new UnsupportedOperationException();\n");
+            stringBuilder.append(" ".repeat(indent) + "}\n");
         }
+        return stringBuilder.toString();
     }
 
     private static void printFields(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             if (!field.isSynthetic()) {
-                printField(field, indent + TAB_SIZE, fileWriter);
+                fileWriter.write(fieldToString(field, indent + TAB_SIZE));
             }
         }
     }
 
-    private static void printField(Field field, int indent, FileWriter fileWriter) throws IOException {
+    private static String fieldToString(Field field, int indent) {
+        var stringBuilder = new StringBuilder();
         String modifiers = Modifier.toString(field.getModifiers());
         String type = field.getGenericType().getTypeName();
-        fileWriter.write(" ".repeat(indent));
+        stringBuilder.append(" ".repeat(indent));
         if (!modifiers.isEmpty()) {
-            fileWriter.write(modifiers + " ");
+            stringBuilder.append(modifiers);
+            stringBuilder.append(" ");
         }
 
-        fileWriter.write(type + " " + field.getName() + ";\n");
+        stringBuilder.append(type);
+        stringBuilder.append(" ");
+        stringBuilder.append(field.getName());
+        stringBuilder.append(";\n");
+        return stringBuilder.toString();
     }
 
     private static String typeToString(Type type, boolean simple) {
