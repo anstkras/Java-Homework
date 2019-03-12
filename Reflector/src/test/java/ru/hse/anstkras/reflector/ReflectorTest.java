@@ -2,15 +2,30 @@ package ru.hse.anstkras.reflector;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ReflectorTest {
     @Test
-    void test() throws IOException {
+    void test() throws IOException, InterruptedException {
         Reflector.printStructure(TestClass.class);
+        ProcessBuilder pb = new ProcessBuilder("javac", "TestClass.java");
+        Process process = pb.start();
+        int errCode = process.waitFor();
+        assertEquals(0, errCode);
+
+        Path generatedFile = Paths.get("TestClass.java");
+        Path expectedFile = Paths.get("TestClassExpected.java");
+        byte[] generatedFileBytes = Files.readAllBytes(generatedFile);
+        byte[] expectedFileBytes = Files.readAllBytes(expectedFile);
+        assertArrayEquals(expectedFileBytes, generatedFileBytes);
     }
 
     @Test
