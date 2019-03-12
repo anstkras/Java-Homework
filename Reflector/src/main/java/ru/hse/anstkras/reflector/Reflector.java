@@ -11,13 +11,30 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
+/**
+ * Reflector is a class that allows to generate a .java file using reflection
+ * or to analyze the difference between two classes
+ */
 public class Reflector {
     private static final int TAB_SIZE = 4;
 
+    private Reflector() {
+    }
+
+    /**
+     * Prints a valid java code of someClass to given writer
+     *
+     * @throws IOException in case of problems with writer
+     */
     public static void printStructure(@NotNull Class<?> someClass, @NotNull Writer writer) throws IOException {
         writer.write(classToString(someClass, 0));
     }
 
+    /**
+     * Prints a difference between given classes to the given writer
+     *
+     * @throws IOException in case of problems with writer
+     */
     public static void diffClasses(@NotNull Class<?> firstClass, @NotNull Class<?> secondClass, @NotNull Writer writer) throws IOException {
         String firstName = firstClass.getSimpleName();
         String secondName = secondClass.getSimpleName();
