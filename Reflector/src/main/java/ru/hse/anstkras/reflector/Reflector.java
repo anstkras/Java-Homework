@@ -92,15 +92,15 @@ public class Reflector {
         }
         stringBuilder.append(" {\n");
 
-        printFields(clazz, indent + TAB_SIZE, stringBuilder);
-        printConstructors(clazz, indent + TAB_SIZE, stringBuilder);
-        printMethods(clazz, indent + TAB_SIZE, stringBuilder);
-        printClasses(clazz, indent + TAB_SIZE, stringBuilder);
+        addFields(clazz, indent + TAB_SIZE, stringBuilder);
+        addConstructors(clazz, indent + TAB_SIZE, stringBuilder);
+        addMethods(clazz, indent + TAB_SIZE, stringBuilder);
+        addClasses(clazz, indent + TAB_SIZE, stringBuilder);
         stringBuilder.append(" ".repeat(indent)).append("}");
         return stringBuilder.toString();
     }
 
-    private static void printConstructors(@NotNull Class<?> clazz, int indent, @NotNull StringBuilder stringBuilder) {
+    private static void addConstructors(@NotNull Class<?> clazz, int indent, @NotNull StringBuilder stringBuilder) {
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
         if (constructors.length != 0) {
             stringBuilder.append("\n");
@@ -151,7 +151,7 @@ public class Reflector {
         }
     }
 
-    private static void printMethods(@NotNull Class<?> clazz, int indent, @NotNull StringBuilder stringBuilder) {
+    private static void addMethods(@NotNull Class<?> clazz, int indent, @NotNull StringBuilder stringBuilder) {
         Method[] methods = clazz.getDeclaredMethods();
         if (methods.length != 0) {
             stringBuilder.append("\n");
@@ -163,7 +163,7 @@ public class Reflector {
         }
     }
 
-    private static void printClasses(@NotNull Class<?> clazz, int indent, @NotNull StringBuilder stringBuilder) {
+    private static void addClasses(@NotNull Class<?> clazz, int indent, @NotNull StringBuilder stringBuilder) {
         Class<?>[] classes = clazz.getDeclaredClasses();
         for (Class<?> insideClass : classes) {
             stringBuilder.append(classToString(insideClass, indent)).append("\n");
@@ -205,7 +205,7 @@ public class Reflector {
         return stringBuilder.toString();
     }
 
-    private static void printFields(@NotNull Class<?> clazz, int indent, @NotNull StringBuilder stringBuilder) {
+    private static void addFields(@NotNull Class<?> clazz, int indent, @NotNull StringBuilder stringBuilder) {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             if (!field.isSynthetic()) {
@@ -244,11 +244,11 @@ public class Reflector {
     @NotNull
     private static String typeToString(@NotNull Type type, boolean simpleClassName) {
         var stringBuilder = new StringBuilder();
-        typeToString(stringBuilder, type, simpleClassName);
+        addType(stringBuilder, type, simpleClassName);
         return stringBuilder.toString();
     }
 
-    private static void typeToString(@NotNull StringBuilder stringBuilder, @NotNull Type type, boolean simpleClassName) {
+    private static void addType(@NotNull StringBuilder stringBuilder, @NotNull Type type, boolean simpleClassName) {
         if (type instanceof ParameterizedType) {
             stringBuilder.append(type.getTypeName());
         } else if (type instanceof Class) {
@@ -289,7 +289,7 @@ public class Reflector {
                     stringBuilder.append(", ");
                 }
                 first = false;
-                typeToString(stringBuilder, typeParameter, false);
+                addType(stringBuilder, typeParameter, false);
             }
             stringBuilder.append(">");
         }
