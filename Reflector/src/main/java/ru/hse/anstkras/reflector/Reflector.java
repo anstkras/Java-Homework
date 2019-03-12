@@ -49,6 +49,9 @@ public class Reflector {
         printSet(firstMethods, firstName + " contains methods that " + secondName + " does not contain:", writer);
         printSet(secondMethods, secondName + " contains methods that " + firstName + " does not contain:", writer);
 
+        if (firstFields.isEmpty() && secondFields.isEmpty() && firstMethods.isEmpty() && secondMethods.isEmpty()) {
+            writer.write("Classes are not different\n");
+        }
     }
 
     private static void printSet(Set<String> set, String startString, Writer writer) throws IOException {

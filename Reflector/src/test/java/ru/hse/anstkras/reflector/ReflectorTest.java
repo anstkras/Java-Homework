@@ -34,4 +34,13 @@ class ReflectorTest {
                 "\n";
         assertEquals(stringWriter.toString(), correctResult);
     }
+
+    @Test
+    void diffClassesForEqualClasses() throws IOException {
+        var stringWriter = new StringWriter();
+        Reflector.diffClasses(A.class, AA.class, stringWriter);
+        stringWriter.close();
+        String correctResult = "Classes are not different\n";
+        assertEquals(stringWriter.toString(), correctResult);
+    }
 }
