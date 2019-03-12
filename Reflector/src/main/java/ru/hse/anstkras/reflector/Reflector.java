@@ -1,7 +1,5 @@
 package ru.hse.anstkras.reflector;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.*;
@@ -15,7 +13,7 @@ public class Reflector {
     private static final int TAB_SIZE = 4;
 
     public static void printStructure(Class<?> someClass, Writer writer) throws IOException {
-        printClass(someClass, 0, writer);
+        writer.write(classToString(someClass, 0));
     }
 
     public static void diffClasses(Class<?> firstClass, Class<?> secondClass, Writer writer) throws IOException {
@@ -52,108 +50,119 @@ public class Reflector {
     }
 
     private static void printSet(Set<String> set, String startString, Writer writer) throws IOException {
+        var stringBuilder = new StringBuilder();
         if (!set.isEmpty()) {
-            writer.write(startString + "\n");
+            stringBuilder.append(startString).append("\n");
             for (String element : set) {
-                writer.write(element);
-                writer.write("\n");
+                stringBuilder.append(element).append("\n");
             }
-            writer.write("\n");
+            stringBuilder.append("\n");
         }
+        writer.write(stringBuilder.toString());
     }
 
-    private static void printClass(Class<?> clazz, int indent, Writer writer) throws IOException {
-        writer.write(" ".repeat(indent));
+    private static String classToString(Class<?> clazz, int indent) {
+        var stringBuilder = new StringBuilder();
+        stringBuilder.append(" ".repeat(indent));
         String modifiers = Modifier.toString(clazz.getModifiers());
         if (clazz.isInterface()) {
-            writer.write(modifiers + " ");
+            stringBuilder.append(modifiers).append(" ");
         } else {
-            writer.write(modifiers + " class ");
+            stringBuilder.append(modifiers).append(" class ");
         }
-        writer.write(typeToString(clazz, true));
+        stringBuilder.append(typeToString(clazz, true));
 
         Class<?> superClass = clazz.getSuperclass();
         if (superClass != null && superClass != Object.class) {
-            writer.write(" extends ");
-            writer.write(typeToString(superClass, false));
+            stringBuilder.append(" extends ");
+            stringBuilder.append(typeToString(superClass));
         }
         Class<?>[] interfaces = clazz.getInterfaces();
         if (interfaces.length != 0) {
-            writer.write(" implements ");
+            stringBuilder.append(" implements ");
             var stringJoiner = new StringJoiner(", ");
             stringJoiner.setEmptyValue("");
             for (Class<?> classInterface : interfaces) {
-                stringJoiner.add(typeToString(classInterface, false));
+                stringJoiner.add(typeToString(classInterface));
             }
-            writer.write(stringJoiner.toString());
+            stringBuilder.append(stringJoiner);
         }
-        writer.write(" {\n");
-        printFields(clazz, indent, writer);
-        printConstructors(clazz, indent + TAB_SIZE, writer);
-        printMethods(clazz, indent + TAB_SIZE, writer);
-        printClasses(clazz, indent, writer);
-        writer.write(" ".repeat(indent) + "}");
+        stringBuilder.append(" {\n");
+
+        printFields(clazz, indent + TAB_SIZE, stringBuilder);
+        printConstructors(clazz, indent + TAB_SIZE, stringBuilder);
+        printMethods(clazz, indent + TAB_SIZE, stringBuilder);
+        printClasses(clazz, indent + TAB_SIZE, stringBuilder);
+        stringBuilder.append(" ".repeat(indent)).append("}");
+        return stringBuilder.toString();
     }
 
-    private static void printConstructors(Class<?> clazz, int indent, Writer writer) throws IOException {
+    private static void printConstructors(Class<?> clazz, int indent, StringBuilder stringBuilder) {
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
         if (constructors.length != 0) {
-            writer.write("\n");
+            stringBuilder.append("\n");
         }
         for (Constructor constructor : constructors) {
             if (!constructor.isSynthetic()) {
-                printConstructor(constructor, indent, writer);
-                writer.write("\n");
+                stringBuilder.append(constructorToString(constructor, indent)).append("\n");
             }
         }
     }
 
-    private static void printConstructor(Constructor<?> constructor, int indent, Writer writer) throws IOException {
-        writer.write(" ".repeat(indent));
+    private static String constructorToString(Constructor<?> constructor, int indent) {
+        var stringBuilder = new StringBuilder();
+        stringBuilder.append(" ".repeat(indent));
         String modifiers = Modifier.toString(constructor.getModifiers());
         if (modifiers.length() > 0) {
-            writer.write(modifiers + " ");
+            stringBuilder.append(modifiers).append(" ");
         }
+        addTypeParameters(constructor, stringBuilder);
+        stringBuilder.append(" ").append(constructor.getDeclaringClass().getSimpleName()).append("(");
+        addParameterTypes(constructor, stringBuilder, isNested(constructor.getDeclaringClass()));
+        stringBuilder.append(") {}\n");
+        return stringBuilder.toString();
+    }
 
-        TypeVariable<?>[] typeParameters = constructor.getTypeParameters();
+    private static void addTypeParameters(Executable executable, StringBuilder stringBuilder) {
+        TypeVariable<?>[] typeParameters = executable.getTypeParameters();
         StringJoiner stringJoiner = new StringJoiner(", ", "<", ">");
         stringJoiner.setEmptyValue("");
         for (Type type : typeParameters) {
-            stringJoiner.add(typeToString(type, false));
+            stringJoiner.add(typeToString(type));
         }
-        writer.write(stringJoiner + " " + constructor.getDeclaringClass().getSimpleName() + "(");
-        Class<?>[] paramTypes = constructor.getParameterTypes();
-        int start = 0;
-        if (isNested(constructor.getDeclaringClass())) {
-            start = 1;
-        }
-        for (int i = start; i < paramTypes.length; i++) {
-            writer.write(typeToString(paramTypes[i], false) + " " + "name" + i);
-            if (i != paramTypes.length - 1) {
-                writer.write(", ");
-            }
-        }
-        writer.write(") {}\n");
+        stringBuilder.append(stringJoiner);
     }
 
-    private static void printMethods(Class<?> clazz, int indent, Writer writer) throws IOException {
+    private static void addParameterTypes(Executable executable, StringBuilder stringBuilder, boolean skipFirst) {
+        Class<?>[] parameterTypes = executable.getParameterTypes();
+        int start = 0;
+        if (skipFirst) {
+            start = 1;
+        }
+        for (int i = start; i < parameterTypes.length; i++) {
+            stringBuilder.append(typeToString(parameterTypes[i])).append(" ").append("name").append(i);
+            if (i != parameterTypes.length - 1) {
+                stringBuilder.append(", ");
+            }
+        }
+    }
+
+    private static void printMethods(Class<?> clazz, int indent, StringBuilder stringBuilder) {
         Method[] methods = clazz.getDeclaredMethods();
         if (methods.length != 0) {
-            writer.write("\n");
+            stringBuilder.append("\n");
         }
         for (Method method : methods) {
             if (!method.isSynthetic()) {
-                writer.write(methodToString(method, indent));
-                writer.write("\n");
+                stringBuilder.append(methodToString(method, indent)).append("\n");
             }
         }
     }
 
-    private static void printClasses(Class<?> clazz, int indent, Writer writer) throws IOException {
+    private static void printClasses(Class<?> clazz, int indent, StringBuilder stringBuilder) {
         Class<?>[] classes = clazz.getDeclaredClasses();
         for (Class<?> insideClass : classes) {
-            printClass(insideClass, indent + TAB_SIZE, writer);
-            writer.write("\n");
+            stringBuilder.append(classToString(insideClass, indent)).append("\n");
         }
     }
 
@@ -168,20 +177,10 @@ public class Reflector {
             stringBuilder.append(modifiers);
         }
 
-        TypeVariable<?>[] typeParameters = method.getTypeParameters();
-        StringJoiner stringJoiner = new StringJoiner(", ", "<", ">");
-        stringJoiner.setEmptyValue("");
-        for (Type type : typeParameters) {
-            stringJoiner.add(typeToString(type, false));
-        }
-        stringBuilder.append(stringJoiner).append(" ").append(typeToString(method.getReturnType(), false)).append(" ").append(method.getName()).append("(");
-        Class<?>[] paramTypes = method.getParameterTypes();
-        for (int i = 0; i < paramTypes.length; i++) {
-            stringBuilder.append(typeToString(paramTypes[i], false)).append(" ").append("name").append(i);
-            if (i != paramTypes.length - 1) {
-                stringBuilder.append(", ");
-            }
-        }
+        addTypeParameters(method, stringBuilder);
+        stringBuilder.append(" ").append(typeToString(method.getReturnType())).append(" ");
+        stringBuilder.append(method.getName()).append("(");
+        addParameterTypes(method, stringBuilder, false);
         stringBuilder.append(")");
         return stringBuilder.toString();
     }
@@ -200,11 +199,11 @@ public class Reflector {
         return stringBuilder.toString();
     }
 
-    private static void printFields(Class<?> clazz, int indent, Writer writer) throws IOException {
+    private static void printFields(Class<?> clazz, int indent, StringBuilder stringBuilder) {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             if (!field.isSynthetic()) {
-                writer.write(fieldToString(field, indent + TAB_SIZE) + "\n");
+                stringBuilder.append(fieldToString(field, indent)).append("\n");
             }
         }
     }
@@ -226,31 +225,23 @@ public class Reflector {
         return stringBuilder.toString();
     }
 
-    private static String typeToString(Type type, boolean simple) {
+    private static String typeToString(Type type) {
+        return typeToString(type, false);
+    }
+
+    private static String typeToString(Type type, boolean simpleClassName) {
         var stringBuilder = new StringBuilder();
-        typeToString(stringBuilder, type, simple);
+        typeToString(stringBuilder, type, simpleClassName);
         return stringBuilder.toString();
     }
 
-    private static void typeToString(StringBuilder stringBuilder, Type type, boolean simple) {
+    private static void typeToString(StringBuilder stringBuilder, Type type, boolean simpleClassName) {
         if (type instanceof ParameterizedType) {
-            stringBuilder.append(type.getTypeName());
-        } else if (type instanceof WildcardType) { // does it work?
             stringBuilder.append(type.getTypeName());
         } else if (type instanceof Class) {
             Class<?> classType = (Class<?>) type;
-            TypeVariable<?>[] typeParameters = classType.getTypeParameters();
-            StringJoiner params = new StringJoiner(" ,", "<", ">");
-            params.setEmptyValue("");
-            for (Type typeParameter : typeParameters) {
-                params.add(typeToString(typeParameter, false));
-            }
-            if (!simple) {
-                stringBuilder.append(classType.getName());
-            } else {
-                stringBuilder.append(classType.getSimpleName());
-            }
-            stringBuilder.append(params.toString());
+            stringBuilder.append(simpleClassName ? classType.getSimpleName() : classType.getName());
+            addClassTypeParameters(classType, stringBuilder);
         } else if (type instanceof GenericArrayType) {
             var genericArrayType = (GenericArrayType) type;
             stringBuilder.append(genericArrayType.getGenericComponentType());
@@ -272,6 +263,22 @@ public class Reflector {
             }
         } else {
             throw new IllegalArgumentException();
+        }
+    }
+
+    private static void addClassTypeParameters(Class<?> classType, StringBuilder stringBuilder) {
+        TypeVariable<?>[] typeParameters = classType.getTypeParameters();
+        if (typeParameters.length != 0) {
+            stringBuilder.append("<");
+            boolean first = true;
+            for (Type typeParameter : typeParameters) {
+                if (!first) {
+                    stringBuilder.append(", ");
+                }
+                first = false;
+                typeToString(stringBuilder, typeParameter, false);
+            }
+            stringBuilder.append(">");
         }
     }
 
