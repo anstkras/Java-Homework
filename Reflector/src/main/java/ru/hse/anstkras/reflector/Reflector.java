@@ -1,5 +1,7 @@
 package ru.hse.anstkras.reflector;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.*;
@@ -12,11 +14,11 @@ import java.util.stream.Collectors;
 public class Reflector {
     private static final int TAB_SIZE = 4;
 
-    public static void printStructure(Class<?> someClass, Writer writer) throws IOException {
+    public static void printStructure(@NotNull Class<?> someClass, @NotNull Writer writer) throws IOException {
         writer.write(classToString(someClass, 0));
     }
 
-    public static void diffClasses(Class<?> firstClass, Class<?> secondClass, Writer writer) throws IOException {
+    public static void diffClasses(@NotNull Class<?> firstClass, @NotNull Class<?> secondClass, @NotNull Writer writer) throws IOException {
         String firstName = firstClass.getSimpleName();
         String secondName = secondClass.getSimpleName();
 
@@ -49,7 +51,7 @@ public class Reflector {
         }
     }
 
-    private static void printSet(Set<String> set, String startString, Writer writer) throws IOException {
+    private static void printSet(@NotNull Set<String> set, @NotNull String startString, @NotNull Writer writer) throws IOException {
         var stringBuilder = new StringBuilder();
         if (!set.isEmpty()) {
             stringBuilder.append(startString).append("\n");
@@ -61,7 +63,8 @@ public class Reflector {
         writer.write(stringBuilder.toString());
     }
 
-    private static String classToString(Class<?> clazz, int indent) {
+    @NotNull
+    private static String classToString(@NotNull Class<?> clazz, int indent) {
         var stringBuilder = new StringBuilder();
         stringBuilder.append(" ".repeat(indent));
         String modifiers = Modifier.toString(clazz.getModifiers());
@@ -97,7 +100,7 @@ public class Reflector {
         return stringBuilder.toString();
     }
 
-    private static void printConstructors(Class<?> clazz, int indent, StringBuilder stringBuilder) {
+    private static void printConstructors(@NotNull Class<?> clazz, int indent, @NotNull StringBuilder stringBuilder) {
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
         if (constructors.length != 0) {
             stringBuilder.append("\n");
@@ -109,7 +112,8 @@ public class Reflector {
         }
     }
 
-    private static String constructorToString(Constructor<?> constructor, int indent) {
+    @NotNull
+    private static String constructorToString(@NotNull Constructor<?> constructor, int indent) {
         var stringBuilder = new StringBuilder();
         stringBuilder.append(" ".repeat(indent));
         String modifiers = Modifier.toString(constructor.getModifiers());
@@ -123,7 +127,7 @@ public class Reflector {
         return stringBuilder.toString();
     }
 
-    private static void addTypeParameters(Executable executable, StringBuilder stringBuilder) {
+    private static void addTypeParameters(@NotNull Executable executable, @NotNull StringBuilder stringBuilder) {
         TypeVariable<?>[] typeParameters = executable.getTypeParameters();
         StringJoiner stringJoiner = new StringJoiner(", ", "<", ">");
         stringJoiner.setEmptyValue("");
@@ -133,7 +137,7 @@ public class Reflector {
         stringBuilder.append(stringJoiner);
     }
 
-    private static void addParameterTypes(Executable executable, StringBuilder stringBuilder, boolean skipFirst) {
+    private static void addParameterTypes(@NotNull Executable executable, @NotNull StringBuilder stringBuilder, boolean skipFirst) {
         Class<?>[] parameterTypes = executable.getParameterTypes();
         int start = 0;
         if (skipFirst) {
@@ -147,7 +151,7 @@ public class Reflector {
         }
     }
 
-    private static void printMethods(Class<?> clazz, int indent, StringBuilder stringBuilder) {
+    private static void printMethods(@NotNull Class<?> clazz, int indent, @NotNull StringBuilder stringBuilder) {
         Method[] methods = clazz.getDeclaredMethods();
         if (methods.length != 0) {
             stringBuilder.append("\n");
@@ -159,14 +163,15 @@ public class Reflector {
         }
     }
 
-    private static void printClasses(Class<?> clazz, int indent, StringBuilder stringBuilder) {
+    private static void printClasses(@NotNull Class<?> clazz, int indent, @NotNull StringBuilder stringBuilder) {
         Class<?>[] classes = clazz.getDeclaredClasses();
         for (Class<?> insideClass : classes) {
             stringBuilder.append(classToString(insideClass, indent)).append("\n");
         }
     }
 
-    private static String methodToStringWithoutBody(Method method, int indent) {
+    @NotNull
+    private static String methodToStringWithoutBody(@NotNull Method method, int indent) {
         var stringBuilder = new StringBuilder();
         stringBuilder.append(" ".repeat(indent));
         if (method.isDefault()) {
@@ -185,7 +190,8 @@ public class Reflector {
         return stringBuilder.toString();
     }
 
-    private static String methodToString(Method method, int indent) {
+    @NotNull
+    private static String methodToString(@NotNull Method method, int indent) {
         var stringBuilder = new StringBuilder();
         stringBuilder.append(methodToStringWithoutBody(method, indent));
         if (Modifier.isAbstract(method.getModifiers())) {
@@ -199,7 +205,7 @@ public class Reflector {
         return stringBuilder.toString();
     }
 
-    private static void printFields(Class<?> clazz, int indent, StringBuilder stringBuilder) {
+    private static void printFields(@NotNull Class<?> clazz, int indent, @NotNull StringBuilder stringBuilder) {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             if (!field.isSynthetic()) {
@@ -208,7 +214,8 @@ public class Reflector {
         }
     }
 
-    private static String fieldToString(Field field, int indent) {
+    @NotNull
+    private static String fieldToString(@NotNull Field field, int indent) {
         var stringBuilder = new StringBuilder();
         String modifiers = Modifier.toString(field.getModifiers());
         String type = field.getGenericType().getTypeName();
@@ -229,17 +236,19 @@ public class Reflector {
         return stringBuilder.toString();
     }
 
-    private static String typeToString(Type type) {
+    @NotNull
+    private static String typeToString(@NotNull Type type) {
         return typeToString(type, false);
     }
 
-    private static String typeToString(Type type, boolean simpleClassName) {
+    @NotNull
+    private static String typeToString(@NotNull Type type, boolean simpleClassName) {
         var stringBuilder = new StringBuilder();
         typeToString(stringBuilder, type, simpleClassName);
         return stringBuilder.toString();
     }
 
-    private static void typeToString(StringBuilder stringBuilder, Type type, boolean simpleClassName) {
+    private static void typeToString(@NotNull StringBuilder stringBuilder, @NotNull Type type, boolean simpleClassName) {
         if (type instanceof ParameterizedType) {
             stringBuilder.append(type.getTypeName());
         } else if (type instanceof Class) {
@@ -270,7 +279,7 @@ public class Reflector {
         }
     }
 
-    private static void addClassTypeParameters(Class<?> classType, StringBuilder stringBuilder) {
+    private static void addClassTypeParameters(@NotNull Class<?> classType, @NotNull StringBuilder stringBuilder) {
         TypeVariable<?>[] typeParameters = classType.getTypeParameters();
         if (typeParameters.length != 0) {
             stringBuilder.append("<");
@@ -286,11 +295,12 @@ public class Reflector {
         }
     }
 
-    private static boolean isNested(Class<?> clazz) {
+    private static boolean isNested(@NotNull Class<?> clazz) {
         return clazz.isMemberClass() && !Modifier.isStatic(clazz.getModifiers());
     }
 
-    private static String getDefaultValue(Type type) {
+    @NotNull
+    private static String getDefaultValue(@NotNull Type type) {
         if (type == byte.class || type == short.class || type == int.class) {
             return "0";
         }

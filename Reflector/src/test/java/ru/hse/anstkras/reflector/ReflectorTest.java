@@ -22,8 +22,8 @@ class ReflectorTest {
         var fileWriter = getTestClassWriter();
         Reflector.printStructure(TestClass.class, fileWriter);
         fileWriter.close();
-        ProcessBuilder pb = new ProcessBuilder("javac", "tmp/TestClass.java");
-        Process process = pb.start();
+        var processBuilder = new ProcessBuilder("javac", "tmp/TestClass.java");
+        Process process = processBuilder.start();
         int errorCode = process.waitFor();
         assertEquals(0, errorCode);
 
@@ -41,8 +41,8 @@ class ReflectorTest {
         FileWriter fileWriter = getTestClassWriter();
         Reflector.printStructure(TestClass.class, fileWriter);
         fileWriter.close();
-        ProcessBuilder pb = new ProcessBuilder("javac", "tmp/TestClass.java");
-        Process process = pb.start();
+        var processBuilder = new ProcessBuilder("javac", "tmp/TestClass.java");
+        Process process = processBuilder.start();
         int errorCode = process.waitFor();
         assertEquals(0, errorCode);
 
@@ -57,17 +57,17 @@ class ReflectorTest {
     }
 
     private FileWriter getTestClassWriter() throws IOException {
-        File tmpDir = new File("tmp/");
-        tmpDir.mkdir();
-        File file = new File("tmp/TestClass.java");
+        var tmpDirectory = new File("tmp/");
+        tmpDirectory.mkdir();
+        var file = new File("tmp/TestClass.java");
         file.createNewFile();
         return new FileWriter(file);
     }
 
     private void cleanTmp() {
-        var tmpDir = new File("tmp/");
-        Arrays.stream(tmpDir.listFiles()).forEach(File::delete);
-        tmpDir.delete();
+        var tmpDirectory = new File("tmp/");
+        Arrays.stream(tmpDirectory.listFiles()).forEach(File::delete);
+        tmpDirectory.delete();
     }
 
     @Test

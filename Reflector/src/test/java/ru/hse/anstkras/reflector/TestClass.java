@@ -5,18 +5,18 @@ import java.io.Serializable;
 import java.util.*;
 
 public class TestClass<E extends List<Set<E>> & Comparable<List<? super E>>, T> extends AbstractSet<E> implements Comparable<T>, Serializable {
-    static List<? super Collection<? extends List<? super String>>>[] arr = null;
+    static List<? super Collection<? extends List<? super String>>>[] array = null;
     private static final int a = 0;
     public volatile transient E e;
     public List<? super Collection<? extends List<? super E>>> list;
-    public int[] array;
-    public List<E> liste;
+    public int[] array2;
+    public List<E> listOfE;
 
     public <T> TestClass() {
         T t;
     }
 
-    public static final <T, E> int psf(int i, T ttt) {
+    public static final <T, E> int method(int i, T t) {
         throw new UnsupportedOperationException();
     }
 
@@ -32,8 +32,8 @@ public class TestClass<E extends List<Set<E>> & Comparable<List<? super E>>, T> 
         return 0;
     }
 
-    private abstract static interface inter {
-        public abstract void q();
+    private interface interface1 {
+        void q();
 
         default int v() {
             return 1;
@@ -43,12 +43,12 @@ public class TestClass<E extends List<Set<E>> & Comparable<List<? super E>>, T> 
     private static class A {
         int a;
 
-        public A(int aaa) {
+        public A(int a) {
 
         }
 
         public static class B {
-            static List<? super Collection<? extends List<? super String>>>[] arr = null;
+            static List<? super Collection<? extends List<? super String>>>[] array = null;
 
         }
     }
