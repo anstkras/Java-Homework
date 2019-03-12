@@ -221,6 +221,10 @@ public class Reflector {
         stringBuilder.append(type);
         stringBuilder.append(" ");
         stringBuilder.append(field.getName());
+        if (Modifier.isFinal(field.getModifiers())) {
+            stringBuilder.append(" = ");
+            stringBuilder.append(getDefaultValue(field.getType()));
+        }
         stringBuilder.append(";");
         return stringBuilder.toString();
     }
@@ -284,5 +288,30 @@ public class Reflector {
 
     private static boolean isNested(Class<?> clazz) {
         return clazz.isMemberClass() && !Modifier.isStatic(clazz.getModifiers());
+    }
+
+    private static String getDefaultValue(Type type) {
+        if (type == byte.class || type == short.class || type == int.class) {
+            return "0";
+        }
+        if (type == long.class) {
+            return "0L";
+        }
+        if (type == char.class) {
+            return "'\u0000'";
+        }
+        if (type == float.class) {
+            return "0.0F";
+        }
+        if (type == double.class) {
+            return "0.0";
+        }
+        if (type == boolean.class) {
+            return "false";
+        }
+        if (type == void.class) {
+            return "void";
+        }
+        return "null";
     }
 }

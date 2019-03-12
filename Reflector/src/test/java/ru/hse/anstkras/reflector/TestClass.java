@@ -6,7 +6,7 @@ import java.util.*;
 
 public class TestClass<E extends List<Set<E>> & Comparable<List<? super E>>, T> extends AbstractSet<E> implements Comparable<T>, Serializable {
     static List<? super Collection<? extends List<? super String>>>[] arr = null;
-    private static int a;
+    private static final int a = 0;
     public volatile transient E e;
     public List<? super Collection<? extends List<? super E>>> list;
     public int[] array;
