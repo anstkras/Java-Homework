@@ -28,7 +28,7 @@ class ReflectorTest {
         assertEquals(0, errorCode);
 
         Path generatedFile = Paths.get("tmp/TestClass.java");
-        Path expectedFile = Paths.get("TestClassExpected.java");
+        Path expectedFile = Paths.get("src/test/java/ru/hse/anstkras/reflector/TestClassExpected.txt");
         var generatedLines = Files.lines(generatedFile).sorted().collect(Collectors.toList());
         var expectedLines = Files.lines(expectedFile).sorted().collect(Collectors.toList());
 
