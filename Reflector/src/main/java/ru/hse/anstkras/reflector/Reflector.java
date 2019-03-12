@@ -14,11 +14,8 @@ import java.util.stream.Collectors;
 public class Reflector {
     private static final int TAB_SIZE = 4;
 
-    public static void printStructure(Class<?> someClass) throws IOException {
-        File file = new File(someClass.getSimpleName() + ".java");
-        FileWriter fileWriter = new FileWriter(file);
-        printClass(someClass, 0, fileWriter);
-        fileWriter.close();
+    public static void printStructure(Class<?> someClass, Writer writer) throws IOException {
+        printClass(someClass, 0, writer);
     }
 
     public static void diffClasses(Class<?> firstClass, Class<?> secondClass, Writer writer) throws IOException {
@@ -65,57 +62,57 @@ public class Reflector {
         }
     }
 
-    private static void printClass(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
-        fileWriter.write(" ".repeat(indent));
+    private static void printClass(Class<?> clazz, int indent, Writer writer) throws IOException {
+        writer.write(" ".repeat(indent));
         String modifiers = Modifier.toString(clazz.getModifiers());
         if (clazz.isInterface()) {
-            fileWriter.write(modifiers + " ");
+            writer.write(modifiers + " ");
         } else {
-            fileWriter.write(modifiers + " class ");
+            writer.write(modifiers + " class ");
         }
-        fileWriter.write(typeToString(clazz, true));
+        writer.write(typeToString(clazz, true));
 
         Class<?> superClass = clazz.getSuperclass();
         if (superClass != null && superClass != Object.class) {
-            fileWriter.write(" extends ");
-            fileWriter.write(typeToString(superClass, false));
+            writer.write(" extends ");
+            writer.write(typeToString(superClass, false));
         }
         Class<?>[] interfaces = clazz.getInterfaces();
         if (interfaces.length != 0) {
-            fileWriter.write(" implements ");
+            writer.write(" implements ");
             var stringJoiner = new StringJoiner(", ");
             stringJoiner.setEmptyValue("");
             for (Class<?> classInterface : interfaces) {
                 stringJoiner.add(typeToString(classInterface, false));
             }
-            fileWriter.write(stringJoiner.toString());
+            writer.write(stringJoiner.toString());
         }
-        fileWriter.write(" {\n");
-        printFields(clazz, indent, fileWriter);
-        printConstructors(clazz, indent + TAB_SIZE, fileWriter);
-        printMethods(clazz, indent + TAB_SIZE, fileWriter);
-        printClasses(clazz, indent, fileWriter);
-        fileWriter.write(" ".repeat(indent) + "}");
+        writer.write(" {\n");
+        printFields(clazz, indent, writer);
+        printConstructors(clazz, indent + TAB_SIZE, writer);
+        printMethods(clazz, indent + TAB_SIZE, writer);
+        printClasses(clazz, indent, writer);
+        writer.write(" ".repeat(indent) + "}");
     }
 
-    private static void printConstructors(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
+    private static void printConstructors(Class<?> clazz, int indent, Writer writer) throws IOException {
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
         if (constructors.length != 0) {
-            fileWriter.write("\n");
+            writer.write("\n");
         }
         for (Constructor constructor : constructors) {
             if (!constructor.isSynthetic()) {
-                printConstructor(constructor, indent, fileWriter);
-                fileWriter.write("\n");
+                printConstructor(constructor, indent, writer);
+                writer.write("\n");
             }
         }
     }
 
-    private static void printConstructor(Constructor<?> constructor, int indent, FileWriter fileWriter) throws IOException {
-        fileWriter.write(" ".repeat(indent));
+    private static void printConstructor(Constructor<?> constructor, int indent, Writer writer) throws IOException {
+        writer.write(" ".repeat(indent));
         String modifiers = Modifier.toString(constructor.getModifiers());
         if (modifiers.length() > 0) {
-            fileWriter.write(modifiers + " ");
+            writer.write(modifiers + " ");
         }
 
         TypeVariable<?>[] typeParameters = constructor.getTypeParameters();
@@ -124,39 +121,39 @@ public class Reflector {
         for (Type type : typeParameters) {
             stringJoiner.add(typeToString(type, false));
         }
-        fileWriter.write(stringJoiner + " " + constructor.getDeclaringClass().getSimpleName() + "(");
+        writer.write(stringJoiner + " " + constructor.getDeclaringClass().getSimpleName() + "(");
         Class<?>[] paramTypes = constructor.getParameterTypes();
         int start = 0;
         if (isNested(constructor.getDeclaringClass())) {
             start = 1;
         }
         for (int i = start; i < paramTypes.length; i++) {
-            fileWriter.write(typeToString(paramTypes[i], false) + " " + "name" + i);
+            writer.write(typeToString(paramTypes[i], false) + " " + "name" + i);
             if (i != paramTypes.length - 1) {
-                fileWriter.write(", ");
+                writer.write(", ");
             }
         }
-        fileWriter.write(") {}\n");
+        writer.write(") {}\n");
     }
 
-    private static void printMethods(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
+    private static void printMethods(Class<?> clazz, int indent, Writer writer) throws IOException {
         Method[] methods = clazz.getDeclaredMethods();
         if (methods.length != 0) {
-            fileWriter.write("\n");
+            writer.write("\n");
         }
         for (Method method : methods) {
             if (!method.isSynthetic()) {
-                fileWriter.write(methodToString(method, indent));
-                fileWriter.write("\n");
+                writer.write(methodToString(method, indent));
+                writer.write("\n");
             }
         }
     }
 
-    private static void printClasses(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
+    private static void printClasses(Class<?> clazz, int indent, Writer writer) throws IOException {
         Class<?>[] classes = clazz.getDeclaredClasses();
         for (Class<?> insideClass : classes) {
-            printClass(insideClass, indent + TAB_SIZE, fileWriter);
-            fileWriter.write("\n");
+            printClass(insideClass, indent + TAB_SIZE, writer);
+            writer.write("\n");
         }
     }
 
@@ -203,11 +200,11 @@ public class Reflector {
         return stringBuilder.toString();
     }
 
-    private static void printFields(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
+    private static void printFields(Class<?> clazz, int indent, Writer writer) throws IOException {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             if (!field.isSynthetic()) {
-                fileWriter.write(fieldToString(field, indent + TAB_SIZE) + "\n");
+                writer.write(fieldToString(field, indent + TAB_SIZE) + "\n");
             }
         }
     }

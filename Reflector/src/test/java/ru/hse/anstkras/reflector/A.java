@@ -2,15 +2,15 @@ package ru.hse.anstkras.reflector;
 
 public class A {
     public static int a;
-    private volatile String b;
     double c;
-
-    private <T> void method () {
-
-    }
+    private volatile String b;
 
     static Integer method2() {
         return null;
+    }
+
+    private <T> void method() {
+
     }
 
     <E> double method3() {
