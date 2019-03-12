@@ -4,7 +4,7 @@ public class B {
     private static int a;
     private volatile String b;
 
-    private void method () {
+    private <T> void method () {
 
     }
 

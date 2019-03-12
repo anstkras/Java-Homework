@@ -3,6 +3,7 @@ package ru.hse.anstkras.reflector;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -20,7 +21,10 @@ public class Reflector {
         fileWriter.close();
     }
 
-    public static void diffClasses(Class<?> firstClass, Class<?> secondClass) {
+    public static void diffClasses(Class<?> firstClass, Class<?> secondClass, Writer writer) throws IOException {
+        String firstName = firstClass.getSimpleName();
+        String secondName = secondClass.getSimpleName();
+
         Set<String> firstFields = Arrays.stream(firstClass.getDeclaredFields()).
                 map(field -> fieldToString(field, 0)).collect(Collectors.toSet());
         Set<String> secondFields = Arrays.stream(secondClass.getDeclaredFields()).
@@ -29,44 +33,34 @@ public class Reflector {
         var firstFieldsCopy = new HashSet<>(firstFields);
         firstFields.removeAll(secondFields);
         secondFields.removeAll(firstFieldsCopy);
-        String firstName = firstClass.getSimpleName();
-        String secondName = secondClass.getSimpleName();
-        if (!firstFields.isEmpty()) {
-            System.out.println(firstName + " contains fields that " + secondName + " does not contain:");
-            for (String field : firstFields) {
-                System.out.println(field);
-            }
-        }
 
-        if (!secondFields.isEmpty()) {
-            System.out.println(secondName + " contains fields that " + firstName + " does not contain:");
-            for (String field : secondFields) {
-                System.out.println(field);
-            }
-        }
+        printSet(firstFields, firstName + " contains fields that " + secondName + " does not contain:", writer);
+        printSet(secondFields, secondName + " contains fields that " + firstName + " does not contain:", writer);
 
         Set<String> firstMethods = Arrays.stream(firstClass.getDeclaredMethods()).
-                map(method -> methodToString(method, 0)).collect(Collectors.toSet());
+                map(method -> methodToStringWithoutBody(method, 0)).collect(Collectors.toSet());
         Set<String> secondMethods = Arrays.stream(secondClass.getDeclaredMethods()).
-                map(method -> methodToString(method, 0)).collect(Collectors.toSet());
+                map(method -> methodToStringWithoutBody(method, 0)).collect(Collectors.toSet());
 
         var firstMethodsCopy = new HashSet<>(firstMethods);
         firstMethods.removeAll(secondMethods);
         secondMethods.removeAll(firstMethodsCopy);
-        if (!firstMethods.isEmpty()) {
-            System.out.println(firstName + " contains methods that " + secondName + " does not contain:");
-            for (String method : firstMethods) {
-                System.out.println(method);
-            }
-        }
 
-        if (!secondMethods.isEmpty()) {
-            System.out.println(secondName + " contains methods that " + firstName + " does not contain:");
-            for (String method : secondMethods) {
-                System.out.println(method);
+        printSet(firstMethods, firstName + " contains methods that " + secondName + " does not contain:", writer);
+        printSet(secondMethods, secondName + " contains methods that " + firstName + " does not contain:", writer);
+
+    }
+
+    private static void printSet(Set<String> set, String startString, Writer writer) throws IOException {
+        if (!set.isEmpty()) {
+            writer.write(startString + "\n");
+            for (String element : set) {
+                writer.write(element);
+                writer.write("\n");
             }
+            writer.write("\n");
         }
-     }
+    }
 
     private static void printClass(Class<?> clazz, int indent, FileWriter fileWriter) throws IOException {
         fileWriter.write(" ".repeat(indent));
@@ -163,7 +157,7 @@ public class Reflector {
         }
     }
 
-    private static String methodToString(Method method, int indent) {
+    private static String methodToStringWithoutBody(Method method, int indent) {
         var stringBuilder = new StringBuilder();
         stringBuilder.append(" ".repeat(indent));
         if (method.isDefault()) {
@@ -172,7 +166,6 @@ public class Reflector {
         String modifiers = Modifier.toString(method.getModifiers());
         if (modifiers.length() > 0) {
             stringBuilder.append(modifiers);
-            stringBuilder.append(" ");
         }
 
         TypeVariable<?>[] typeParameters = method.getTypeParameters();
@@ -189,13 +182,20 @@ public class Reflector {
                 stringBuilder.append(", ");
             }
         }
+        stringBuilder.append(")");
+        return stringBuilder.toString();
+    }
+
+    private static String methodToString(Method method, int indent) {
+        var stringBuilder = new StringBuilder();
+        stringBuilder.append(methodToStringWithoutBody(method, indent));
         if (Modifier.isAbstract(method.getModifiers())) {
-            stringBuilder.append(");\n");
+            stringBuilder.append(";\n");
         } else {
-            stringBuilder.append(") {\n");
+            stringBuilder.append(" {\n");
             stringBuilder.append(" ".repeat(indent + TAB_SIZE));
             stringBuilder.append("throw new UnsupportedOperationException();\n");
-            stringBuilder.append(" ".repeat(indent) + "}\n");
+            stringBuilder.append(" ".repeat(indent)).append("}\n");
         }
         return stringBuilder.toString();
     }
@@ -204,7 +204,7 @@ public class Reflector {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             if (!field.isSynthetic()) {
-                fileWriter.write(fieldToString(field, indent + TAB_SIZE));
+                fileWriter.write(fieldToString(field, indent + TAB_SIZE) + "\n");
             }
         }
     }
@@ -222,7 +222,7 @@ public class Reflector {
         stringBuilder.append(type);
         stringBuilder.append(" ");
         stringBuilder.append(field.getName());
-        stringBuilder.append(";\n");
+        stringBuilder.append(";");
         return stringBuilder.toString();
     }
 
