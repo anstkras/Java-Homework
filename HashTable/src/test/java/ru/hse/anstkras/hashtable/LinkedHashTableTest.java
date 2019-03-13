@@ -62,11 +62,6 @@ class LinkedHashTableTest {
     }
 
     @Test
-    void getNullKey() {
-        assertThrows(IllegalArgumentException.class, () -> hashTable.get(null));
-    }
-
-    @Test
     void getNull() {
         fill(hashTable, 50);
         assertNull(hashTable.get("123"));
@@ -86,20 +81,10 @@ class LinkedHashTableTest {
     }
 
     @Test
-    void putNullKey() {
-        assertThrows(IllegalArgumentException.class, () -> hashTable.put(null, "1"));
-    }
-
-    @Test
     void remove() {
         fill(hashTable, 50);
         hashTable.remove("key21");
         assertFalse(hashTable.contains("key21"));
-    }
-
-    @Test
-    void removeNullKey() {
-        assertThrows(IllegalArgumentException.class, () -> hashTable.remove(null));
     }
 
     @Test
