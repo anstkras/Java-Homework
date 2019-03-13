@@ -18,6 +18,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     private int size;
     private Entry<K, V> head = null;
     private Entry<K, V> tail = null;
+    private Set<Map.Entry<K, V>> cachedEntrySet = null;
 
     public HashTable() {
         this(DEFAULT_CAPACITY);
@@ -122,7 +123,10 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     @NotNull
     @Override
     public Set<Map.Entry<K, V>> entrySet() {
-        return new EntrySet();
+        if (cachedEntrySet == null) {
+            cachedEntrySet = new EntrySet();
+        }
+        return cachedEntrySet;
     }
 
     private EntryList<K, V> entries() {
