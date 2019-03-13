@@ -9,7 +9,7 @@ import java.util.*;
  * Implementation of hashtable based on separate chaining technique
  * Null keys are not allowed
  */
-public class HashTable<K, V> extends AbstractMap<K, V> {
+public class LinkedHashTable<K, V> extends AbstractMap<K, V> {
     private static final double DEFAULT_LOAD_FACTOR = 0.75;
     private static final int DEFAULT_CAPACITY = 10;
     private final double loadFactor;
@@ -20,16 +20,16 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     private Entry<K, V> tail = null;
     private Set<Map.Entry<K, V>> cachedEntrySet = null;
 
-    public HashTable() {
+    public LinkedHashTable() {
         this(DEFAULT_CAPACITY);
     }
 
-    public HashTable(int capacity) {
+    public LinkedHashTable(int capacity) {
         this(capacity, DEFAULT_LOAD_FACTOR);
     }
 
     @SuppressWarnings("unchecked")
-    public HashTable(int capacity, double loadFactor) {
+    public LinkedHashTable(int capacity, double loadFactor) {
         lists = (LinkedEntryList<K, V>[])new LinkedEntryList[capacity];
         for (int i = 0; i < capacity; i++) {
             lists[i] = new LinkedEntryList<>();
@@ -117,7 +117,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
 
     /** Delete all the values in the hashtable and shrinks its capacity */
     public void clear() {
-        assignLists(new HashTable<>());
+        assignLists(new LinkedHashTable<>());
     }
 
     /** Returns set that represents the set of map entries */
@@ -153,7 +153,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     }
 
     private void rebuild() {
-        var newHashTable = new HashTable<K, V>(capacity * 2, loadFactor);
+        var newHashTable = new LinkedHashTable<K, V>(capacity * 2, loadFactor);
         EntryList<K, V> entries = entries();
         for (Entry<K, V> entry : entries) {
             newHashTable.put(entry.key, entry.value);
@@ -161,7 +161,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
         assignLists(newHashTable);
     }
 
-    private void assignLists(HashTable<K, V> hashTable) {
+    private void assignLists(LinkedHashTable<K, V> hashTable) {
         deleteAll();
         lists = hashTable.lists;
         size = hashTable.size;
@@ -262,7 +262,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
 
         @Override
         public int size() {
-            return HashTable.this.size();
+            return LinkedHashTable.this.size();
         }
 
         private class EntryIterator implements Iterator<Map.Entry<K, V>> {

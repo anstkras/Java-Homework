@@ -31,7 +31,7 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
      */
     @Override
     @Nullable
-    public HashTable.Entry<K, V> remove(@NotNull HashTable.Entry<?, V> value) {
+    public LinkedHashTable.Entry<K, V> remove(@NotNull LinkedHashTable.Entry<?, V> value) {
         for (ListNode<K, V> node = head; node != null; node = node.next) {
             if (node.value.equals(value)) {
                 ListNode<K, V> next = node.next;
@@ -52,7 +52,7 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
                 }
 
                 size--;
-                HashTable.Entry<K, V> nodeValue = node.value;
+                LinkedHashTable.Entry<K, V> nodeValue = node.value;
                 node.value = null;
                 return nodeValue;
             }
@@ -66,7 +66,7 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
      * @param value element to be added to the list
      */
     @Override
-    public void add(@NotNull HashTable.Entry<K, V> value) {
+    public void add(@NotNull LinkedHashTable.Entry<K, V> value) {
         if ((head == null && tail != null) || (head != null && tail == null)) {
             throw new IllegalStateException();
         }
@@ -89,7 +89,7 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
      */
     @Override
     @Nullable
-    public HashTable.Entry<K, V> find(@NotNull HashTable.Entry<?, V> value) {
+    public LinkedHashTable.Entry<K, V> find(@NotNull LinkedHashTable.Entry<?, V> value) {
         for (ListNode<K, V> node = head; node != null; node = node.next) {
             if (node.value.equals(value)) {
                 return node.value;
@@ -99,7 +99,7 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
     }
 
     @Override
-    public boolean contains(@NotNull HashTable.Entry<K, V> value) {
+    public boolean contains(@NotNull LinkedHashTable.Entry<K, V> value) {
         return find(value) != null;
     }
 
@@ -132,7 +132,7 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
         }
 
         if (other.getClass() != getClass()) {
-            for (HashTable.Entry<K, V> entry : other) {
+            for (LinkedHashTable.Entry<K, V> entry : other) {
                 add(entry);
             }
             return;
@@ -164,7 +164,7 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
      */
     @NotNull
     @Override
-    public Iterator<HashTable.Entry<K, V>> iterator() {
+    public Iterator<LinkedHashTable.Entry<K, V>> iterator() {
         return new Iterator<>() {
             private ListNode<K, V> node = head;
 
@@ -174,8 +174,8 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
             }
 
             @Override
-            public HashTable.Entry<K, V> next() {
-                HashTable.Entry<K, V> value = node.value;
+            public LinkedHashTable.Entry<K, V> next() {
+                LinkedHashTable.Entry<K, V> value = node.value;
                 node = node.next;
                 return value;
             }
@@ -183,14 +183,14 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
     }
 
     private static class ListNode<K, V> {
-        private HashTable.Entry<K, V> value;
+        private LinkedHashTable.Entry<K, V> value;
         private ListNode<K, V> next;
         private ListNode<K, V> prev;
 
         private ListNode() {
         }
 
-        private ListNode(@NotNull HashTable.Entry<K, V> value) {
+        private ListNode(@NotNull LinkedHashTable.Entry<K, V> value) {
             this.value = value;
         }
     }

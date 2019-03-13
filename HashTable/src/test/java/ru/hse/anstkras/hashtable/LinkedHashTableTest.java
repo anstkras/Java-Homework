@@ -11,11 +11,11 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class HashTableTest {
-    private HashTable<String, String> hashTable;
+class LinkedHashTableTest {
+    private LinkedHashTable<String, String> hashTable;
 
 
-    private void fill(HashTable<String, String> hashTable, int n) {
+    private void fill(LinkedHashTable<String, String> hashTable, int n) {
         for (int i = 0; i < n; i++) {
             hashTable.put("key" + i, "value" + i);
         }
@@ -23,7 +23,7 @@ class HashTableTest {
 
     @BeforeEach
     void init() {
-        hashTable = new HashTable<>();
+        hashTable = new LinkedHashTable<>();
     }
 
     @AfterEach

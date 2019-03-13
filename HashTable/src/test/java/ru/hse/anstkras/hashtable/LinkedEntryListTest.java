@@ -13,7 +13,7 @@ class LinkedEntryListTest {
 
     private void fill(EntryList<String, String> list, int n) {
         for (int i = 0; i < n; i++) {
-            list.add(new HashTable.Entry<>("key" + i, "value" + i));
+            list.add(new LinkedHashTable.Entry<>("key" + i, "value" + i));
         }
     }
 
@@ -34,34 +34,34 @@ class LinkedEntryListTest {
 
     @Test
     void notEmpty() {
-        list.add(new HashTable.Entry<>("key0", "value0"));
+        list.add(new LinkedHashTable.Entry<>("key0", "value0"));
         assertFalse(list.empty());
     }
 
     @Test
     void size() {
-        list.add(new HashTable.Entry<>("key0", "value0"));
-        list.add(new HashTable.Entry<>("key1", "value1"));
+        list.add(new LinkedHashTable.Entry<>("key0", "value0"));
+        list.add(new LinkedHashTable.Entry<>("key1", "value1"));
         assertEquals(2, list.size());
     }
 
     @Test
     void find() {
         fill(list, 50);
-        HashTable.Entry<String, String> entryToFind = new HashTable.Entry<>("key21", null);
-        assertEquals(new HashTable.Entry<>("key21", "value21"), list.find(entryToFind));
+        LinkedHashTable.Entry<String, String> entryToFind = new LinkedHashTable.Entry<>("key21", null);
+        assertEquals(new LinkedHashTable.Entry<>("key21", "value21"), list.find(entryToFind));
     }
 
     @Test
     void contains() {
         fill(list, 50);
-        HashTable.Entry<String, String> entryToFind = new HashTable.Entry<>("key21", null);
+        LinkedHashTable.Entry<String, String> entryToFind = new LinkedHashTable.Entry<>("key21", null);
         assertTrue(list.contains(entryToFind));
     }
 
     @Test
     void addAndRemove() {
-        HashTable.Entry<String, String> entry = new HashTable.Entry<>("key", "value");
+        LinkedHashTable.Entry<String, String> entry = new LinkedHashTable.Entry<>("key", "value");
         list.add(entry);
         list.remove(entry);
         assertTrue(list.empty());
@@ -77,14 +77,14 @@ class LinkedEntryListTest {
     @Test
     void remove() {
         fill(list, 50);
-        HashTable.Entry<String, String> entryToRemove = new HashTable.Entry<>("key21", null);
+        LinkedHashTable.Entry<String, String> entryToRemove = new LinkedHashTable.Entry<>("key21", null);
         list.remove(entryToRemove);
         assertFalse(list.contains(entryToRemove));
     }
 
     @Test
     void removeFromEmptyList() {
-        assertNull(list.remove(new HashTable.Entry<>("123", "456")));
+        assertNull(list.remove(new LinkedHashTable.Entry<>("123", "456")));
     }
 
     @Test
@@ -106,7 +106,7 @@ class LinkedEntryListTest {
     @Test
     void iterator() {
         fill(list, 100);
-        Iterator<HashTable.Entry<String, String>> it = list.iterator();
+        Iterator<LinkedHashTable.Entry<String, String>> it = list.iterator();
         int count = 0;
         while (it.hasNext()) {
             count++;
