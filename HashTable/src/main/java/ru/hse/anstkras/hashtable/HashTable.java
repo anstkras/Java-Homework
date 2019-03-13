@@ -48,7 +48,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
 
     /**
      * Checks if the given key is presented in the hash table.
-     * Throws {@code IllegalArgumentException} in case of null argument
+     * @throws  IllegalArgumentException in case of null argument
      */
     public boolean contains(@NotNull K key) {
         int hashKey = hashMod(key);
@@ -58,7 +58,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     /**
      * Looks for a value by the given key.
      * If the key is not presented in the hash table returns null
-     * Throws {@code IllegalArgumentException} in case of null argument
+     * @throws  IllegalArgumentException in case of null argument
      */
     @Nullable
     public V get(@NotNull Object key) {
@@ -75,7 +75,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
      * If there was an old value associated with the given key,
      * than returns the old value, otherwise returns null
      * Null value is allowed
-     * Throws {@code IllegalArgumentException} in case of null key
+     * @throws  IllegalArgumentException in case of null key
      *
      * @return the old value if exists, null otherwise
      */
@@ -98,7 +98,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
 
     /**
      * Removes the entry by the given key if exists, returns null otherwise.
-     * Throws {@code IllegalArgumentException} in case of null argument
+     * @throws  IllegalArgumentException in case of null argument
      *
      * @return the value of removed entry if exists, null otherwise
      */
@@ -120,6 +120,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
         assignLists(new HashTable<>());
     }
 
+    /** Returns set that represents the set of map entries */
     @NotNull
     @Override
     public Set<Map.Entry<K, V>> entrySet() {
