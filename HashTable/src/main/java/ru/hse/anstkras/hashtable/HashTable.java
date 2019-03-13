@@ -61,7 +61,6 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
      */
     @Nullable
     public V get(@NotNull Object key) {
-
         int hashKey = hashMod(key);
         Entry<K, V> entry = lists[hashKey].find(new Entry<>(key, null));
         if (entry == null) {
@@ -91,6 +90,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
             checkLoadFactor();
             return null;
         } else {
+            removeFromList(entry);
             return entry.value;
         }
     }
