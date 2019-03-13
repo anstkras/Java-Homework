@@ -10,9 +10,9 @@ import java.util.*;
  * Null keys are not allowed
  */
 public class HashTable<K, V> extends AbstractMap<K, V> {
-    private static final double DEFAULT_LOADFACTOR = 0.75;
+    private static final double DEFAULT_LOAD_FACTOR = 0.75;
     private static final int DEFAULT_CAPACITY = 10;
-    private final double loadfactor;
+    private final double loadFactor;
     private EntryList<K, V>[] lists;
     private int capacity;
     private int size;
@@ -24,7 +24,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     }
 
     public HashTable(int capacity) {
-        this(capacity, DEFAULT_LOADFACTOR);
+        this(capacity, DEFAULT_LOAD_FACTOR);
     }
 
     public HashTable(int capacity, double loadFactor) {
@@ -33,7 +33,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
             lists[i] = new LinkedEntryList<>();
         }
         this.capacity = capacity;
-        this.loadfactor = loadFactor;
+        this.loadFactor = loadFactor;
     }
 
     public int size() {
@@ -57,8 +57,6 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
      * Looks for a value by the given key.
      * If the key is not presented in the hash table returns null
      * Throws {@code IllegalArgumentException} in case of null argument
-     *
-     * @param key
      */
     @Nullable
     public V get(@NotNull Object key) {
@@ -100,7 +98,6 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
      * Removes the entry by the given key if exists, returns null otherwise.
      * Throws {@code IllegalArgumentException} in case of null argument
      *
-     * @param key
      * @return the value of removed entry if exists, null otherwise
      */
     @Nullable
@@ -136,7 +133,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     }
 
     private void checkLoadFactor() {
-        if ((double) size / capacity > loadfactor) {
+        if ((double) size / capacity > loadFactor) {
             rebuild();
         }
     }
@@ -150,7 +147,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     }
 
     private void rebuild() {
-        var newHashTable = new HashTable<K, V>(capacity * 2, loadfactor);
+        var newHashTable = new HashTable<K, V>(capacity * 2, loadFactor);
         EntryList<K, V> entries = entries();
         for (Entry<K, V> entry : entries) {
             newHashTable.put(entry.key, entry.value);
@@ -204,7 +201,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     }
 
     static class Entry<K, V> implements Map.Entry<K, V> {
-        private K key;
+        private final K key;
         private V value;
         private Entry<K, V> prev;
         private Entry<K, V> next;

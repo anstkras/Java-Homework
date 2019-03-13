@@ -109,7 +109,7 @@ class HashTableTest {
         hashTable.put("3", "4");
         hashTable.put("2", "5");
         List<String> expectedAnswer = Arrays.asList("1", "2", "3", "4", "5");
-        List<String> actualAnswer = hashTable.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList());
+        List<String> actualAnswer = hashTable.values().stream().collect(Collectors.toList());
         assertEquals(expectedAnswer, actualAnswer);
     }
 
