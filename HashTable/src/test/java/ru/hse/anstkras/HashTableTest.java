@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -110,5 +111,10 @@ class HashTableTest {
         List<String> expectedAnswer = Arrays.asList("1", "2", "3", "4", "5");
         List<String> actualAnswer = hashTable.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList());
         assertEquals(expectedAnswer, actualAnswer);
+    }
+
+    @Test
+    void iteratorEmptyEntrySet() {
+        assertThrows(NoSuchElementException.class, () -> hashTable.entrySet().iterator().next());
     }
 }

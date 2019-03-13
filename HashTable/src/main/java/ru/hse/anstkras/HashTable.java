@@ -276,6 +276,10 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
 
             @Override
             public Map.Entry<K, V> next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+
                 Entry<K, V> entry = next;
                 next = next.next;
                 return entry;
