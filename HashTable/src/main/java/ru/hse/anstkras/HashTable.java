@@ -1,12 +1,15 @@
 package ru.hse.anstkras;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/** Implementation of hashtable based on separate chaining technique */
+/**
+ * Implementation of hashtable based on separate chaining technique
+ * Null keys are not allowed
+ */
 public class HashTable<K, V> extends AbstractMap<K, V> {
-    private static final String NULL_KEY_ERROR = "Null can not be a key in hash table";
     private static final double DEFAULT_LOADFACTOR = 0.75;
     private static final int DEFAULT_CAPACITY = 10;
     private final double loadfactor;
@@ -45,11 +48,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
      * Checks if the given key is presented in the hash table.
      * Throws {@code IllegalArgumentException} in case of null argument
      */
-    public boolean contains(K key) {
-        if (key == null) {
-            throw new IllegalArgumentException(NULL_KEY_ERROR);
-        }
-
+    public boolean contains(@NotNull K key) {
         int hashKey = hashMod(key);
         return lists[hashKey].contains(new Entry<>(key, null));
     }
@@ -61,10 +60,8 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
      *
      * @param key
      */
-    public V get(Object key) {
-        if (key == null) {
-            throw new IllegalArgumentException(NULL_KEY_ERROR);
-        }
+    @Nullable
+    public V get(@NotNull Object key) {
 
         int hashKey = hashMod(key);
         Entry<K, V> entry = lists[hashKey].find(new Entry<>((K) key, null));
@@ -83,10 +80,8 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
      *
      * @return the old value if exists, null otherwise
      */
-    public V put(K key, V value) {
-        if (key == null) {
-            throw new IllegalArgumentException(NULL_KEY_ERROR);
-        }
+    @Nullable
+    public V put(@NotNull K key, @Nullable V value) {
         var newEntry = new Entry<>(key, value);
         addToList(newEntry);
         int hashKey = hashMod(key);
@@ -108,11 +103,8 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
      * @param key
      * @return the value of removed entry if exists, null otherwise
      */
-    public V remove(Object key) {
-        if (key == null) {
-            throw new IllegalArgumentException(NULL_KEY_ERROR);
-        }
-
+    @Nullable
+    public V remove(@NotNull Object key) {
         int hashKey = hashMod(key);
         Entry<K, V> removeEntry = lists[hashKey].remove(new Entry<>((K) key, null));
         if (removeEntry == null) {
@@ -122,8 +114,6 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
             removeFromList(removeEntry);
             return removeEntry.value;
         }
-
-        // TODO выпилить, как элемент списка
     }
 
     /** Delete all the values in the hashtable and shrinks its capacity */
@@ -151,7 +141,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
         }
     }
 
-    private int hashMod(Object key) {
+    private int hashMod(@NotNull Object key) {
         int result = key.hashCode() % capacity;
         if (result < 0) {
             result += capacity;
@@ -180,7 +170,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
         size = 0;
     }
 
-    private void addToList(Entry<K, V> entry) {
+    private void addToList(@NotNull Entry<K, V> entry) {
         if ((head == null && tail != null) || (head != null && tail == null)) {
             throw new IllegalStateException();
         }
@@ -194,7 +184,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
         }
     }
 
-    private void removeFromList(Entry<K, V> entry) {
+    private void removeFromList(@NotNull Entry<K, V> entry) {
         Entry<K, V> next = entry.next;
         Entry<K, V> prev = entry.prev;
 
@@ -213,36 +203,39 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
         }
     }
 
-    public static class Entry<K, V> implements Map.Entry<K, V> {
+    static class Entry<K, V> implements Map.Entry<K, V> {
         private K key;
         private V value;
         private Entry<K, V> prev;
         private Entry<K, V> next;
 
-        public Entry(K key, V value) {
+        Entry(@NotNull K key, @Nullable V value) {
             this.key = key;
             this.value = value;
         }
 
         @Override
+        @NotNull
         public K getKey() {
             return key;
         }
 
         @Override
+        @Nullable
         public V getValue() {
             return value;
         }
 
         @Override
-        public V setValue(V value) {
+        @Nullable
+        public V setValue(@Nullable V value) {
             V previousValue = this.value;
             this.value = value;
             return previousValue;
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(@Nullable Object obj) {
             if (obj == null || obj.getClass() != getClass()) {
                 return false;
             }
@@ -272,7 +265,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
         private class EntryIterator implements Iterator<Map.Entry<K, V>> {
             private Entry<K, V> next;
 
-            private EntryIterator(Entry<K, V> startEntry) {
+            private EntryIterator(@Nullable Entry<K, V> startEntry) {
                 next = startEntry;
             }
 
