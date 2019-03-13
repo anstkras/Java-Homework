@@ -1,8 +1,6 @@
 language: java
 jdk:
 - openjdk11
-services: 
-- mongodb
 os:
 - linux
 env:
