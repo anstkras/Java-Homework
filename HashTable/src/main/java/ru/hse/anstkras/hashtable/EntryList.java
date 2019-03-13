@@ -1,5 +1,8 @@
 package ru.hse.anstkras.hashtable;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /** An ordered collection of elements. */
 
 interface EntryList<K, V> extends Iterable<HashTable.Entry<K, V>> {
@@ -7,14 +10,23 @@ interface EntryList<K, V> extends Iterable<HashTable.Entry<K, V>> {
 
     boolean empty();
 
-    HashTable.Entry<K, V> remove(HashTable.Entry<K, V> value);
+
+    /**
+     * Removes the first occurrence of the given element if it is contained in the list,
+     * otherwise returns null
+     *
+     * @param value element to remove
+     * @return removed element if it was contained in the list, null otherwise
+     */
+    @Nullable
+    HashTable.Entry<K, V> remove(@NotNull HashTable.Entry<K, V> value);
 
     /**
      * Add the element to the end of the list
      *
      * @param value element to be added to the list
      */
-    void add(HashTable.Entry<K, V> value);
+    void add(@NotNull HashTable.Entry<K, V> value);
 
     /**
      * Finds the first occurrence of the element that is equal to the given element
@@ -22,9 +34,10 @@ interface EntryList<K, V> extends Iterable<HashTable.Entry<K, V>> {
      * @param value element to find
      * @return the first occurrence of the element that is equal to the given element
      */
-    HashTable.Entry find(HashTable.Entry<K, V> value);
+    @Nullable
+    HashTable.Entry find(@NotNull HashTable.Entry<K, V> value);
 
-    boolean contains(HashTable.Entry<K, V> value);
+    boolean contains(@NotNull HashTable.Entry<K, V> value);
 
     void clear();
 
@@ -33,5 +46,5 @@ interface EntryList<K, V> extends Iterable<HashTable.Entry<K, V>> {
      *
      * @param other list to concatenate
      */
-    void concat(EntryList<K, V> other);
+    void concat(@NotNull EntryList<K, V> other);
 }

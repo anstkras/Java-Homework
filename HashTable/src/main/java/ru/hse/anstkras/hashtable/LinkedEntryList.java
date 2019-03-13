@@ -1,6 +1,7 @@
 package ru.hse.anstkras.hashtable;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 
@@ -29,11 +30,12 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
      * @return removed element if it was contained in the list, null otherwise
      */
     @Override
-    public HashTable.Entry<K, V> remove(HashTable.Entry<K, V> value) {
+    @Nullable
+    public HashTable.Entry<K, V> remove(@NotNull HashTable.Entry<K, V> value) {
         for (ListNode<K, V> node = head; node != null; node = node.next) {
-            if ((value == null && node.value == null) || node.value.equals(value)) {
-                ListNode next = node.next;
-                ListNode prev = node.prev;
+            if (node.value.equals(value)) {
+                ListNode<K, V> next = node.next;
+                ListNode<K, V> prev = node.prev;
 
                 if (next == null) {
                     tail = prev;
@@ -64,7 +66,7 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
      * @param value element to be added to the list
      */
     @Override
-    public void add(HashTable.Entry<K, V> value) {
+    public void add(@NotNull HashTable.Entry<K, V> value) {
         if ((head == null && tail != null) || (head != null && tail == null)) {
             throw new IllegalStateException();
         }
@@ -86,9 +88,10 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
      * @return the first occurrence of the element that is equal to the given element
      */
     @Override
-    public HashTable.Entry<K, V> find(HashTable.Entry<K, V> value) {
+    @Nullable
+    public HashTable.Entry<K, V> find(@NotNull HashTable.Entry<K, V> value) {
         for (ListNode<K, V> node = head; node != null; node = node.next) {
-            if ((value == null && node.value == null) || node.value.equals(value)) {
+            if (node.value.equals(value)) {
                 return node.value;
             }
         }
@@ -96,7 +99,7 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
     }
 
     @Override
-    public boolean contains(HashTable.Entry<K, V> value) {
+    public boolean contains(@NotNull HashTable.Entry<K, V> value) {
         return find(value) != null;
     }
 
@@ -123,8 +126,8 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
      * @param other list to concatenate
      */
     @Override
-    public void concat(EntryList<K, V> other) {
-        if (other == null || other.empty()) {
+    public void concat(@NotNull EntryList<K, V> other) {
+        if (other.empty()) {
             return;
         }
 
@@ -179,7 +182,6 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
         };
     }
 
-
     private static class ListNode<K, V> {
         private HashTable.Entry<K, V> value;
         private ListNode<K, V> next;
@@ -188,7 +190,7 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
         private ListNode() {
         }
 
-        private ListNode(HashTable.Entry<K, V> value) {
+        private ListNode(@NotNull HashTable.Entry<K, V> value) {
             this.value = value;
         }
     }
