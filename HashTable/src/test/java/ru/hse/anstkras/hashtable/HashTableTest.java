@@ -1,4 +1,4 @@
-package ru.hse.anstkras;
+package ru.hse.anstkras.hashtable;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

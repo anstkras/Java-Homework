@@ -1,4 +1,4 @@
-package ru.hse.anstkras;
+package ru.hse.anstkras.hashtable;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +13,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     private static final double DEFAULT_LOADFACTOR = 0.75;
     private static final int DEFAULT_CAPACITY = 10;
     private final double loadfactor;
-    private List<K, V>[] lists;
+    private EntryList<K, V>[] lists;
     private int capacity;
     private int size;
     private Entry<K, V> head = null;
@@ -28,9 +28,9 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     }
 
     public HashTable(int capacity, double loadFactor) {
-        lists = new LinkedList[capacity];
+        lists = new LinkedEntryList[capacity];
         for (int i = 0; i < capacity; i++) {
-            lists[i] = new LinkedList<>();
+            lists[i] = new LinkedEntryList<>();
         }
         this.capacity = capacity;
         this.loadfactor = loadFactor;
@@ -127,9 +127,9 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
         return new EntrySet();
     }
 
-    private List<K, V> entries() {
-        var entries = new LinkedList<K, V>();
-        for (List<K, V> list : lists) {
+    private EntryList<K, V> entries() {
+        var entries = new LinkedEntryList<K, V>();
+        for (EntryList<K, V> list : lists) {
             entries.concat(list);
         }
         return entries;
@@ -151,7 +151,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
 
     private void rebuild() {
         var newHashTable = new HashTable<K, V>(capacity * 2, loadfactor);
-        List<K, V> entries = entries();
+        EntryList<K, V> entries = entries();
         for (Entry<K, V> entry : entries) {
             newHashTable.put(entry.key, entry.value);
         }

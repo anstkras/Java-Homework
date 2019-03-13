@@ -1,14 +1,14 @@
-package ru.hse.anstkras;
+package ru.hse.anstkras.hashtable;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
-/** Doubly linked list implementation of the List interface */
+/** Doubly linked list implementation of the EntryList interface */
 
-public class LinkedList<K, V> implements List<K, V> {
-    private ListNode<K, V>  head;
-    private ListNode<K, V>  tail;
+class LinkedEntryList<K, V> implements EntryList<K, V> {
+    private ListNode<K, V> head;
+    private ListNode<K, V> tail;
     private int size;
 
     @Override
@@ -29,8 +29,8 @@ public class LinkedList<K, V> implements List<K, V> {
      * @return removed element if it was contained in the list, null otherwise
      */
     @Override
-    public HashTable.Entry<K, V>  remove(HashTable.Entry<K, V>  value) {
-        for (ListNode<K, V>  node = head; node != null; node = node.next) {
+    public HashTable.Entry<K, V> remove(HashTable.Entry<K, V> value) {
+        for (ListNode<K, V> node = head; node != null; node = node.next) {
             if ((value == null && node.value == null) || node.value.equals(value)) {
                 ListNode next = node.next;
                 ListNode prev = node.prev;
@@ -50,7 +50,7 @@ public class LinkedList<K, V> implements List<K, V> {
                 }
 
                 size--;
-                HashTable.Entry<K, V>  nodeValue = node.value;
+                HashTable.Entry<K, V> nodeValue = node.value;
                 node.value = null;
                 return nodeValue;
             }
@@ -64,7 +64,7 @@ public class LinkedList<K, V> implements List<K, V> {
      * @param value element to be added to the list
      */
     @Override
-    public void add(HashTable.Entry<K, V>  value) {
+    public void add(HashTable.Entry<K, V> value) {
         if ((head == null && tail != null) || (head != null && tail == null)) {
             throw new IllegalStateException();
         }
@@ -86,8 +86,8 @@ public class LinkedList<K, V> implements List<K, V> {
      * @return the first occurrence of the element that is equal to the given element
      */
     @Override
-    public HashTable.Entry<K, V>  find(HashTable.Entry<K, V>  value) {
-        for (ListNode<K, V>  node = head; node != null; node = node.next) {
+    public HashTable.Entry<K, V> find(HashTable.Entry<K, V> value) {
+        for (ListNode<K, V> node = head; node != null; node = node.next) {
             if ((value == null && node.value == null) || node.value.equals(value)) {
                 return node.value;
             }
@@ -96,7 +96,7 @@ public class LinkedList<K, V> implements List<K, V> {
     }
 
     @Override
-    public boolean contains(HashTable.Entry<K, V>  value) {
+    public boolean contains(HashTable.Entry<K, V> value) {
         return find(value) != null;
     }
 
@@ -123,19 +123,19 @@ public class LinkedList<K, V> implements List<K, V> {
      * @param other list to concatenate
      */
     @Override
-    public void concat(List<K, V>  other) {
+    public void concat(EntryList<K, V> other) {
         if (other == null || other.empty()) {
             return;
         }
 
         if (other.getClass() != getClass()) {
-            for (HashTable.Entry<K, V>  entry : other) {
+            for (HashTable.Entry<K, V> entry : other) {
                 add(entry);
             }
             return;
         }
 
-        var otherList = (LinkedList<K, V> ) other;
+        var otherList = (LinkedEntryList<K, V>) other;
         if ((head == null && tail != null) || (head != null && tail == null)) {
             throw new IllegalStateException();
         }
@@ -161,9 +161,9 @@ public class LinkedList<K, V> implements List<K, V> {
      */
     @NotNull
     @Override
-    public Iterator<HashTable.Entry<K, V> > iterator() {
+    public Iterator<HashTable.Entry<K, V>> iterator() {
         return new Iterator<>() {
-            private ListNode<K, V>  node = head;
+            private ListNode<K, V> node = head;
 
             @Override
             public boolean hasNext() {
@@ -171,7 +171,7 @@ public class LinkedList<K, V> implements List<K, V> {
             }
 
             @Override
-            public HashTable.Entry<K, V>  next() {
+            public HashTable.Entry<K, V> next() {
                 HashTable.Entry<K, V> value = node.value;
                 node = node.next;
                 return value;
@@ -179,15 +179,16 @@ public class LinkedList<K, V> implements List<K, V> {
         };
     }
 
+
     private static class ListNode<K, V> {
         private HashTable.Entry<K, V> value;
-        private ListNode<K, V>  next;
-        private ListNode<K, V>  prev;
+        private ListNode<K, V> next;
+        private ListNode<K, V> prev;
 
         private ListNode() {
         }
 
-        private ListNode(HashTable.Entry<K, V>  value) {
+        private ListNode(HashTable.Entry<K, V> value) {
             this.value = value;
         }
     }

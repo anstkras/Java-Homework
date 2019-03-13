@@ -1,4 +1,4 @@
-package ru.hse.anstkras;
+package ru.hse.anstkras.hashtable;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,10 +8,10 @@ import java.util.Iterator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LinkedListTest {
-    private LinkedList<String, String> list;
+class LinkedEntryListTest {
+    private LinkedEntryList<String, String> list;
 
-    private void fill(List<String, String> list, int n) {
+    private void fill(EntryList<String, String> list, int n) {
         for (int i = 0; i < n; i++) {
             list.add(new HashTable.Entry<>("key" + i, "value" + i));
         }
@@ -19,7 +19,7 @@ class LinkedListTest {
 
     @BeforeEach
     void init() {
-        list = new LinkedList<>();
+        list = new LinkedEntryList<>();
     }
 
     @AfterEach
@@ -97,7 +97,7 @@ class LinkedListTest {
     @Test
     void concat() {
         fill(list, 100);
-        var list2 = new LinkedList<String, String>();
+        var list2 = new LinkedEntryList<String, String>();
         fill(list2, 100);
         list.concat(list2);
         assertEquals(200, list.size());
