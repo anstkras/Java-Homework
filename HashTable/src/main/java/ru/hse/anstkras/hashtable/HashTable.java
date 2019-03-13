@@ -27,8 +27,9 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
         this(capacity, DEFAULT_LOAD_FACTOR);
     }
 
+    @SuppressWarnings("unchecked")
     public HashTable(int capacity, double loadFactor) {
-        lists = new LinkedEntryList[capacity];
+        lists = (LinkedEntryList<K, V>[])new LinkedEntryList[capacity];
         for (int i = 0; i < capacity; i++) {
             lists[i] = new LinkedEntryList<>();
         }
@@ -62,7 +63,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     public V get(@NotNull Object key) {
 
         int hashKey = hashMod(key);
-        Entry<K, V> entry = lists[hashKey].find(new Entry<>((K) key, null));
+        Entry<K, V> entry = lists[hashKey].find(new Entry<>(key, null));
         if (entry == null) {
             return null;
         }
@@ -103,7 +104,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     @Nullable
     public V remove(@NotNull Object key) {
         int hashKey = hashMod(key);
-        Entry<K, V> removeEntry = lists[hashKey].remove(new Entry<>((K) key, null));
+        Entry<K, V> removeEntry = lists[hashKey].remove(new Entry<>(key, null));
         if (removeEntry == null) {
             return null;
         } else {

@@ -19,7 +19,7 @@ interface EntryList<K, V> extends Iterable<HashTable.Entry<K, V>> {
      * @return removed element if it was contained in the list, null otherwise
      */
     @Nullable
-    HashTable.Entry<K, V> remove(@NotNull HashTable.Entry<K, V> value);
+    HashTable.Entry<K, V> remove(@NotNull HashTable.Entry<?, V> value);
 
     /**
      * Add the element to the end of the list
@@ -35,7 +35,7 @@ interface EntryList<K, V> extends Iterable<HashTable.Entry<K, V>> {
      * @return the first occurrence of the element that is equal to the given element
      */
     @Nullable
-    HashTable.Entry find(@NotNull HashTable.Entry<K, V> value);
+    HashTable.Entry<K, V> find(@NotNull HashTable.Entry<?, V> value);
 
     boolean contains(@NotNull HashTable.Entry<K, V> value);
 

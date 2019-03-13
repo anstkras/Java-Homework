@@ -31,7 +31,7 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
      */
     @Override
     @Nullable
-    public HashTable.Entry<K, V> remove(@NotNull HashTable.Entry<K, V> value) {
+    public HashTable.Entry<K, V> remove(@NotNull HashTable.Entry<?, V> value) {
         for (ListNode<K, V> node = head; node != null; node = node.next) {
             if (node.value.equals(value)) {
                 ListNode<K, V> next = node.next;
@@ -89,7 +89,7 @@ class LinkedEntryList<K, V> implements EntryList<K, V> {
      */
     @Override
     @Nullable
-    public HashTable.Entry<K, V> find(@NotNull HashTable.Entry<K, V> value) {
+    public HashTable.Entry<K, V> find(@NotNull HashTable.Entry<?, V> value) {
         for (ListNode<K, V> node = head; node != null; node = node.next) {
             if (node.value.equals(value)) {
                 return node.value;
