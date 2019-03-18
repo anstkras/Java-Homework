@@ -3,7 +3,7 @@ package ru.hse.anstkras;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Phaser;
 
@@ -12,7 +12,7 @@ public class QSort {
     private final static int DEFAULT_SIZE_LIMIT = 10;
     private final int sizeLimit;
 
-    private final Executor threadPool;
+    private final ExecutorService threadPool;
 
     /**
      * Initializes thread pool for quick sort with default values, default value for threads number is
@@ -39,6 +39,11 @@ public class QSort {
         phaser.register();
         threadPool.execute(new QSortRunnable(0, array.length - 1, array, phaser));
         phaser.arriveAndAwaitAdvance();
+    }
+
+    /** Shuts down the thread pool used by quick sort algorithm */
+    public void shutDown() {
+        threadPool.shutdown();
     }
 
     private class QSortRunnable implements Runnable {

@@ -1,5 +1,6 @@
 package ru.hse.anstkras;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,11 @@ class QSortTest {
     @BeforeEach
     void init() {
         qSort = new QSort();
+    }
+
+    @AfterEach
+    void finish() {
+        qSort.shutDown();
     }
 
     @Test
