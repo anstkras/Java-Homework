@@ -8,6 +8,7 @@ env:
 - PROJECT_DIR=2
 - PROJECT_DIR=TreeSet
 - PROJECT_DIR=4/PhoneBook
+- PROJECT_DIR=Reflector
 - PROJECT_DIR=HashTable
 script: 
 - if [ -d "$PROJECT_DIR" ]; then
