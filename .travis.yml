@@ -9,6 +9,7 @@ env:
 - PROJECT_DIR=TreeSet
 - PROJECT_DIR=4/PhoneBook
 - PROJECT_DIR=Reflector
+- PROJECT_DIR=HashTable
 script: 
 - if [ -d "$PROJECT_DIR" ]; then
   cd $PROJECT_DIR && ./gradlew check;
