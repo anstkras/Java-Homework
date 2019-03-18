@@ -2,11 +2,13 @@ package ru.hse.anstkras.qsort;
 
 import java.util.Random;
 
+/** Prints the statistics about execution time of quick sort algorithm */
 public class Main {
     private final static int[] threadsNumber = {1, 2, 4, 8, 16, 32, 64, 128, 256};
     private final static int[] sizesOfArrays = {10, 100, 1000, 10000, 100000, 1000000};
     private final static Random random = new Random(1);
 
+    /** Prints the statistics about execution time of quick sort algorithm */
     public static void main(String[] args) {
         for (int size : sizesOfArrays) {
             int[] array = random.ints(-10000, 10000).limit(size).toArray();
