@@ -1,4 +1,4 @@
-package ru.hse.anstkras;
+package ru.hse.anstkras.qsort;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +9,7 @@ import java.util.concurrent.Phaser;
 
 /** Implements multithreaded quick sort algorithm */
 public class QSort {
-    private final static int DEFAULT_SIZE_LIMIT = 10;
+    private final static int DEFAULT_SIZE_LIMIT = 50;
     private final int sizeLimit;
 
     private final ExecutorService threadPool;
