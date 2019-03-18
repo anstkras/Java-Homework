@@ -36,7 +36,7 @@ public class QSort {
     /** Sorts the array  using multithreaded quick sort algorithm */
     public void sort(@NotNull int[] array) {
         final Phaser phaser = new Phaser(1);
-        threadPool.execute(new QSortRunnable(0, array.length, array, phaser));
+        threadPool.execute(new QSortRunnable(0, array.length , array, phaser));
         phaser.arriveAndAwaitAdvance();
     }
 
@@ -61,7 +61,10 @@ public class QSort {
         }
 
         private void quickSort(int start, int end) {
-            if (end - start + 1 >= sizeLimit) {
+            if (start >= end) {
+                return;
+            }
+            if (end - start + 1 <= sizeLimit) {
                 Arrays.sort(array, start, end);
                 return;
             }
