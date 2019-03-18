@@ -1,4 +1,4 @@
-package ru.hse.anstkras;
+package ru.hse.anstkras.qsort;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
