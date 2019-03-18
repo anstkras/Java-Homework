@@ -19,3 +19,9 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+jar {
+    manifest {
+        attributes 'Main-Class': 'ru.hse.anstkras.qsort.Main'
+    }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
