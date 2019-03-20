@@ -10,6 +10,7 @@ env:
 - PROJECT_DIR=4/PhoneBook
 - PROJECT_DIR=Reflector
 - PROJECT_DIR=HashTable
+- PROJECT_DIR=qsort
 script: 
 - if [ -d "$PROJECT_DIR" ]; then
   cd $PROJECT_DIR && ./gradlew check;
