@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ThreadPoolTest {
     @Test
-    void simpleTestForOneThread() {
+    void simpleTestForOneThread() throws LightExecutionException {
         var threadPool = new ThreadPool(1);
         LightFuture<Integer> lightFuture1 = threadPool.submit(() -> 5);
         while (!lightFuture1.isReady()) {
@@ -21,7 +21,7 @@ class ThreadPoolTest {
     }
 
     @Test
-    void simpleTestForManyThreads() {
+    void simpleTestForManyThreads() throws LightExecutionException {
         final int SIZE = 100;
         var threadPool = new ThreadPool(SIZE);
         List<LightFuture<Integer>> futures = new ArrayList<>();
@@ -36,7 +36,7 @@ class ThreadPoolTest {
     }
 
     @Test
-    void simpleTestForThenApply() {
+    void simpleTestForThenApply() throws LightExecutionException {
         var threadPool = new ThreadPool(1);
         LightFuture<Integer> future = threadPool.submit(() -> 42);
         LightFuture<Integer> futureThen = future.thenApply(value -> value + 137);
