@@ -7,6 +7,6 @@ public interface LightFuture<V> {
 
     V get();
 
-    <R> LightFuture<R> thenApply(Function<V, LightFuture<R>> function);
+    <R> LightFuture<R> thenApply(Function<V, R> function);
 
 }

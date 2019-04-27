@@ -30,10 +30,14 @@ public class ThreadPool {
         }
         synchronized (tasks) {
             var threadPoolTask = new ThreadPoolTask<>(task);
-            tasks.add(threadPoolTask);
-            tasks.notify();
+            addTask(threadPoolTask);
             return threadPoolTask;
         }
+    }
+
+    private <R> void addTask(ThreadPoolTask<R> task) {
+        tasks.add(task);
+        tasks.notify();
     }
 
     public void shutdown() {
@@ -47,9 +51,9 @@ public class ThreadPool {
         return isShutDown;
     }
 
-    private static class ThreadPoolTask<R> implements LightFuture<R> {
+    private class ThreadPoolTask<R> implements LightFuture<R>, Runnable {
         private final Supplier<R> supplier;
-
+        private final List<ThreadPoolTask<?>> children = new ArrayList<>();
         private R result;
         private volatile boolean isReady = false;
 
@@ -58,31 +62,34 @@ public class ThreadPool {
         }
 
         @Override
-        public boolean isReady() {
-            synchronized (supplier) {
-                return isReady;
+        synchronized public boolean isReady() {
+            return isReady; // TODO is synchronized here necessary?
+        }
+
+        @Override
+        synchronized public R get() {
+            if (!isReady) {
+                run();
+            }
+            return result;
+
+        }
+
+        @Override
+        public <R1> LightFuture<R1> thenApply(Function<R, R1> function) {
+            synchronized (children) {
+                ThreadPoolTask<R1> task = new ThreadPoolTask<>(() -> function.apply(get()));
+                children.add(task);
+                return task;
             }
         }
 
         @Override
-        public R get() {
-            synchronized (supplier) {
-                if (!isReady) {
-                    compute();
-                }
-                return result;
-            }
-        }
-
-        @Override
-        public <R1> LightFuture<R1> thenApply(Function<R, LightFuture<R1>> function) {
-            return null;
-        }
-
-        private void compute() {
-            synchronized (supplier) {
-                result = supplier.get();
-                isReady = true;
+        synchronized public void run() {
+            result = supplier.get();
+            isReady = true;
+            for (var child : children) {
+                addTask(child);
             }
         }
     }
@@ -103,7 +110,7 @@ public class ThreadPool {
                     }
                     task = tasks.remove();
                 }
-                task.compute();
+                task.run();
             }
         }
     }

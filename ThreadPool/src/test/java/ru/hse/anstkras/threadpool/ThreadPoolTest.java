@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ThreadPoolTest {
     @Test
@@ -32,5 +33,15 @@ class ThreadPoolTest {
             assertEquals(i, (int) futures.get(i).get());
         }
         threadPool.shutdown();
+    }
+
+    @Test
+    void simpleTestForThenApply() {
+        var threadPool = new ThreadPool(1);
+        LightFuture<Integer> future = threadPool.submit(() -> 42);
+        LightFuture<Integer> futureThen = future.thenApply(value -> value + 137);
+        assertEquals(179, (int)futureThen.get());
+        assertTrue(future.isReady());
+        assertEquals(42, (int)future.get());
     }
 }
