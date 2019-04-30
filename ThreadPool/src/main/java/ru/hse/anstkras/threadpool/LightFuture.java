@@ -12,5 +12,5 @@ public interface LightFuture<V> {
     V get() throws LightExecutionException;
 
     @NotNull
-    <R> LightFuture<R> thenApply(@NotNull Function<V, R> function);
+    <R> LightFuture<R> thenApply(@NotNull Function<? super V, R> function);
 }

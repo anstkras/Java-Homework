@@ -99,7 +99,7 @@ public class ThreadPool {
 
         @Override
         @NotNull
-        public <R1> LightFuture<R1> thenApply(@NotNull Function<R, R1> function) {
+        public <T> LightFuture<T> thenApply(@NotNull Function<? super R, T> function) {
             var task = new ThreadPoolTask<>(() -> {
                 try {
                     return function.apply(get());
