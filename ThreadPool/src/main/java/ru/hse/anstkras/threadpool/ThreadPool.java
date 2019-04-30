@@ -70,6 +70,7 @@ public class ThreadPool {
         private final @NotNull List<ThreadPoolTask<?>> children = new ArrayList<>();
         private @Nullable R result;
         private volatile boolean isReady = false;
+        private volatile LightExecutionException exception;
 
         private ThreadPoolTask(@NotNull Supplier<R> supplier) {
             this.supplier = supplier;
@@ -93,6 +94,9 @@ public class ThreadPool {
                         }
                     }
                 }
+            }
+            if (exception != null) {
+                throw exception;
             }
             return result;
         }
@@ -118,20 +122,21 @@ public class ThreadPool {
             return task;
         }
 
-        private void execute() throws LightExecutionException {
+        private void execute() {
             try {
                 result = supplier.get();
-                isReady = true;
                 synchronized (children) {
                     for (var child : children) {
                         addTask(child);
                     }
                 }
-                synchronized (this) {
-                    notifyAll();
-                }
             } catch (Exception exception) {
-                throw new LightExecutionException(exception);
+                this.exception = new LightExecutionException(exception);
+            }
+
+            isReady = true;
+            synchronized (this) {
+                notifyAll();
             }
         }
     }
@@ -150,11 +155,7 @@ public class ThreadPool {
                     }
                     task = tasks.remove();
                 }
-                try {
-                    task.execute();
-                } catch (LightExecutionException e) {
-                    e.printStackTrace();
-                }
+                task.execute();
             }
         }
     }
