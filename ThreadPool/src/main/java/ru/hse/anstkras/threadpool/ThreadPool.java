@@ -1,6 +1,7 @@
 package ru.hse.anstkras.threadpool;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -11,9 +12,9 @@ import java.util.function.Supplier;
 
 public class ThreadPool {
     private final int threadsNumber;
-    private final Queue<ThreadPoolTask> tasks = new ArrayDeque<>();
-    private final Thread[] threads;
-    private boolean isShutDown = false;
+    private final @NotNull Queue<ThreadPoolTask> tasks = new ArrayDeque<>();
+    private final @NotNull Thread[] threads;
+    private volatile boolean isShutDown = false;
 
     public ThreadPool(int threadsNumber) {
         if (threadsNumber <= 0) {
@@ -39,7 +40,7 @@ public class ThreadPool {
 
     }
 
-    private <R> void addTask(ThreadPoolTask<R> task) {
+    private <R> void addTask(@NotNull ThreadPoolTask<R> task) {
         synchronized (tasks) {
             tasks.add(task);
             tasks.notify();
@@ -56,29 +57,42 @@ public class ThreadPool {
         }
     }
 
+    public int getThreadsNumber() {
+        return threadsNumber;
+    }
+
     public boolean isShutDown() {
         return isShutDown;
     }
 
     private class ThreadPoolTask<R> implements LightFuture<R> {
-        private final Supplier<R> supplier;
-        private final List<ThreadPoolTask<?>> children = new ArrayList<>();
-        private R result;
+        private final @NotNull Supplier<R> supplier;
+        private final @NotNull List<ThreadPoolTask<?>> children = new ArrayList<>();
+        private @Nullable R result;
         private volatile boolean isReady = false;
 
-        private ThreadPoolTask(Supplier<R> supplier) {
+        private ThreadPoolTask(@NotNull Supplier<R> supplier) {
             this.supplier = supplier;
         }
 
         @Override
-        synchronized public boolean isReady() {
-            return isReady; // TODO is synchronized here necessary?
+        public boolean isReady() {
+            return isReady;
         }
 
         @Override
-        synchronized public R get() throws LightExecutionException {
+        @Nullable
+        public R get() throws LightExecutionException {
             if (!isReady) {
-                execute();
+                synchronized (this) {
+                    while (!isReady) {
+                        try {
+                            wait();
+                        } catch (InterruptedException exception) {
+                            throw new LightExecutionException(exception);
+                        }
+                    }
+                }
             }
             return result;
         }
@@ -94,11 +108,14 @@ public class ThreadPool {
                 }
             });
 
-            synchronized (children) {
-                children.add(task);
+            if (isReady) {
+                addTask(task);
+            } else {
+                synchronized (children) {
+                    children.add(task);
+                }
             }
             return task;
-
         }
 
         private void execute() throws LightExecutionException {
@@ -110,8 +127,11 @@ public class ThreadPool {
                         addTask(child);
                     }
                 }
+                synchronized (this) {
+                    notifyAll();
+                }
             } catch (Exception exception) {
-                throw new LightExecutionException();
+                throw new LightExecutionException(exception);
             }
         }
     }
@@ -125,8 +145,7 @@ public class ThreadPool {
                     while (tasks.isEmpty()) {
                         try {
                             tasks.wait();
-                        } catch (InterruptedException e) {
-
+                        } catch (InterruptedException ignored) {
                         }
                     }
                     task = tasks.remove();
