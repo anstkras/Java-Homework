@@ -12,11 +12,8 @@ class ThreadPoolTest {
     void simpleTestForOneThread() {
         assertDoesNotThrow(() -> {
             var threadPool = new ThreadPool(1);
-            LightFuture<Integer> lightFuture1 = threadPool.submit(() -> 5);
-            while (!lightFuture1.isReady()) {
-                ;
-            }
-            assertEquals(5, (int) lightFuture1.get());
+            LightFuture<Integer> lightFuture = threadPool.submit(() -> 5);
+            assertEquals(5, (int) lightFuture.get());
             threadPool.shutdown();
         });
     }

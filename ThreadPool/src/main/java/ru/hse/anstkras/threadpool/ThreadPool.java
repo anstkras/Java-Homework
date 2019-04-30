@@ -37,7 +37,6 @@ public class ThreadPool {
         var threadPoolTask = new ThreadPoolTask<>(task);
         addTask(threadPoolTask);
         return threadPoolTask;
-
     }
 
     private <R> void addTask(@NotNull ThreadPoolTask<R> task) {
