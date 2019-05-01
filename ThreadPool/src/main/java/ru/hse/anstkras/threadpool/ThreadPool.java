@@ -19,7 +19,11 @@ public class ThreadPool {
     private final @NotNull Thread[] threads;
     private volatile boolean isShutDown = false;
 
-    /** Creates a thread pool with the given number of threads */
+    /**
+     * Creates a thread pool with the given number of threads
+     *
+     * @throws IllegalArgumentException in case of threadsNumber is negative
+     */
     public ThreadPool(int threadsNumber) {
         if (threadsNumber <= 0) {
             throw new IllegalArgumentException("Threads number should be a positive integer");
@@ -38,6 +42,7 @@ public class ThreadPool {
      *
      * @param task to be computed
      * @param <R>  the type of the task's result
+     * @throws IllegalStateException if the thread pool is shut down
      * @return the representation of task's result
      */
     @NotNull
