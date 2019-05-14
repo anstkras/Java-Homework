@@ -68,6 +68,8 @@ public class ThreadPool {
         isShutDown = true;
         for (Thread thread : threads) {
             thread.interrupt();
+        }
+        for (Thread thread : threads) {
             thread.join();
         }
     }
@@ -170,12 +172,13 @@ public class ThreadPool {
         @Override
         public void run() {
             ThreadPoolTask task = null;
-            while (!interrupted()) {
+            while (!isShutDown) {
                 synchronized (tasks) {
                     while (tasks.isEmpty()) {
                         try {
                             tasks.wait();
                         } catch (InterruptedException ignored) {
+                            return;
                         }
                     }
                     task = tasks.remove();

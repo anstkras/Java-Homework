@@ -68,7 +68,7 @@ class ThreadPoolTest {
     }
 
     @Test
-    void throwLightFutureException() {
+    void throwLightFutureException() throws InterruptedException {
         var threadPool = new ThreadPool(1);
         LightFuture<Integer> future = threadPool.submit(() -> {
             throw new NullPointerException();
@@ -78,7 +78,7 @@ class ThreadPoolTest {
     }
 
     @Test
-    void testIsShutDown() {
+    void testIsShutDown() throws InterruptedException {
         var threadPool = new ThreadPool(2);
         threadPool.shutdown();
         assertTrue(threadPool.isShutDown());
@@ -172,7 +172,7 @@ class ThreadPoolTest {
     }
 
     @Test
-    void tryAddTaskToShutDownThreadPool() {
+    void tryAddTaskToShutDownThreadPool() throws InterruptedException {
         var threadPool = new ThreadPool(1);
         threadPool.shutdown();
         assertThrows(IllegalStateException.class, () -> threadPool.submit(() -> 42));
