@@ -58,14 +58,17 @@ public class ThreadPool {
 
     /**
      * Stops the thread pool's threads
+     *
+     * @throws InterruptedException if some other thread has interrupted the current thread while joining
      */
-    public void shutdown() {
+    public void shutdown() throws InterruptedException {
         if (isShutDown) {
             return;
         }
         isShutDown = true;
         for (Thread thread : threads) {
             thread.interrupt();
+            thread.join();
         }
     }
 
