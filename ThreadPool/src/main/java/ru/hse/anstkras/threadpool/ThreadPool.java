@@ -42,8 +42,8 @@ public class ThreadPool {
      *
      * @param task to be computed
      * @param <R>  the type of the task's result
-     * @throws IllegalStateException if the thread pool is shut down
      * @return the representation of task's result
+     * @throws IllegalStateException if the thread pool is shut down
      */
     @NotNull
     public <R> LightFuture<R> submit(@NotNull Supplier<R> task) {
@@ -87,13 +87,14 @@ public class ThreadPool {
     private <R> void addTaskToQueue(@NotNull ThreadPoolTask<R> task) {
         synchronized (tasks) {
             tasks.add(task);
-            tasks.notify();
+            tasks.notifyAll();
         }
     }
 
     private class ThreadPoolTask<R> implements LightFuture<R> {
         private final @NotNull Supplier<R> supplier;
         private final @NotNull List<ThreadPoolTask<?>> children = new ArrayList<>();
+        private final Object lock = new Object();
         private @Nullable R result;
         private volatile boolean isReady = false;
         private volatile LightExecutionException exception;
@@ -111,12 +112,11 @@ public class ThreadPool {
         @Nullable
         public R get() throws LightExecutionException {
             if (!isReady) {
-                synchronized (this) {
+                synchronized (lock) {
                     while (!isReady) {
                         try {
-                            wait();
-                        } catch (InterruptedException exception) {
-                            throw new LightExecutionException(exception);
+                            lock.wait();
+                        } catch (InterruptedException ignored) {
                         }
                     }
                 }
@@ -130,6 +130,10 @@ public class ThreadPool {
         @Override
         @NotNull
         public <T> LightFuture<T> thenApply(@NotNull Function<? super R, T> function) {
+            if (isShutDown) {
+                throw new IllegalStateException("Thread pool is shut down");
+            }
+
             var task = new ThreadPoolTask<>(() -> {
                 try {
                     return function.apply(get());
@@ -138,10 +142,10 @@ public class ThreadPool {
                 }
             });
 
-            if (isReady) {
-                addTaskToQueue(task);
-            } else {
-                synchronized (children) {
+            synchronized (lock) {
+                if (isReady) {
+                    addTaskToQueue(task);
+                } else {
                     children.add(task);
                 }
             }
@@ -152,18 +156,16 @@ public class ThreadPool {
         private void execute() {
             try {
                 result = supplier.get();
-                synchronized (children) {
-                    for (var child : children) {
-                        addTaskToQueue(child);
-                    }
-                }
             } catch (Exception exception) {
                 this.exception = new LightExecutionException(exception);
             }
 
             isReady = true;
-            synchronized (this) {
-                notifyAll();
+            synchronized (lock) {
+                lock.notifyAll();
+                for (var child : children) {
+                    addTaskToQueue(child);
+                }
             }
         }
     }
@@ -171,14 +173,16 @@ public class ThreadPool {
     private class LightThread extends Thread {
         @Override
         public void run() {
-            ThreadPoolTask task = null;
-            while (!isShutDown) {
+            ThreadPoolTask<?> task;
+            while (!isInterrupted() && !isShutDown) {
                 synchronized (tasks) {
                     while (tasks.isEmpty()) {
                         try {
                             tasks.wait();
-                        } catch (InterruptedException ignored) {
-                            return;
+                        } catch (InterruptedException exception) {
+                            if (isShutDown) {
+                                return;
+                            }
                         }
                     }
                     task = tasks.remove();
