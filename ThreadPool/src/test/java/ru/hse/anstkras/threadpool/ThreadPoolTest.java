@@ -108,25 +108,31 @@ class ThreadPoolTest {
         threadPool.shutdown();
     }
 
-    @Test
-    void threadPoolHasNThreads() throws InterruptedException, LightExecutionException {
+    @RepeatedTest(TESTS_NUMBER)
+    void threadPoolHasNThreads() throws InterruptedException {
         var threadPool = new ThreadPool(10);
-        List<LightFuture<Integer>> futures = new ArrayList<>();
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < 10; i++) {
-            futures.add(threadPool.submit(() -> {
+        final List<Integer> list = new ArrayList<>();
+
+        for (int i = 0; i < 20; i++) {
+            threadPool.submit(() -> {
+                synchronized (list) {
+                    list.add(1);
+                    list.notifyAll();
+                }
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(Long.MAX_VALUE);
                 } catch (InterruptedException ignored) {
                 }
-                return 0;
-            }));
+                return null;
+            });
         }
-        for (LightFuture<Integer> future : futures) {
-            future.get();
+
+        synchronized (list) {
+            while (list.size() != 10) {
+                list.wait();
+            }
         }
-        long end = System.currentTimeMillis();
-        assertTrue(end - start < 1500);
+        assertEquals(10, list.size());
         threadPool.shutdown();
     }
 
