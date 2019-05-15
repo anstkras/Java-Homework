@@ -13,13 +13,13 @@ class CheckerMD5Test {
     void testCheckersComputeTheSame() throws IOException {
         Path dir = Files.createTempDirectory("testDir");
         Path file = Files.createTempFile(dir, "testFile", "123");
-        try(OutputStream outputStream = new FileOutputStream(file.toFile())) {
+        try(var outputStream = new FileOutputStream(file.toFile())) {
             outputStream.write(123);
         }
         Path oneMoreDir = Files.createTempDirectory(dir, "oneMoreDir");
         Path oneMoreFile = Files.createTempFile(oneMoreDir, "123", "123");
-        CheckerMD5MultiThreaded checkerMD5 = new CheckerMD5MultiThreaded();
-        CheckerMD5SingleThreaded checkerMD5SingleThreaded = new CheckerMD5SingleThreaded();
+        var checkerMD5 = new CheckerMD5MultiThreaded();
+        var checkerMD5SingleThreaded = new CheckerMD5SingleThreaded();
         assertEquals(checkerMD5.checkSum(dir), checkerMD5SingleThreaded.checkSum(dir));
     }
 }

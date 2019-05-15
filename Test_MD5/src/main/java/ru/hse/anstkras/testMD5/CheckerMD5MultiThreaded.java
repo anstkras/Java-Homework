@@ -9,8 +9,11 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.stream.Collectors;
 
+/**
+ * Implemets Checker using fork join pool
+ */
 public class CheckerMD5MultiThreaded implements Checker {
-    private ForkJoinPool forkJoinPool = new ForkJoinPool(8); //TODO
+    private ForkJoinPool forkJoinPool = new ForkJoinPool(8);
 
     @Override
     public String checkSum(Path path) {
@@ -20,11 +23,11 @@ public class CheckerMD5MultiThreaded implements Checker {
                 try {
                     if (Files.isDirectory(path)) {
                         Collection<Path> paths = Files.list(path).collect(Collectors.toSet());
-                        StringBuilder stringBuilder = new StringBuilder();
+                        var stringBuilder = new StringBuilder();
                         stringBuilder.append(path.getFileName());
                         for (Path file : paths) {
                             if (Files.isRegularFile(file)) {
-                                stringBuilder.append(hasherMD5.hashMD5(new FileInputStream(file.toFile())));
+                                stringBuilder.append(HasherMD5.hashMD5(new FileInputStream(file.toFile())));
                             } else if (Files.isDirectory(file)) {
                                 stringBuilder.append(forkJoinPool.invoke(new RecursiveTask<String>() {
                                     @Override
@@ -34,10 +37,10 @@ public class CheckerMD5MultiThreaded implements Checker {
                                 }));
                             }
                         }
-                        return hasherMD5.hashMD5(new ByteArrayInputStream(stringBuilder.toString().getBytes()));
+                        return HasherMD5.hashMD5(new ByteArrayInputStream(stringBuilder.toString().getBytes()));
                     }
                     if (Files.isRegularFile(path)) {
-                        return hasherMD5.hashMD5(new FileInputStream(path.toFile()));
+                        return HasherMD5.hashMD5(new FileInputStream(path.toFile()));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

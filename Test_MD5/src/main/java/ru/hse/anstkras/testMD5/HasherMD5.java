@@ -8,20 +8,21 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class hasherMD5 {
-    private hasherMD5() {}
+// package private class to compute md5 hash
+class HasherMD5 {
+    private HasherMD5() {}
 
     static String hashMD5(InputStream inputStream) throws NoSuchAlgorithmException, IOException {
-        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-        DigestInputStream digestInputStream = new DigestInputStream(inputStream, messageDigest);
+        var messageDigest = MessageDigest.getInstance("MD5");
+        var digestInputStream = new DigestInputStream(inputStream, messageDigest);
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(digestInputStream));
+        var reader = new BufferedReader(new InputStreamReader(digestInputStream));
         while ((reader.readLine()) != null) {
             ;
         }
 
         byte[] bytes = messageDigest.digest();
-        StringBuilder stringBuilder = new StringBuilder();
+        var stringBuilder = new StringBuilder();
         for (byte b : bytes) {
             stringBuilder.append(Integer.toHexString(b & 0xff));
         }
