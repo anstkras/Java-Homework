@@ -1,5 +1,7 @@
 package ru.hse.anstkras.testMD5;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.nio.file.Files;
@@ -15,8 +17,9 @@ import java.util.stream.Collectors;
 public class CheckerMD5MultiThreaded implements Checker {
     private ForkJoinPool forkJoinPool = new ForkJoinPool(8);
 
+    @NotNull
     @Override
-    public String checkSum(Path path) {
+    public String checkSum(@NotNull Path path) {
         return forkJoinPool.invoke(new RecursiveTask<>() {
             @Override
             protected String compute() {

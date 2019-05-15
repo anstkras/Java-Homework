@@ -1,5 +1,7 @@
 package ru.hse.anstkras.testMD5;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.nio.file.Files;
@@ -12,7 +14,8 @@ import java.util.stream.Collectors;
  */
 public class CheckerMD5SingleThreaded implements Checker {
     @Override
-    public String checkSum(Path path) {
+    @NotNull
+    public String checkSum(@NotNull Path path) {
         try {
             if (Files.isDirectory(path)) {
                 Collection<Path> paths = Files.list(path).collect(Collectors.toSet());

@@ -1,5 +1,7 @@
 package ru.hse.anstkras.testMD5;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
 class HasherMD5 {
     private HasherMD5() {}
 
+    @NotNull
     static String hashMD5(InputStream inputStream) throws NoSuchAlgorithmException, IOException {
         var messageDigest = MessageDigest.getInstance("MD5");
         var digestInputStream = new DigestInputStream(inputStream, messageDigest);
