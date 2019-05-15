@@ -6,9 +6,11 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class CheckerMD5Test {
     @Test
-    void test() throws IOException {
+    void testCheckersComputeTheSame() throws IOException {
         Path dir = Files.createTempDirectory("testDir");
         Path file = Files.createTempFile(dir, "testFile", "123");
         try(OutputStream outputStream = new FileOutputStream(file.toFile())) {
@@ -18,7 +20,6 @@ class CheckerMD5Test {
         Path oneMoreFile = Files.createTempFile(oneMoreDir, "123", "123");
         CheckerMD5MultiThreaded checkerMD5 = new CheckerMD5MultiThreaded();
         CheckerMD5SingleThreaded checkerMD5SingleThreaded = new CheckerMD5SingleThreaded();
-        System.out.println(checkerMD5.checkSum(dir));
-        System.out.println(checkerMD5SingleThreaded.checkSum(dir));
+        assertEquals(checkerMD5.checkSum(dir), checkerMD5SingleThreaded.checkSum(dir));
     }
 }
