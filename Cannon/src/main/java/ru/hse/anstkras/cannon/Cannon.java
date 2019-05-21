@@ -1,5 +1,6 @@
 package ru.hse.anstkras.cannon;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -22,6 +23,7 @@ public class Cannon extends Application {
     private final ArrayList<Segment> segmentsList = new ArrayList<>();
     private Pane pane;
     private CannonRepresentation cannon;
+    private int cannonballType = 1;
 
     public static void main(String[] args) {
         launch(args);
@@ -81,6 +83,18 @@ public class Cannon extends Application {
             if (code == KeyCode.A || code == KeyCode.LEFT) {
                 cannon.moveLeft();
             }
+            if (code == KeyCode.ENTER) {
+                cannon.shoot();
+            }
+            if (code == KeyCode.DIGIT1) {
+                cannonballType = 1;
+            }
+            if (code == KeyCode.DIGIT2) {
+                cannonballType = 2;
+            }
+            if (code == KeyCode.DIGIT3) {
+                cannonballType = 3;
+            }
         });
 
         Scene scene = new Scene(root);
@@ -135,12 +149,12 @@ public class Cannon extends Application {
 
     private class CannonRepresentation {
         private final static int CIRCLE_RADIUS = 35;
-        private final static int RECTANGLE_WIDTH = 200;
+        private final static int RECTANGLE_WIDTH = 180;
         private final static int RECTANGLE_HEIGHT = 40;
         private final Rotate rotate = new Rotate();
         private int circle_x = 125;
         private int circle_y = HEIGHT - 125;
-        private int angle = -40;
+        private int angle = 320;
         private Segment currentSegment;
         private int segmentIndex = 0;
         private Circle circle;
@@ -166,13 +180,28 @@ public class Cannon extends Application {
         }
 
         private void increaseAngle() {
+            System.out.println(angle);
+            if (angle == 150) {
+                return;
+            }
             angle -= 10;
+            if (angle <= 0) {
+                angle += 360;
+            }
             rotate.setAngle(angle);
+
         }
 
         private void decreaseAngle() {
+            if (angle == 30) {
+                return;
+            }
             angle += 10;
+            if (angle >= 360) {
+                angle -= 360;
+            }
             rotate.setAngle(angle);
+
         }
 
         private void moveRight() {
@@ -234,6 +263,54 @@ public class Cannon extends Application {
             rotate.setPivotX(rectangle.getX());
             rotate.setPivotY(rectangle.getY() + RECTANGLE_HEIGHT / 2.0);
             rotate.setAngle(angle);
+        }
+
+        private void shootImplement(int radius, int length, double curve, int speed) {
+            Circle bullet = new Circle(rectangle.getX() + Math.cos(Math.toRadians(angle)) * RECTANGLE_WIDTH,
+                                       rectangle.getY() + RECTANGLE_HEIGHT / 2.0 + Math.sin(Math.toRadians(angle)) * RECTANGLE_WIDTH, radius);
+
+            int tick = 10;
+            pane.getChildren().add(bullet);
+            double startX = bullet.getCenterX();
+            double startY = bullet.getCenterY();
+            double toDivide;
+            toDivide = Math.abs(90 - angle % 180);
+            if (toDivide == 0) {
+                toDivide = 5;
+            }
+            double coefficient = curve * Math.abs(0.1 / toDivide);
+            double savedAngle = angle;
+            System.out.println(coefficient);
+            AnimationTimer timer = new AnimationTimer() {
+                @Override
+                public void handle(long now) {
+                    if (now % speed == 0) {
+                        if (savedAngle < 270 && savedAngle >= 90) {
+                            bullet.setCenterX(bullet.getCenterX() - tick);
+                        } else {
+                            bullet.setCenterX(bullet.getCenterX() + tick);
+                        }
+                        double x = Math.abs(bullet.getCenterX() - startX) - length;
+                        bullet.setCenterY((coefficient * x * x) + startY - length * length * coefficient);
+                    }
+                    if (bullet.getCenterX() >= 900) {
+                        this.stop();
+                    }
+                }
+            };
+            timer.start();
+        }
+
+        private void shoot() {
+            if (cannonballType == 1) {
+                shootImplement(10, 100,0.5, 4);
+            }
+            if (cannonballType == 2) {
+                shootImplement(13, 150, 0.8, 4);
+            }
+            if (cannonballType == 3) {
+                shootImplement(15, 200, 1, 4);
+            }
         }
     }
 }
