@@ -9,14 +9,17 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
+import java.awt.*;
+
 public class Cannon extends Application {
 
-    private Canvas canvas;
-    private GraphicsContext graphicsContext;
     private Pane pane;
     private CannonRepresentation cannon = new CannonRepresentation();
     private final static int WIDTH = 1000;
@@ -28,31 +31,37 @@ public class Cannon extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        canvas = new Canvas(WIDTH, HEIGHT);
-        canvas.setWidth(WIDTH);
-        canvas.setHeight(HEIGHT);
-        graphicsContext = canvas.getGraphicsContext2D();
+        BorderPane root = new BorderPane();
 
-        graphicsContext.setFill(Color.GREEN);
-        graphicsContext.fillPolygon(new double[]{-100, 300, 500},
-                                    new double[]{HEIGHT, HEIGHT - 200, HEIGHT},
-                                    3);
-
-        graphicsContext.fillPolygon(new double[]{350, 650, 800},
-                                    new double[]{HEIGHT, HEIGHT - 300, HEIGHT},
-                                    3);
-        graphicsContext.fillPolygon(new double[]{700, 950, 1100},
-                                    new double[]{HEIGHT, HEIGHT - 150, HEIGHT},
-                                    3);
-        graphicsContext.setFill(Color.RED);
-        graphicsContext.fillOval(900, HEIGHT - 150, 50, 50);
-
-        cannon.draw();
-
-        pane = new BorderPane(canvas);
+        pane = new Pane();
         pane.setMinWidth(WIDTH);
         pane.setMinHeight(HEIGHT);
         pane.setMaxSize(WIDTH, HEIGHT);
+        root.setCenter(pane);
+
+
+        Polygon gora1 = new Polygon(-100, HEIGHT,
+                                    300, HEIGHT - 200,
+                                    500, HEIGHT);
+        gora1.setFill(Color.GREEN);
+
+        Polygon gora2 = new Polygon(350, HEIGHT,
+                                    650, HEIGHT - 300,
+                                    800, HEIGHT);
+        gora2.setFill(Color.GREEN);
+
+        Polygon gora3 = new Polygon(700, HEIGHT,
+                                    950, HEIGHT - 150,
+                                    1100, HEIGHT);
+        gora3.setFill(Color.GREEN);
+
+
+        Circle target = new Circle(900, HEIGHT - 125, 25);
+        target.setFill(Color.RED);
+        pane.getChildren().addAll(gora1, gora2, gora3, target);
+        cannon.draw();
+
+
 
         primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
             KeyCode code = key.getCode();
@@ -64,7 +73,7 @@ public class Cannon extends Application {
             }
         });
 
-        Scene scene = new Scene(pane);
+        Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Cannon");
 
@@ -79,36 +88,34 @@ public class Cannon extends Application {
         private int circle_x = 125;
         private int circle_y = HEIGHT - 125;
         private int angle = -40;
-        private final static int CIRCLE_HEIGHT = 70;
-        private final static int CIRCLE_WIDTH = 70;
+        private final static int CIRCLE_RADIUS = 35;
         private final static int RECTANGLE_WIDTH = 200;
         private final static int RECTANGLE_HEIGHT = 40;
+        private final Rotate rotate = new Rotate();
 
         private void draw() {
-            graphicsContext.setFill(Color.BLUE);
-            graphicsContext.fillOval(circle_x - CIRCLE_WIDTH / 2.0, circle_y - CIRCLE_HEIGHT / 2.0, CIRCLE_WIDTH, CIRCLE_HEIGHT);
-            graphicsContext.save();
-            graphicsContext.transform(new Affine(new Rotate(angle, circle_x, circle_y)));
-            graphicsContext.fillRect(circle_x, circle_y - RECTANGLE_HEIGHT / 2.0, RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
-            graphicsContext.restore();
+            Circle circle = new Circle(circle_x, circle_y, CIRCLE_RADIUS);
+            circle.setFill(Color.BLUE);
+
+            Rectangle rectangle = new Rectangle(circle_x, circle_y - RECTANGLE_HEIGHT / 2.0,
+                                                RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
+            rectangle.setFill(Color.BLUE);
+            rotate.setAngle(angle);
+            rotate.setPivotX(rectangle.getX());
+            rotate.setPivotY(rectangle.getY() + RECTANGLE_HEIGHT / 2.0);
+            rectangle.getTransforms().add(rotate);
+
+            pane.getChildren().addAll(circle, rectangle);
         }
 
         private void increaseAngle() {
-            graphicsContext.save();
-            graphicsContext.transform(new Affine(new Rotate(angle, circle_x, circle_y)));
-            graphicsContext.clearRect(circle_x, circle_y - RECTANGLE_HEIGHT / 2.0, RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
-            graphicsContext.restore();
             angle -= 10;
-            draw();
+            rotate.setAngle(angle);
         }
 
         private void decreaseAngle() {
-            graphicsContext.save();
-            graphicsContext.transform(new Affine(new Rotate(angle, circle_x, circle_y)));
-            graphicsContext.clearRect(circle_x, circle_y - RECTANGLE_HEIGHT / 2.0, RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
-            graphicsContext.restore();
             angle += 10;
-            draw();
+            rotate.setAngle(angle);
         }
     }
 }
