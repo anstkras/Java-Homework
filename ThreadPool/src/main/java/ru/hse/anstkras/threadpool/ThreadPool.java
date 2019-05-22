@@ -87,7 +87,7 @@ public class ThreadPool {
     private <R> void addTaskToQueue(@NotNull ThreadPoolTask<R> task) {
         synchronized (tasks) {
             tasks.add(task);
-            tasks.notifyAll();
+            tasks.notify();
         }
     }
 
