@@ -56,21 +56,21 @@ public class ThreadPool {
         return threadPoolTask;
     }
 
-    /**
-     * Stops the thread pool's threads
-     *
-     * @throws InterruptedException if some other thread has interrupted the current thread while joining
-     */
-    public void shutdown() throws InterruptedException {
-        if (isShutDown) {
-            return;
-        }
-        isShutDown = true;
-        for (Thread thread : threads) {
-            thread.interrupt();
-        }
-        for (Thread thread : threads) {
-            thread.join();
+    /** Stops the thread pool's threads */
+    public void shutdown() {
+        try {
+            if (isShutDown) {
+                return;
+            }
+            isShutDown = true;
+            for (Thread thread : threads) {
+                thread.interrupt();
+            }
+            for (Thread thread : threads) {
+                thread.join();
+            }
+        } catch (InterruptedException ignored) {
+
         }
     }
 
