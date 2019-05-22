@@ -12,7 +12,7 @@ class ThreadPoolTest {
     private static final int TESTS_NUMBER = 100;
 
     @RepeatedTest(TESTS_NUMBER)
-    void simpleTestForOneThread() throws LightExecutionException, InterruptedException {
+    void simpleTestForOneThread() throws LightExecutionException {
         var threadPool = new ThreadPool(1);
         LightFuture<Integer> lightFuture = threadPool.submit(() -> 5);
         assertEquals(5, (int) lightFuture.get());
@@ -20,7 +20,7 @@ class ThreadPoolTest {
     }
 
     @RepeatedTest(TESTS_NUMBER)
-    void simpleTestForManyThreads() throws InterruptedException, LightExecutionException {
+    void simpleTestForManyThreads() throws LightExecutionException {
         final int size = 100;
         var threadPool = new ThreadPool(size);
         List<LightFuture<Integer>> futures = new ArrayList<>();
@@ -35,7 +35,7 @@ class ThreadPoolTest {
     }
 
     @RepeatedTest(TESTS_NUMBER)
-    void simpleTestForThenApply() throws InterruptedException, LightExecutionException {
+    void simpleTestForThenApply() throws LightExecutionException {
         var threadPool = new ThreadPool(1);
         LightFuture<Integer> future = threadPool.submit(() -> 42);
         LightFuture<Integer> futureThen = future.thenApply(value -> value + 137);
@@ -46,7 +46,7 @@ class ThreadPoolTest {
     }
 
     @RepeatedTest(TESTS_NUMBER)
-    void severalThenApply() throws InterruptedException, LightExecutionException {
+    void severalThenApply() throws LightExecutionException {
         var threadPool = new ThreadPool(1);
         LightFuture<Integer> future = threadPool.submit(() -> 42);
         var futures = new ArrayList<LightFuture<Integer>>();
@@ -63,7 +63,7 @@ class ThreadPoolTest {
     }
 
     @RepeatedTest(TESTS_NUMBER)
-    void throwLightFutureException() throws InterruptedException {
+    void throwLightFutureException() {
         var threadPool = new ThreadPool(1);
         LightFuture<Integer> future = threadPool.submit(() -> {
             throw new NullPointerException();
@@ -73,7 +73,7 @@ class ThreadPoolTest {
     }
 
     @Test
-    void testIsShutDown() throws InterruptedException {
+    void testIsShutDown() {
         var threadPool = new ThreadPool(2);
         threadPool.shutdown();
         assertTrue(threadPool.isShutDown());
@@ -86,7 +86,7 @@ class ThreadPoolTest {
     }
 
     @RepeatedTest(TESTS_NUMBER)
-    void thenApplyWithSleep() throws InterruptedException, LightExecutionException {
+    void thenApplyWithSleep() throws LightExecutionException {
         var threadPool = new ThreadPool(1);
         LightFuture<Integer> future = threadPool.submit(() -> {
             try {
@@ -167,7 +167,7 @@ class ThreadPoolTest {
     }
 
     @Test
-    void tryAddTaskToShutDownThreadPool() throws InterruptedException {
+    void tryAddTaskToShutDownThreadPool() {
         var threadPool = new ThreadPool(1);
         threadPool.shutdown();
         assertThrows(IllegalStateException.class, () -> threadPool.submit(() -> 42));
