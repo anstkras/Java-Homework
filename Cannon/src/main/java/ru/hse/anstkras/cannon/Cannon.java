@@ -5,8 +5,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -36,6 +34,9 @@ public class Cannon extends Application {
     private Circle target;
     private Stage stage;
     private javafx.event.EventHandler<KeyEvent> keyEventHandler;
+    private Polygon mountain1;
+    private Polygon mountain2;
+    private Polygon mountain3;
 
     public static void main(String[] args) {
         launch(args);
@@ -52,32 +53,32 @@ public class Cannon extends Application {
         root.setCenter(pane);
 
 
-        Polygon gora1 = new Polygon(-100, HEIGHT,
-                                    300, HEIGHT - 200,
-                                    500, HEIGHT);
+        mountain1 = new Polygon(-100, HEIGHT,
+                                300, HEIGHT - 200,
+                                500, HEIGHT);
         segmentsList.add(new Segment(-0.5, 0, HEIGHT, 300, HEIGHT - 200));
         segmentsList.add(new Segment(1, 300, HEIGHT - 200, 425, HEIGHT - 75));
-        gora1.setFill(Color.GREEN);
+        mountain1.setFill(Color.GREEN);
 
-        Polygon gora2 = new Polygon(350, HEIGHT,
-                                    650, HEIGHT - 300,
-                                    800, HEIGHT);
-        gora2.setFill(Color.GREEN);
+        mountain2 = new Polygon(350, HEIGHT,
+                                650, HEIGHT - 300,
+                                800, HEIGHT);
+        mountain2.setFill(Color.GREEN);
 
         segmentsList.add(new Segment(-1, 425, HEIGHT - 75, 650, HEIGHT - 300));
         segmentsList.add(new Segment(2, 650, HEIGHT - 300, 776.92, HEIGHT - 46.154));
 
-        Polygon gora3 = new Polygon(700, HEIGHT,
-                                    950, HEIGHT - 150,
-                                    1100, HEIGHT);
-        gora3.setFill(Color.GREEN);
+        mountain3 = new Polygon(700, HEIGHT,
+                                950, HEIGHT - 150,
+                                1100, HEIGHT);
+        mountain3.setFill(Color.GREEN);
 
         segmentsList.add(new Segment(-0.6, 776.92, HEIGHT - 46.154, 950, HEIGHT - 150));
         segmentsList.add(new Segment(1, 950, HEIGHT - 150, WIDTH, HEIGHT));
 
         target = new Circle(900, HEIGHT - 125, 25);
         target.setFill(Color.RED);
-        pane.getChildren().addAll(gora1, gora2, gora3, target);
+        pane.getChildren().addAll(mountain1, mountain2, mountain3, target);
         cannon = new CannonRepresentation();
         cannon.draw();
 
@@ -317,7 +318,7 @@ public class Cannon extends Application {
                         timeline.setOnFinished(event -> {
                                                    pane.getChildren().remove(bullet);
                                                    Text text = new Text(200, 100, "You win!");
-                                                   text.setFont(Font.font(20));
+                                                   text.setFont(Font.font(30));
                                                    pane.getChildren().add(text);
                                                    stage.removeEventHandler(KeyEvent.KEY_PRESSED, keyEventHandler);
                                                }
@@ -326,7 +327,7 @@ public class Cannon extends Application {
                         this.stop();
 
                     }
-                    if (intersectLine(new Point2D(bullet.getCenterX(), bullet.getCenterY()))) {
+                    if (intersectMountains(new Point2D(bullet.getCenterX(), bullet.getCenterY()))) {
                         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1),
                                                                       new KeyValue(bullet.radiusProperty(), bullet.getRadius() * 3)));
                         timeline.setCycleCount(1);
@@ -357,13 +358,30 @@ public class Cannon extends Application {
             }
         }
 
-        private boolean intersectLine(Point2D point) {
-            for (Segment segment : segmentsList) {
-                Point2D start = new Point2D(segment.start_x, segment.start_y);
-                Point2D end = new Point2D(segment.end_x, segment.end_y);
-                if (Math.abs(distance(start, point) + distance(point, end) - distance(start, end)) < 1) {
-                    return true;
-                }
+        private boolean intersectMountains(Point2D point) {
+            //            for (Segment segment : segmentsList) {
+            //                Point2D start = new Point2D(segment.start_x, segment.start_y);
+            //                Point2D end = new Point2D(segment.end_x, segment.end_y);
+            //                if (Math.abs(distance(start, point) + distance(point, end) - distance(start, end)) < 2) {
+            //                    return true;
+            //                }
+            //            }
+
+            if (PointInTriangle(point, new Point2D(mountain1.getPoints().get(0), mountain1.getPoints().get(1)),
+                                new Point2D(mountain1.getPoints().get(2), mountain1.getPoints().get(3)),
+                                new Point2D(mountain1.getPoints().get(4), mountain1.getPoints().get(5)))) {
+                return true;
+            }
+
+            if (PointInTriangle(point, new Point2D(mountain2.getPoints().get(0), mountain2.getPoints().get(1)),
+                                new Point2D(mountain2.getPoints().get(2), mountain2.getPoints().get(3)),
+                                new Point2D(mountain2.getPoints().get(4), mountain2.getPoints().get(5)))) {
+                return true;
+            }
+            if (PointInTriangle(point, new Point2D(mountain3.getPoints().get(0), mountain3.getPoints().get(1)),
+                                new Point2D(mountain3.getPoints().get(2), mountain3.getPoints().get(3)),
+                                new Point2D(mountain3.getPoints().get(4), mountain3.getPoints().get(5)))) {
+                return true;
             }
             return false;
         }
@@ -386,5 +404,25 @@ public class Cannon extends Application {
             return Math.sqrt((a.getX() - b.getX()) * (a.getX() - b.getX()) +
                                      (a.getY() - b.getY()) * (a.getY() - b.getY()));
         }
+
+
+        private double sign(Point2D p1, Point2D p2, Point2D p3) {
+            return (p1.getX() - p3.getX()) * (p2.getY() - p3.getY()) - (p2.getX() - p3.getX()) * (p1.getY() - p3.getY());
+        }
+
+        private boolean PointInTriangle(Point2D pt, Point2D v1, Point2D v2, Point2D v3) {
+            double d1, d2, d3;
+            boolean has_neg, has_pos;
+
+            d1 = sign(pt, v1, v2);
+            d2 = sign(pt, v2, v3);
+            d3 = sign(pt, v3, v1);
+
+            has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+            has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+            return !(has_neg && has_pos);
+        }
+
     }
 }
