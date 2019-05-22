@@ -142,10 +142,10 @@ public class ThreadPool {
                 }
             });
 
-            synchronized (lock) {
-                if (isReady) {
-                    addTaskToQueue(task);
-                } else {
+            if (isReady) {
+                addTaskToQueue(task);
+            } else {
+                synchronized (lock) {
                     children.add(task);
                 }
             }
