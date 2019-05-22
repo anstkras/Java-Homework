@@ -1,7 +1,13 @@
 package ru.hse.anstkras.cannon;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -11,8 +17,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 
@@ -24,6 +33,9 @@ public class Cannon extends Application {
     private Pane pane;
     private CannonRepresentation cannon;
     private int cannonballType = 1;
+    private Circle target;
+    private Stage stage;
+    private javafx.event.EventHandler<KeyEvent> keyEventHandler;
 
     public static void main(String[] args) {
         launch(args);
@@ -32,7 +44,7 @@ public class Cannon extends Application {
     @Override
     public void start(Stage primaryStage) {
         BorderPane root = new BorderPane();
-
+        stage = primaryStage;
         pane = new Pane();
         pane.setMinWidth(WIDTH);
         pane.setMinHeight(HEIGHT);
@@ -63,13 +75,13 @@ public class Cannon extends Application {
         segmentsList.add(new Segment(-0.6, 776.92, HEIGHT - 46.154, 950, HEIGHT - 150));
         segmentsList.add(new Segment(1, 950, HEIGHT - 150, WIDTH, HEIGHT));
 
-        Circle target = new Circle(900, HEIGHT - 125, 25);
+        target = new Circle(900, HEIGHT - 125, 25);
         target.setFill(Color.RED);
         pane.getChildren().addAll(gora1, gora2, gora3, target);
         cannon = new CannonRepresentation();
         cannon.draw();
 
-        primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
+        keyEventHandler = key -> {
             KeyCode code = key.getCode();
             if (code == KeyCode.W || code == KeyCode.UP) {
                 cannon.increaseAngle();
@@ -95,7 +107,10 @@ public class Cannon extends Application {
             if (code == KeyCode.DIGIT3) {
                 cannonballType = 3;
             }
-        });
+        };
+
+
+        primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, keyEventHandler);
 
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
@@ -270,6 +285,7 @@ public class Cannon extends Application {
                                        rectangle.getY() + RECTANGLE_HEIGHT / 2.0 + Math.sin(Math.toRadians(angle)) * RECTANGLE_WIDTH, radius);
 
             int tick = 10;
+            boolean isBoom = false;
             pane.getChildren().add(bullet);
             double startX = bullet.getCenterX();
             double startY = bullet.getCenterY();
@@ -293,7 +309,35 @@ public class Cannon extends Application {
                         double x = Math.abs(bullet.getCenterX() - startX) - length;
                         bullet.setCenterY((coefficient * x * x) + startY - length * length * coefficient);
                     }
-                    if (bullet.getCenterX() >= 900) {
+                    if (intersectTarget(new Point2D(bullet.getCenterX(), bullet.getCenterY()))) {
+                        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1),
+                                                                      new KeyValue(bullet.radiusProperty(), bullet.getRadius() * 3)));
+                        timeline.setCycleCount(1);
+                        timeline.setAutoReverse(false);
+                        timeline.setOnFinished(event -> {
+                                                   pane.getChildren().remove(bullet);
+                                                   Text text = new Text(200, 100, "You win!");
+                                                   text.setFont(Font.font(20));
+                                                   pane.getChildren().add(text);
+                                                   stage.removeEventHandler(KeyEvent.KEY_PRESSED, keyEventHandler);
+                                               }
+                        );
+                        timeline.play();
+                        this.stop();
+
+                    }
+                    if (intersectLine(new Point2D(bullet.getCenterX(), bullet.getCenterY()))) {
+                        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1),
+                                                                      new KeyValue(bullet.radiusProperty(), bullet.getRadius() * 3)));
+                        timeline.setCycleCount(1);
+                        timeline.setAutoReverse(false);
+                        timeline.setOnFinished(event -> pane.getChildren().remove(bullet));
+                        timeline.play();
+                        this.stop();
+                    }
+
+                    if (bullet.getCenterX() >= WIDTH) {
+                        pane.getChildren().remove(bullet);
                         this.stop();
                     }
                 }
@@ -303,7 +347,7 @@ public class Cannon extends Application {
 
         private void shoot() {
             if (cannonballType == 1) {
-                shootImplement(10, 100,0.5, 4);
+                shootImplement(10, 100, 0.5, 4);
             }
             if (cannonballType == 2) {
                 shootImplement(13, 150, 0.8, 4);
@@ -311,6 +355,36 @@ public class Cannon extends Application {
             if (cannonballType == 3) {
                 shootImplement(15, 200, 1, 4);
             }
+        }
+
+        private boolean intersectLine(Point2D point) {
+            for (Segment segment : segmentsList) {
+                Point2D start = new Point2D(segment.start_x, segment.start_y);
+                Point2D end = new Point2D(segment.end_x, segment.end_y);
+                if (Math.abs(distance(start, point) + distance(point, end) - distance(start, end)) < 1) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private boolean intersectTarget(Point2D point) {
+            int space = 0;
+            if (cannonballType == 1) {
+                space = 30;
+            }
+            if (cannonballType == 2) {
+                space = 50;
+            }
+            if (cannonballType == 3) {
+                space = 70;
+            }
+            return distance(point, new Point2D(target.getCenterX(), target.getCenterY())) <= space;
+        }
+
+        private double distance(Point2D a, Point2D b) {
+            return Math.sqrt((a.getX() - b.getX()) * (a.getX() - b.getX()) +
+                                     (a.getY() - b.getY()) * (a.getY() - b.getY()));
         }
     }
 }
