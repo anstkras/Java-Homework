@@ -1,3 +1,5 @@
+package ru.hse.anstkras.springtest2;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -8,7 +10,6 @@ public class Board {
 
     public Board(int boardSize) {
         if (boardSize % 2 != 0) {
-            //this.boardSize = boardSize;
             throw new IllegalArgumentException("board size should be not be odd");
         }
         this.boardSize = boardSize;
