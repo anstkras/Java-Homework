@@ -1,5 +1,6 @@
 package ru.hse.anstkras.springtest2;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,6 +14,10 @@ public class FindPairBoard {
     private final Board board;
     private State state = State.NO_BUTTONS_OPEN;
     private long timeOpen;
+    private Button firstButton;
+    private Button secondButton;
+    private int firsti;
+    private int firstj;
 
     public FindPairBoard(Stage primaryStage, int boardSize) {
         this.boardSize = boardSize;
@@ -48,6 +53,9 @@ public class FindPairBoard {
                     if (state == State.NO_BUTTONS_OPEN) {
                         buttons[ii][jj].setText(String.valueOf(board.getCell(ii, jj)));
                         state = State.ONE_BUTTON_OPEN;
+                        firstButton = buttons[ii][jj];
+                        firsti = ii;
+                        firstj = jj;
                         return;
                     }
 
@@ -55,14 +63,32 @@ public class FindPairBoard {
                         buttons[ii][jj].setText(String.valueOf(board.getCell(ii, jj)));
                         state = State.TWO_BUTTONS_OPEN;
                         timeOpen = System.currentTimeMillis();
-                        return;
-                    }
-                    if (state == State.TWO_BUTTONS_OPEN) {
-                        if (System.currentTimeMillis() - timeOpen > 3000) {
-                            state = State.ONE_BUTTON_OPEN;
-                            buttons[ii][jj].setText(String.valueOf(board.getCell(ii, jj)));
-                        } else {
-                            // TODO
+                        secondButton = buttons[ii][jj];
+                        Board.MoveState moveState = board.makeMove(firsti, firstj, ii, jj);
+                        for (int k = 0; k < boardSize; k++) {
+                            for (int l = 0; l < boardSize; l++) {
+                                buttons[k][l].setDisable(true);
+                            }
+                        }
+                        state = State.NO_BUTTONS_OPEN;
+                        Thread thread = new Thread(() -> {
+                            try {
+                                Thread.sleep(1000);
+                                Platform.runLater(() -> {
+                                    for (int k = 0; k < boardSize; k++) {
+                                        for (int l = 0; l < boardSize; l++) {
+                                            buttons[k][l].setText("");
+                                            buttons[k][l].setDisable(!board.isActive(k, l));
+                                        }
+                                    }
+                                });
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        thread.start();
+                        if (moveState == Board.MoveState.WIN) {
+                            primaryStage.setTitle("You win");
                         }
                         return;
                     }
