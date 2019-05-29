@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+/** Represents activity for getting the size of the board */
 public class FindPair extends Application {
     private final static int DEFAULT_SIZE = 4;
     public static void main(String[] args) {
@@ -15,7 +16,6 @@ public class FindPair extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
         var pane = new GridPane();
         final TextField sizeTextField = new TextField();
         sizeTextField.setPromptText("Enter size of the board.");
@@ -29,18 +29,19 @@ public class FindPair extends Application {
             int size = DEFAULT_SIZE;
             try {
                 size = Integer.valueOf(sizeTextField.getText());
-            } catch (NumberFormatException exception) {
-                // TODO
+                if (size < 2 || size > 100) {
+                    size = DEFAULT_SIZE;
+                }
+            } catch (NumberFormatException ignored) {
+                // just use default size
             }
             FindPairBoard findPairBoard = new FindPairBoard(primaryStage, size);
         });
-
         Scene scene = new Scene(pane);
-        primaryStage.setTitle("TicTacToe");
+        primaryStage.setTitle("FindPair");
         primaryStage.setScene(scene);
         primaryStage.setMinHeight(200);
         primaryStage.setMinWidth(200);
         primaryStage.show();
     }
-
 }

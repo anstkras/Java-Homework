@@ -8,18 +8,18 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
+
+/** Represents a game activity */
 
 public class FindPairBoard {
     private final int boardSize;
     private final Board board;
-    private State state = State.NO_BUTTONS_OPEN;
-    private long timeOpen;
-    private Button firstButton;
-    private Button secondButton;
+    private @NotNull State state = State.NO_BUTTONS_OPEN;
     private int firsti;
     private int firstj;
 
-    public FindPairBoard(Stage primaryStage, int boardSize) {
+    public FindPairBoard(@NotNull Stage primaryStage, int boardSize) {
         this.boardSize = boardSize;
         board = new Board(boardSize);
         var pane = new GridPane();
@@ -35,8 +35,8 @@ public class FindPairBoard {
             row.setFillHeight(true);
             pane.getRowConstraints().add(row);
         }
-        pane.setMinSize(250, 250);
 
+        pane.setMinSize(250, 250);
         pane.setHgap(20);
         pane.setVgap(20);
         pane.setPadding(new Insets(10, 10, 10, 10));
@@ -53,7 +53,6 @@ public class FindPairBoard {
                     if (state == State.NO_BUTTONS_OPEN) {
                         buttons[ii][jj].setText(String.valueOf(board.getCell(ii, jj)));
                         state = State.ONE_BUTTON_OPEN;
-                        firstButton = buttons[ii][jj];
                         firsti = ii;
                         firstj = jj;
                         return;
@@ -62,8 +61,6 @@ public class FindPairBoard {
                     if (state == State.ONE_BUTTON_OPEN) {
                         buttons[ii][jj].setText(String.valueOf(board.getCell(ii, jj)));
                         state = State.TWO_BUTTONS_OPEN;
-                        timeOpen = System.currentTimeMillis();
-                        secondButton = buttons[ii][jj];
                         Board.MoveState moveState = board.makeMove(firsti, firstj, ii, jj);
                         for (int k = 0; k < boardSize; k++) {
                             for (int l = 0; l < boardSize; l++) {
@@ -98,8 +95,8 @@ public class FindPairBoard {
         }
 
 
-        Scene scene = new Scene(pane);
-        primaryStage.setTitle("TicTacToe");
+        final var scene = new Scene(pane);
+        primaryStage.setTitle("FindPair");
         primaryStage.setScene(scene);
         primaryStage.setMinHeight(200);
         primaryStage.setMinWidth(200);
