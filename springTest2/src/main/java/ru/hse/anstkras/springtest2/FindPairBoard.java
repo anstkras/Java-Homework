@@ -60,7 +60,6 @@ public class FindPairBoard {
 
                     if (state == State.ONE_BUTTON_OPEN) {
                         buttons[ii][jj].setText(String.valueOf(board.getCell(ii, jj)));
-                        state = State.TWO_BUTTONS_OPEN;
                         Board.MoveState moveState = board.makeMove(firsti, firstj, ii, jj);
                         for (int k = 0; k < boardSize; k++) {
                             for (int l = 0; l < boardSize; l++) {
@@ -87,13 +86,11 @@ public class FindPairBoard {
                         if (moveState == Board.MoveState.WIN) {
                             primaryStage.setTitle("You win");
                         }
-                        return;
                     }
                 });
                 pane.add(buttons[i][j], i, j);
             }
         }
-
 
         final var scene = new Scene(pane);
         primaryStage.setTitle("FindPair");
@@ -106,6 +103,5 @@ public class FindPairBoard {
     private enum State {
         NO_BUTTONS_OPEN,
         ONE_BUTTON_OPEN,
-        TWO_BUTTONS_OPEN;
     }
 }
