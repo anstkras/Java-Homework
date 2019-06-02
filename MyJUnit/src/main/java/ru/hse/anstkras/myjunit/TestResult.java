@@ -1,22 +1,25 @@
 package ru.hse.anstkras.myjunit;
 
-public interface TestResult {
-    TestResultState getState();
+import org.jetbrains.annotations.NotNull;
 
-    String getMessage();
+/** Represents result of the test with the state and message */
+public interface TestResult {
+    @NotNull TestResultState getState();
+
+    @NotNull String getMessage();
 
     enum TestResultState {
         SUCCESS("SUCCESS"),
         FAIL("FAIL"),
         IGNORED("IGNORED");
 
-        private String stringRepresentation;
+        private final @NotNull String stringRepresentation;
 
-        TestResultState(String toString) {
+        TestResultState(@NotNull String toString) {
             this.stringRepresentation = toString;
         }
 
-        public String toString() {
+        public @NotNull String toString() {
             return stringRepresentation;
         }
     }

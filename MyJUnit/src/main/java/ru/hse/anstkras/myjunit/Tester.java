@@ -1,21 +1,30 @@
 package ru.hse.anstkras.myjunit;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Runs tests in the given class using annotations */
 public class Tester {
-    private final Object instance;
-    private final Class<?> clazz;
-    private List<Method> beforeClassMethods = new ArrayList<>();
-    private List<Method> afterClassMethods = new ArrayList<>();
-    private List<Method> beforeMethods = new ArrayList<>();
-    private List<Method> afterMethods = new ArrayList<>();
-    private List<Method> testMethods = new ArrayList<>();
+    private final @NotNull Object instance;
+    private final @NotNull Class<?> clazz;
+    private final @NotNull List<Method> beforeClassMethods = new ArrayList<>();
+    private final @NotNull List<Method> afterClassMethods = new ArrayList<>();
+    private final @NotNull List<Method> beforeMethods = new ArrayList<>();
+    private final @NotNull List<Method> afterMethods = new ArrayList<>();
+    private final @NotNull List<Method> testMethods = new ArrayList<>();
 
-    public Tester(Class<?> clazz) throws MyJUnitException {
+    /**
+     * Creates a tester for a given class by instantiating
+     *
+     * @param clazz class to create a tester for
+     * @throws MyJUnitException if the class does not have accessible constructor with no parameters
+     */
+    public Tester(@NotNull Class<?> clazz) throws MyJUnitException {
         try {
             Constructor<?> constructor = clazz.getConstructor();
             instance = constructor.newInstance();
@@ -27,12 +36,20 @@ public class Tester {
         initMethods();
     }
 
-    private static boolean methodHasMJUnitAnnotation(Method method) {
+    private static boolean methodHasMJUnitAnnotation(@NotNull Method method) {
         return method.getAnnotation(Test.class) != null || method.getAnnotation(BeforeClass.class) != null
                 || method.getAnnotation(Before.class) != null || method.getAnnotation(AfterClass.class) != null
                 || method.getAnnotation(After.class) != null;
     }
 
+    /**
+     * Runs annotated methods in the class
+     *
+     * @return list of {@code TestResult} for each {@code Test} annotated method
+     * @throws MyJUnitException if an exception occurs in {@code Before, After, BeforeClass, AfterClass}
+     *                          annotated methods or some method was not accessible
+     */
+    @NotNull
     public List<TestResult> runTests() throws MyJUnitException {
         List<TestResult> results = new ArrayList<>();
         try {
@@ -59,7 +76,8 @@ public class Tester {
         return results;
     }
 
-    private TestResult invokeTestMethod(Method method, Class<?> annotationException) throws InvocationTargetException, IllegalAccessException {
+    @NotNull
+    private TestResult invokeTestMethod(@NotNull Method method, @NotNull Class<?> annotationException) throws InvocationTargetException, IllegalAccessException {
         for (Method beforeMethod : beforeMethods) {
             beforeMethod.invoke(instance);
         }
@@ -117,17 +135,19 @@ public class Tester {
         private final String methodName;
         private final String reason;
 
-        private IgnoredTestResult(String methodName, String reason) {
+        private IgnoredTestResult(@NotNull String methodName, @NotNull String reason) {
             this.methodName = methodName;
             this.reason = reason;
         }
 
         @Override
+        @NotNull
         public TestResultState getState() {
             return STATE;
         }
 
         @Override
+        @NotNull
         public String getMessage() {
             return "Test " + methodName + " disabled. The reason is " + reason + '.';
         }
@@ -138,7 +158,7 @@ public class Tester {
         private final String methodName;
         private final long millisElapsed;
 
-        private RunTestResult(TestResultState state, String methodName, long millisElapsed) {
+        private RunTestResult(@NotNull TestResultState state, @NotNull String methodName, long millisElapsed) {
             if (state != TestResultState.SUCCESS && state != TestResultState.FAIL) {
                 throw new IllegalArgumentException("State must be equal to SUCCESS or FAIL");
             }
@@ -148,11 +168,13 @@ public class Tester {
         }
 
         @Override
+        @NotNull
         public TestResultState getState() {
             return state;
         }
 
         @Override
+        @NotNull
         public String getMessage() {
             return "Test " + methodName + ": " + state.toString() + ", time elapsed: " + millisElapsed + " ms.";
         }

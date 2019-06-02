@@ -5,8 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Scanner;
 
+/** Provides a CLI for running tests by providing a class name */
 public class Main {
-    private static final Scanner SCANNER = new Scanner(System.in);
+    private static final @NotNull Scanner SCANNER = new Scanner(System.in);
 
     private Main() {
     }
@@ -17,8 +18,9 @@ public class Main {
         return SCANNER.next();
     }
 
+    /** Provides a CLI for running tests by providing a class name */
     public static void main(String[] args) {
-        String className = getClassName();
+        final String className = getClassName();
         Class<?> clazz;
         try {
             clazz = Class.forName(className);
