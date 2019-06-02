@@ -1,6 +1,6 @@
 package ru.hse.anstkras.myjunit;
 
-public class SimpleClass {
+public class ClassDoesNotThrow {
     @Test
     void test() {
     }

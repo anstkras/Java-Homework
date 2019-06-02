@@ -55,19 +55,19 @@ public class Tester {
                 }
 
                 Test testAnnotation = method.getAnnotation(Test.class);
-                Class annotationException = testAnnotation.exception();
+                Class<?> annotationException = testAnnotation.exception();
                 String annotationIgnored = testAnnotation.ignored();
                 if (!annotationIgnored.equals(Test.DEFAULT_IGNORED)) {
                     results.add(new IgnoredTestResult(method.getName(), annotationIgnored));
                 } else {
-                    Exception exception = null;
+                    InvocationTargetException exception = null;
                     try {
                         method.invoke(instance);
                     } catch (InvocationTargetException invocationException) {
                         exception = invocationException;
                     }
                     if ((exception == null && annotationException.equals(Test.DefaultException.class))
-                            || (exception.getClass().equals(annotationException))) {
+                            || (exception.getTargetException().getClass().equals(annotationException))) {
                         results.add(new RunTestResult(TestResult.TestResultState.SUCCESS, method.getName(), 0));
                     } else {
                         results.add(new RunTestResult(TestResult.TestResultState.FAIL, method.getName(), 0));
