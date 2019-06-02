@@ -1,8 +1,7 @@
 package ru.hse.anstkras.myjunit;
 
 public class SimpleClass {
-    @Test()
+    @Test
     void test() {
-        System.out.println("win");
     }
 }
