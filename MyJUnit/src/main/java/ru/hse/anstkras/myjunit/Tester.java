@@ -52,16 +52,20 @@ public class Tester {
                     }
 
                     InvocationTargetException exception = null;
+                    long millisElapsed = 0;
                     try {
+                        millisElapsed = System.currentTimeMillis();
                         method.invoke(instance);
+                        millisElapsed = System.currentTimeMillis() - millisElapsed;
                     } catch (InvocationTargetException invocationException) {
+                        millisElapsed = System.currentTimeMillis() - millisElapsed;
                         exception = invocationException;
                     }
                     if ((exception == null && annotationException.equals(Test.DefaultException.class))
                             || (exception.getTargetException().getClass().equals(annotationException))) {
-                        results.add(new RunTestResult(TestResult.TestResultState.SUCCESS, method.getName(), 0));
+                        results.add(new RunTestResult(TestResult.TestResultState.SUCCESS, method.getName(), millisElapsed));
                     } else {
-                        results.add(new RunTestResult(TestResult.TestResultState.FAIL, method.getName(), 0));
+                        results.add(new RunTestResult(TestResult.TestResultState.FAIL, method.getName(), millisElapsed));
                     }
                     for (Method afterMethod : afterMethods) {
                         afterMethod.invoke(instance);
