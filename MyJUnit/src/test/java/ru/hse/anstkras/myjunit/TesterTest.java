@@ -9,49 +9,65 @@ import static org.junit.jupiter.api.Assertions.*;
 class TesterTest {
     @Test
     void testClassWithoutConstructor() {
-        assertThrows(MyJUnitException.class, () -> Tester.test(ClassWithoutConstructor.class));
+        assertThrows(MyJUnitException.class, () -> {
+            var tester = new Tester(ClassWithoutConstructor.class);
+            tester.runTests();
+        });
     }
 
     @Test
     void testClassWithTestMethodParameters() {
-        assertThrows(MyJUnitException.class, () -> Tester.test(ClassWithTestMethodParameters.class));
+        assertThrows(MyJUnitException.class, () -> {
+            var tester = new Tester(ClassWithTestMethodParameters.class);
+            tester.runTests();
+        });
     }
 
     @Test
     void testClassWithPrivateTestMethod() {
-        assertThrows(MyJUnitException.class, () -> Tester.test(ClassWithPrivateTestMethod.class));
+        assertThrows(MyJUnitException.class, () -> {
+            var tester = new Tester(ClassWithPrivateTestMethod.class);
+            tester.runTests();
+        });
     }
 
     @Test
     void testMethodDoesNotThrow() throws MyJUnitException {
-        List<TestResult> results = Tester.test(ClassDoesNotThrow.class);
+        var tester = new Tester(ClassDoesNotThrow.class);
+        List<TestResult> results = tester.runTests();
         assertEquals(1, results.size());
         assertEquals(TestResult.TestResultState.SUCCESS, results.get(0).getState());
     }
 
     @Test
     void testThrowException() throws MyJUnitException {
-        List<TestResult> results = Tester.test(ClassThrowException.class);
+        var tester = new Tester(ClassThrowException.class);
+        List<TestResult> results = tester.runTests();
         assertEquals(1, results.size());
         assertEquals(TestResult.TestResultState.SUCCESS, results.get(0).getState());
     }
 
     @Test
     void testThrowWrongException() throws MyJUnitException {
-        List<TestResult> results = Tester.test(ClassThrowWrongException.class);
+        var tester = new Tester(ClassThrowWrongException.class);
+        List<TestResult> results = tester.runTests();
         assertEquals(1, results.size());
         assertEquals(TestResult.TestResultState.FAIL, results.get(0).getState());
     }
 
     @Test
     void testIgnored() throws MyJUnitException {
-        List<TestResult> results = Tester.test(ClassIgnored.class);
+        var tester = new Tester(ClassIgnored.class);
+        List<TestResult> results = tester.runTests();
         assertEquals(1, results.size());
         assertEquals(TestResult.TestResultState.IGNORED, results.get(0).getState());
     }
 
     @Test
     void testInteraction() {
-        assertDoesNotThrow(() -> Tester.test(InteractionClass.class));
+        assertDoesNotThrow(() -> {
+            var tester = new Tester(InteractionClass.class);
+            tester.runTests();
+        });
     }
 }

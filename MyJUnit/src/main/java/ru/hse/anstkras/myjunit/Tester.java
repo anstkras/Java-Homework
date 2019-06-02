@@ -7,8 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tester {
-    public static List<TestResult> test(Class<?> clazz) throws MyJUnitException {
-        Object instance;
+    private final Object instance;
+    private final Class<?> clazz;
+    private List<Method> beforeClassMethods = new ArrayList<>();
+    private List<Method> afterClassMethods = new ArrayList<>();
+    private List<Method> beforeMethods = new ArrayList<>();
+    private List<Method> afterMethods = new ArrayList<>();
+    private List<Method> testMethods = new ArrayList<>();
+
+    public Tester(Class<?> clazz) throws MyJUnitException {
         try {
             Constructor<?> constructor = clazz.getConstructor();
             instance = constructor.newInstance();
@@ -16,34 +23,17 @@ public class Tester {
             throw new MyJUnitException("No accessible constructor with no parameters", exception);
         }
 
-        Method[] methods = clazz.getDeclaredMethods();
-        List<Method> beforeClassMethods = new ArrayList<>();
-        List<Method> afterClassMethods = new ArrayList<>();
-        List<Method> beforeMethods = new ArrayList<>();
-        List<Method> afterMethods = new ArrayList<>();
-        List<Method> testMethods = new ArrayList<>();
+        this.clazz = clazz;
+        initMethods();
+    }
 
-        for (Method method : methods) {
-            if (methodHasMJUnitAnnotation(method) && method.getParameterCount() != 0) {
-                throw new MyJUnitException("method " + method.getName() + " should have no parameters");
-            }
-            if (method.getAnnotation(Test.class) != null) {
-                testMethods.add(method);
-            }
-            if (method.getAnnotation(BeforeClass.class) != null) {
-                beforeClassMethods.add(method);
-            }
-            if (method.getAnnotation(AfterClass.class) != null) {
-                afterClassMethods.add(method);
-            }
-            if (method.getAnnotation(Before.class) != null) {
-                beforeMethods.add(method);
-            }
-            if (method.getAnnotation(After.class) != null) {
-                afterMethods.add(method);
-            }
-        }
+    private static boolean methodHasMJUnitAnnotation(Method method) {
+        return method.getAnnotation(Test.class) != null || method.getAnnotation(BeforeClass.class) != null
+                || method.getAnnotation(Before.class) != null || method.getAnnotation(AfterClass.class) != null
+                || method.getAnnotation(After.class) != null;
+    }
 
+    public List<TestResult> runTests() throws MyJUnitException {
         List<TestResult> results = new ArrayList<>();
         try {
             for (Method method : beforeClassMethods) {
@@ -53,6 +43,7 @@ public class Tester {
                 Test testAnnotation = method.getAnnotation(Test.class);
                 Class<?> annotationException = testAnnotation.exception();
                 String annotationIgnored = testAnnotation.ignored();
+
                 if (!annotationIgnored.equals(Test.DEFAULT_IGNORED)) {
                     results.add(new IgnoredTestResult(method.getName(), annotationIgnored));
                 } else {
@@ -86,10 +77,28 @@ public class Tester {
         return results;
     }
 
-    private static boolean methodHasMJUnitAnnotation(Method method) {
-        return method.getAnnotation(Test.class) != null || method.getAnnotation(BeforeClass.class) != null
-                || method.getAnnotation(Before.class) != null || method.getAnnotation(AfterClass.class) != null
-                || method.getAnnotation(After.class) != null;
+    private void initMethods() throws MyJUnitException {
+        Method[] methods = clazz.getDeclaredMethods();
+        for (Method method : methods) {
+            if (methodHasMJUnitAnnotation(method) && method.getParameterCount() != 0) {
+                throw new MyJUnitException("method " + method.getName() + " should have no parameters");
+            }
+            if (method.getAnnotation(Test.class) != null) {
+                testMethods.add(method);
+            }
+            if (method.getAnnotation(BeforeClass.class) != null) {
+                beforeClassMethods.add(method);
+            }
+            if (method.getAnnotation(AfterClass.class) != null) {
+                afterClassMethods.add(method);
+            }
+            if (method.getAnnotation(Before.class) != null) {
+                beforeMethods.add(method);
+            }
+            if (method.getAnnotation(After.class) != null) {
+                afterMethods.add(method);
+            }
+        }
     }
 
     private static class IgnoredTestResult implements TestResult {
@@ -134,7 +143,7 @@ public class Tester {
 
         @Override
         public String getMessage() {
-            return "Test " + methodName + ": " + state.toString() + ", time elapsed: " + String.valueOf(millisElapsed) + " ms.";
+            return "Test " + methodName + ": " + state.toString() + ", time elapsed: " + millisElapsed + " ms.";
         }
     }
 }
