@@ -32,7 +32,7 @@ public class Main {
             tester = new Tester(clazz);
             results = tester.runTests();
         } catch (MyJUnitException e) {
-            System.out.println("Somethig went wrong while testing: " + e.getMessage());
+            System.out.println("Something went wrong while testing: " + e.getMessage());
             return;
         }
         for (TestResult testResult : results) {
