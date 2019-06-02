@@ -42,34 +42,12 @@ public class Tester {
             for (Method method : testMethods) {
                 Test testAnnotation = method.getAnnotation(Test.class);
                 Class<?> annotationException = testAnnotation.exception();
-                String annotationIgnored = testAnnotation.ignored();
+                String annotationIgnoredMessage = testAnnotation.ignored();
 
-                if (!annotationIgnored.equals(Test.DEFAULT_IGNORED)) {
-                    results.add(new IgnoredTestResult(method.getName(), annotationIgnored));
+                if (!annotationIgnoredMessage.equals(Test.DEFAULT_IGNORED)) {
+                    results.add(new IgnoredTestResult(method.getName(), annotationIgnoredMessage));
                 } else {
-                    for (Method beforeMethod : beforeMethods) {
-                        beforeMethod.invoke(instance);
-                    }
-
-                    InvocationTargetException exception = null;
-                    long millisElapsed = 0;
-                    try {
-                        millisElapsed = System.currentTimeMillis();
-                        method.invoke(instance);
-                        millisElapsed = System.currentTimeMillis() - millisElapsed;
-                    } catch (InvocationTargetException invocationException) {
-                        millisElapsed = System.currentTimeMillis() - millisElapsed;
-                        exception = invocationException;
-                    }
-                    if ((exception == null && annotationException.equals(Test.DefaultException.class))
-                            || (exception.getTargetException().getClass().equals(annotationException))) {
-                        results.add(new RunTestResult(TestResult.TestResultState.SUCCESS, method.getName(), millisElapsed));
-                    } else {
-                        results.add(new RunTestResult(TestResult.TestResultState.FAIL, method.getName(), millisElapsed));
-                    }
-                    for (Method afterMethod : afterMethods) {
-                        afterMethod.invoke(instance);
-                    }
+                    results.add(invokeTestMethod(method, annotationException));
                 }
             }
             for (Method method : afterClassMethods) {
@@ -79,6 +57,35 @@ public class Tester {
             throw new MyJUnitException("A problem occur while invoking one of the annotated methods", exception);
         }
         return results;
+    }
+
+    private TestResult invokeTestMethod(Method method, Class<?> annotationException) throws InvocationTargetException, IllegalAccessException {
+        for (Method beforeMethod : beforeMethods) {
+            beforeMethod.invoke(instance);
+        }
+
+        InvocationTargetException exception = null;
+        long millisElapsed = 0;
+        try {
+            millisElapsed = System.currentTimeMillis();
+            method.invoke(instance);
+            millisElapsed = System.currentTimeMillis() - millisElapsed;
+        } catch (InvocationTargetException invocationException) {
+            millisElapsed = System.currentTimeMillis() - millisElapsed;
+            exception = invocationException;
+        }
+
+        TestResult testResult;
+        if ((exception == null && annotationException.equals(Test.DefaultException.class))
+                || (exception != null && exception.getTargetException().getClass().equals(annotationException))) {
+            testResult = new RunTestResult(TestResult.TestResultState.SUCCESS, method.getName(), millisElapsed);
+        } else {
+            testResult = new RunTestResult(TestResult.TestResultState.FAIL, method.getName(), millisElapsed);
+        }
+        for (Method afterMethod : afterMethods) {
+            afterMethod.invoke(instance);
+        }
+        return testResult;
     }
 
     private void initMethods() throws MyJUnitException {
