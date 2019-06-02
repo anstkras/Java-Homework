@@ -50,16 +50,16 @@ public class Tester {
                 method.invoke(instance);
             }
             for (Method method : testMethods) {
-                for (Method beforeMethod : beforeMethods) {
-                    beforeMethod.invoke(instance);
-                }
-
                 Test testAnnotation = method.getAnnotation(Test.class);
                 Class<?> annotationException = testAnnotation.exception();
                 String annotationIgnored = testAnnotation.ignored();
                 if (!annotationIgnored.equals(Test.DEFAULT_IGNORED)) {
                     results.add(new IgnoredTestResult(method.getName(), annotationIgnored));
                 } else {
+                    for (Method beforeMethod : beforeMethods) {
+                        beforeMethod.invoke(instance);
+                    }
+
                     InvocationTargetException exception = null;
                     try {
                         method.invoke(instance);
@@ -72,10 +72,9 @@ public class Tester {
                     } else {
                         results.add(new RunTestResult(TestResult.TestResultState.FAIL, method.getName(), 0));
                     }
-                }
-
-                for (Method afterMethod : afterMethods) {
-                    afterMethod.invoke(instance);
+                    for (Method afterMethod : afterMethods) {
+                        afterMethod.invoke(instance);
+                    }
                 }
             }
             for (Method method : afterClassMethods) {
@@ -90,7 +89,7 @@ public class Tester {
     private static boolean methodHasMJUnitAnnotation(Method method) {
         return method.getAnnotation(Test.class) != null || method.getAnnotation(BeforeClass.class) != null
                 || method.getAnnotation(Before.class) != null || method.getAnnotation(AfterClass.class) != null
-                ||method.getAnnotation(After.class) != null;
+                || method.getAnnotation(After.class) != null;
     }
 
     private static class IgnoredTestResult implements TestResult {

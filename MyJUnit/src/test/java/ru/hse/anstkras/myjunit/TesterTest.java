@@ -51,9 +51,7 @@ class TesterTest {
     }
 
     @Test
-    void difficultTest() throws MyJUnitException {
-        List<TestResult> results = Tester.test(DifficultClass.class);
-        assertEquals(1, results.size());
-        assertEquals(TestResult.TestResultState.SUCCESS, results.get(0).getState());
+    void testInteraction() {
+        assertDoesNotThrow(() -> Tester.test(InteractionClass.class));
     }
 }
