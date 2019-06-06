@@ -11,6 +11,7 @@ env:
 - PROJECT_DIR=Reflector
 - PROJECT_DIR=HashTable
 - PROJECT_DIR=qsort
+- PROJECT_DIR=ThreadPool
 - PROJECT_DIR=Test_MD5
 script: 
 - if [ -d "$PROJECT_DIR" ]; then
