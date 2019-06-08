@@ -49,6 +49,14 @@ class TesterTest {
     }
 
     @Test
+    void testClassWithStaticTest() {
+        assertThrows(MyJUnitException.class, () -> {
+            var tester = new Tester(ClassWithStaticTest.class);
+            tester.runTests();
+        });
+    }
+
+    @Test
     void testMethodDoesNotThrow() throws MyJUnitException {
         var tester = new Tester(ClassDoesNotThrow.class);
         List<TestResult> results = tester.runTests();
