@@ -33,6 +33,22 @@ class TesterTest {
     }
 
     @Test
+    void testClassWithNotStaticBeforeClass() {
+        assertThrows(MyJUnitException.class, () -> {
+            var tester = new Tester(BeforeClassNotStatic.class);
+            tester.runTests();
+        });
+    }
+
+    @Test
+    void testClassWithMixedAnnotations() {
+        assertThrows(MyJUnitException.class, () -> {
+            var tester = new Tester(ClassWithMixedAnnotations.class);
+            tester.runTests();
+        });
+    }
+
+    @Test
     void testMethodDoesNotThrow() throws MyJUnitException {
         var tester = new Tester(ClassDoesNotThrow.class);
         List<TestResult> results = tester.runTests();

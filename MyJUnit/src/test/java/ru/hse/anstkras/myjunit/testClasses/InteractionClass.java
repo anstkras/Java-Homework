@@ -3,12 +3,12 @@ package ru.hse.anstkras.myjunit.testClasses;
 import ru.hse.anstkras.myjunit.*;
 
 public class InteractionClass {
-    private String string;
-    private int counterBefore = 0;
-    private int counterAfter = 0;
+    private static String string;
+    private static int counterBefore = 0;
+    private static int counterAfter = 0;
 
     @BeforeClass
-    public void init() {
+    public static void init() {
         string = "String";
     }
 
@@ -23,7 +23,7 @@ public class InteractionClass {
     }
 
     @AfterClass
-    public void finish() {
+    public static void finish() {
         if (counterBefore != 3 || counterAfter != 3) {
             throw new IllegalStateException();
         }

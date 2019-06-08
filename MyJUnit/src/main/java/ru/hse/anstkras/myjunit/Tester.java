@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,20 +114,39 @@ public class Tester {
                 throw new MyJUnitException("method " + method.getName() + " should have no parameters");
             }
             if (method.getAnnotation(Test.class) != null) {
+                validateIsNotStatic(method);
                 testMethods.add(method);
             }
             if (method.getAnnotation(BeforeClass.class) != null) {
+                validateIsStatic(method);
                 beforeClassMethods.add(method);
             }
             if (method.getAnnotation(AfterClass.class) != null) {
+                validateIsStatic(method);
                 afterClassMethods.add(method);
             }
             if (method.getAnnotation(Before.class) != null) {
+                validateIsNotStatic(method);
                 beforeMethods.add(method);
             }
             if (method.getAnnotation(After.class) != null) {
+                validateIsNotStatic(method);
                 afterMethods.add(method);
             }
+        }
+    }
+
+    // Throws MyJunitException if specified method is not static
+    private void validateIsStatic(Method method) throws MyJUnitException {
+        if (!Modifier.isStatic(method.getModifiers())) {
+            throw new MyJUnitException((method.getName() + " is not static"));
+        }
+    }
+
+    // Throws MyJunitException if specified method is static
+    private void validateIsNotStatic(Method method) throws MyJUnitException {
+        if (Modifier.isStatic(method.getModifiers())) {
+            throw new MyJUnitException(method.getName() + " is static");
         }
     }
 
