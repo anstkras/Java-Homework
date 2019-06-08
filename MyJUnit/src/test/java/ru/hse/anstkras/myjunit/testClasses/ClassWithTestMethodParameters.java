@@ -1,4 +1,6 @@
-package ru.hse.anstkras.myjunit;
+package ru.hse.anstkras.myjunit.testClasses;
+
+import ru.hse.anstkras.myjunit.Test;
 
 public class ClassWithTestMethodParameters {
     @Test

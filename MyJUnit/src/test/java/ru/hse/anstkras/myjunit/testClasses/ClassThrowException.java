@@ -1,4 +1,4 @@
-package ru.hse.anstkras.myjunit;
+package ru.hse.anstkras.myjunit.testClasses;
 
 public class ClassThrowException {
     @Test(exception = IllegalStateException.class)

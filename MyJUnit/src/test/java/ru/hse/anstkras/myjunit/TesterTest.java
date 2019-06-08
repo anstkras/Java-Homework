@@ -1,6 +1,7 @@
 package ru.hse.anstkras.myjunit;
 
 import org.junit.jupiter.api.Test;
+import ru.hse.anstkras.myjunit.testClasses.*;
 
 import java.util.List;
 
