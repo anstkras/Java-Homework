@@ -4,6 +4,6 @@ import ru.hse.anstkras.myjunit.Test;
 
 public class ClassDoesNotThrow {
     @Test
-    void test() {
+    public void test() {
     }
 }

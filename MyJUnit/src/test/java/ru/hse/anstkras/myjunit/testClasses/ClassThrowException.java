@@ -4,7 +4,7 @@ import ru.hse.anstkras.myjunit.Test;
 
 public class ClassThrowException {
     @Test(exception = IllegalStateException.class)
-    void test() {
+    public void test() {
         throw new IllegalStateException();
     }
 }

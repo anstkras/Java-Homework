@@ -4,6 +4,6 @@ import ru.hse.anstkras.myjunit.Test;
 
 public class ClassIgnored {
     @Test(ignored = "because")
-    void test() {
+    public void test() {
     }
 }

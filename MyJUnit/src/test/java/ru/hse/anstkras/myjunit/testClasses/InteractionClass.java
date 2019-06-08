@@ -8,44 +8,44 @@ public class InteractionClass {
     private int counterAfter = 0;
 
     @BeforeClass
-    void init() {
+    public void init() {
         string = "String";
     }
 
     @Before
-    void before() {
+    public void before() {
         counterBefore++;
     }
 
     @After
-    void after() {
+    public void after() {
         counterAfter++;
     }
 
     @AfterClass
-    void finish() {
+    public void finish() {
         if (counterBefore != 3 || counterAfter != 3) {
             throw new IllegalStateException();
         }
     }
 
     @Test
-    void test() {
+    public void test() {
         if (string == null) {
             throw new IllegalStateException();
         }
     }
 
     @Test
-    void test2() {
+    public void test2() {
     }
 
     @Test(exception = IndexOutOfBoundsException.class)
-    void test3() {
+    public void test3() {
         throw new IndexOutOfBoundsException();
     }
 
     @Test(ignored = "because")
-    void test4() {
+    public void test4() {
     }
 }

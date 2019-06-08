@@ -7,6 +7,6 @@ public class ClassWithoutConstructor {
     }
 
     @Test
-    void test() {
+    public void test() {
     }
 }

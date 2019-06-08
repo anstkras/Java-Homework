@@ -4,6 +4,6 @@ import ru.hse.anstkras.myjunit.Test;
 
 public class ClassWithTestMethodParameters {
     @Test
-    void test(int parameter) {
+    public void test(int parameter) {
     }
 }
